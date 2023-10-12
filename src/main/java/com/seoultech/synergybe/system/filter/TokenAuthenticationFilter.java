@@ -1,5 +1,8 @@
 package com.seoultech.synergybe.system.filter;
 
+import com.seoultech.synergybe.domain.auth.token.AuthToken;
+import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
+import com.seoultech.synergybe.system.utils.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

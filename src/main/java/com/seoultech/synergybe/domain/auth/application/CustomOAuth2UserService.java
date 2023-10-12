@@ -1,5 +1,9 @@
 package com.seoultech.synergybe.domain.auth.application;
 
+import com.seoultech.synergybe.domain.auth.entity.ProviderType;
+import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfo;
+import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfoFactory;
+import com.seoultech.synergybe.system.exception.OAuthProviderMissMatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;

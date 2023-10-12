@@ -1,5 +1,16 @@
 package com.seoultech.synergybe.system.config.security;
 
+import com.seoultech.synergybe.domain.auth.application.CustomOAuth2UserService;
+import com.seoultech.synergybe.domain.auth.application.CustomUserDetailsService;
+import com.seoultech.synergybe.domain.auth.dao.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
+import com.seoultech.synergybe.system.config.properties.AppProperties;
+import com.seoultech.synergybe.system.config.properties.CorsProperties;
+import com.seoultech.synergybe.system.exception.RestAuthenticationEntryPoint;
+import com.seoultech.synergybe.system.filter.TokenAuthenticationFilter;
+import com.seoultech.synergybe.system.handler.OAuth2AuthenticationFailureHandler;
+import com.seoultech.synergybe.system.handler.OAuth2AuthenticationSuccessHandler;
+import com.seoultech.synergybe.system.handler.TokenAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

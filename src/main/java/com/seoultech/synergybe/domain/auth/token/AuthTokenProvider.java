@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.auth.token;
 
+import com.seoultech.synergybe.system.exception.TokenValidFailedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;

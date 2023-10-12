@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.auth.info.impl;
 
+import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfo;
+
 import java.util.Map;
 
 public class NaverOAuth2UserInfo extends OAuth2UserInfo {

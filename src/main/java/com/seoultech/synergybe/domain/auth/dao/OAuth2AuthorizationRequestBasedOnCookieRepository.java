@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.auth.dao;
 
 import com.nimbusds.oauth2.sdk.util.StringUtils;
+import com.seoultech.synergybe.system.utils.CookieUtil;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 
