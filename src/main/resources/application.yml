@@ -32,6 +32,9 @@ spring:
         order_inserts: true
         order_updates: true
         format_sql: true
+  mvc:
+    pathmatch.matching-strategy: ant_path_matcher
+
   # Security OAuth
   security:
     oauth2.client:
@@ -85,3 +88,9 @@ app:
   oauth2:
     authorizedRedirectUris:
       - http://localhost:3000/oauth/redirect
+
+
+swagger:
+  base-package: com.seoultech.synergybe
+  path: /api/**
+  version: 1.0.0
