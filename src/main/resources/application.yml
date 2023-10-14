@@ -5,6 +5,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/synergydb?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
+#    url: jdbc:mysql://db-instance-synergy.cn6oq0g93zz1.ap-northeast-2.rds.amazonaws.com:3306/synergydb?serverTimezone=Asia/Seoul&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
     password: root
     hikari:
@@ -71,13 +72,15 @@ spring:
 
 # cors 설정
 cors:
+#  allowed-origins: 'https://deploy-preview-17--willowy-kangaroo-6ade3c.netlify.app/auth:443'
   allowed-origins: 'http://localhost:3000'
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
   allowed-headers: '*'
   max-age: 3600
 
 # jwt secret key 설정
-jwt.secret: '8sknjlO3NPTBqo319DHLNqsQAfRJEdKsETOds'
+jwt:
+  secret: '8sknjlO3NPTBqo319DHLNqsQAfRJEdKsETOds'
 
 # 토큰 관련 secret Key 및 RedirectUri 설정
 app:
@@ -87,6 +90,7 @@ app:
     refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris:
+      - https://deploy-preview-17--willowy-kangaroo-6ade3c.netlify.app/oauth/redirect
       - http://localhost:3000/oauth/redirect
 
 
