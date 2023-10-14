@@ -1,5 +1,8 @@
 package com.seoultech.synergybe.domain.auth.application;
 
+import com.seoultech.synergybe.domain.auth.entity.UserPrincipal;
+import com.seoultech.synergybe.domain.user.dao.UserRepository;
+import com.seoultech.synergybe.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

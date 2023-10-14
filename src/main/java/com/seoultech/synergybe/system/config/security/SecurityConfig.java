@@ -3,7 +3,9 @@ package com.seoultech.synergybe.system.config.security;
 import com.seoultech.synergybe.domain.auth.application.CustomOAuth2UserService;
 import com.seoultech.synergybe.domain.auth.application.CustomUserDetailsService;
 import com.seoultech.synergybe.domain.auth.dao.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.seoultech.synergybe.domain.auth.entity.RoleType;
 import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
+import com.seoultech.synergybe.domain.user.dao.UserRefreshTokenRepository;
 import com.seoultech.synergybe.system.config.properties.AppProperties;
 import com.seoultech.synergybe.system.config.properties.CorsProperties;
 import com.seoultech.synergybe.system.exception.RestAuthenticationEntryPoint;
@@ -13,14 +15,17 @@ import com.seoultech.synergybe.system.handler.OAuth2AuthenticationSuccessHandler
 import com.seoultech.synergybe.system.handler.TokenAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
@@ -28,9 +33,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-@Configuration
+@EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     private final CorsProperties corsProperties;
     private final AppProperties appProperties;
@@ -43,14 +48,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /*
      * UserDetailsService 설정
      * */
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors()
                 .and()
@@ -66,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                 .anyRequest().authenticated()
@@ -82,19 +87,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userService(oAuth2UserService)
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler())
-                .failureHandler(oAuth2AuthenticationFailureHandler());
+                .failureHandler(oAuth2AuthenticationFailureHandler())
+                .and().addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 
-    /*
-     * auth 매니저 설정
-     * */
-    @Override
-    @Bean(BeanIds.AUTHENTICATION_MANAGER)
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
-    }
 
     /*
      * security 설정 시, 사용할 인코더 설정
