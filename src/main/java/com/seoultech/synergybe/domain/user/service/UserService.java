@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.user.service;
 
+import com.seoultech.synergybe.domain.user.dto.response.UserResponse;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,10 @@ public class UserService {
 
     public User getUser(String userId) {
         return userRepository.findByUserId(userId);
+    }
+
+    public UserResponse getUserInfo(User user) {
+        return UserResponse.from(user);
     }
 }
 

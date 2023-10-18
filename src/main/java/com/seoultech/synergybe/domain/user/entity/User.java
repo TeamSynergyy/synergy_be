@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "USER")
 public class User {
     @JsonIgnore
     @Id
@@ -60,6 +59,12 @@ public class User {
     @Column(name = "MODIFIED_AT")
     private LocalDateTime modifiedAt;
 
+    private String major;
+
+    private String temperature;
+
+    private String bio;
+
     public User(
             String userId,
             String username,
@@ -81,6 +86,7 @@ public class User {
         this.roleType = roleType;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+        this.bio = "36.5";
     }
 }
 
