@@ -15,6 +15,7 @@ import com.seoultech.synergybe.system.handler.OAuth2AuthenticationSuccessHandler
 import com.seoultech.synergybe.system.handler.TokenAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,6 +30,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -65,11 +67,12 @@ public class SecurityConfig {
                 .accessDeniedHandler(tokenAccessDeniedHandler)
                 .and()
                 .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
-                .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
+//                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+//                .antMatchers("/swagger-ui/**").permitAll()
+//                .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
+//                .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
+//                .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint()
