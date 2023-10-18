@@ -1,6 +1,6 @@
-package com.seoultech.synergybe.domain.user.application;
+package com.seoultech.synergybe.domain.user.service;
 
-import com.seoultech.synergybe.domain.user.dao.UserRepository;
+import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.auth.dao;
+package com.seoultech.synergybe.domain.auth.repository;
 
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import com.seoultech.synergybe.system.utils.CookieUtil;

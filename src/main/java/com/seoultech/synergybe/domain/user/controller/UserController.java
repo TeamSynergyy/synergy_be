@@ -1,6 +1,6 @@
-package com.seoultech.synergybe.domain.user.api;
+package com.seoultech.synergybe.domain.user.controller;
 
-import com.seoultech.synergybe.domain.user.application.UserService;
+import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.domain.user.entity.User;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;

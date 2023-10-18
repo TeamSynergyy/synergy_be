@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.user.dao;
+package com.seoultech.synergybe.domain.user.repository;
 
 import com.seoultech.synergybe.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

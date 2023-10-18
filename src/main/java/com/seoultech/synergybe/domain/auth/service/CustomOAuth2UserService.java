@@ -1,11 +1,11 @@
-package com.seoultech.synergybe.domain.auth.application;
+package com.seoultech.synergybe.domain.auth.service;
 
 import com.seoultech.synergybe.domain.auth.entity.ProviderType;
 import com.seoultech.synergybe.domain.auth.entity.RoleType;
 import com.seoultech.synergybe.domain.auth.entity.UserPrincipal;
 import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfo;
 import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfoFactory;
-import com.seoultech.synergybe.domain.user.dao.UserRepository;
+import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.entity.User;
 import com.seoultech.synergybe.system.exception.OAuthProviderMissMatchException;
 import lombok.RequiredArgsConstructor;
