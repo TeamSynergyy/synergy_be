@@ -5,6 +5,7 @@ import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.response.ProjectResponse;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
+import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.entity.User;
 import com.seoultech.synergybe.system.exception.NotExistProjectException;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,12 @@ import java.util.List;
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
+    private final ProjectUserService projectUserService;
+
     public ProjectResponse createProject(User user, CreateProjectRequest request) {
         Project savedProject = projectRepository.save(request.toEntity(user));
+        projectUserService.createProjectUser(savedProject, user);
+
 
         return ProjectResponse.from(savedProject);
     }
@@ -37,6 +42,8 @@ public class ProjectService {
 
     public ProjectResponse deleteProject(Long projectId) {
         Project project = this.findProjectById(projectId);
+
+
         projectRepository.delete(project);
 
         return ProjectResponse.from(project);

@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.project;
 import com.seoultech.synergybe.domain.apply.Apply;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
+import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.system.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,6 +57,11 @@ public class Project extends BaseTime {
     )
     private List<Apply> applies = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "project"
+    )
+    private List<ProjectUser> projectUsers = new ArrayList<>();
+
     @Builder
     public Project(String name, String content, ProjectField field, LocalDateTime startAt,
                    LocalDateTime endAt, String leaderId) {
@@ -77,5 +83,9 @@ public class Project extends BaseTime {
         this.endAt = request.getEndAt();
 
         return this;
+    }
+
+    public void setLeaderId(String leaderId) {
+        this.leaderId = leaderId;
     }
 }
