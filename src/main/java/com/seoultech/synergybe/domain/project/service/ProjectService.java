@@ -42,7 +42,7 @@ public class ProjectService {
         return ProjectResponse.from(project);
     }
 
-    private Project findProjectById(Long projectId) {
+    public Project findProjectById(Long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(NotExistProjectException::new);
     }

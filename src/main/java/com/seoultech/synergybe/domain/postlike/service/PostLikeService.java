@@ -31,7 +31,7 @@ public class PostLikeService {
             status = LikeStatus.UNLIKE;
         }
         try {
-            PostLike updatedPostLike = update(user, postId, status);
+            PostLike updatedPostLike = this.update(user, postId, status);
 
             return PostLikeResponse.from(updatedPostLike);
         } catch (Exception e) {

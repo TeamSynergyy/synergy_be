@@ -29,16 +29,15 @@ public class ProjectLike {
     private Project project;
 
     @Enumerated(EnumType.STRING)
-    private ProjectStatus status;
+    private LikeStatus status;
 
     @Builder
     public ProjectLike(User user, Project project) {
         this.user = user;
         this.project = project;
-        this.status = ProjectStatus.READY;
     }
 
-    public void updateStatus(ProjectStatus status) {
+    public void updateStatus(LikeStatus status) {
         this.status = status;
     }
 }
