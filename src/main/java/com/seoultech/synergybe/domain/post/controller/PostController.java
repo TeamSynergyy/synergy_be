@@ -8,6 +8,7 @@ import com.seoultech.synergybe.domain.user.entity.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/posts")
@@ -57,7 +59,7 @@ public class PostController {
 
         User user = userService.getUser(principal.getUsername());
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("post", postService.deletePost(user, postId)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post", postService.deletePost(user, postId)));
     }
 
     @GetMapping(value = "/{postId}")
@@ -85,13 +87,22 @@ public class PostController {
     }
 
     @GetMapping(value = "/feed")
-    public ResponseEntity<ApiResponse<Page<PostResponse>>> getFeed(@PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ApiResponse<List<PostResponse>>> getFeed(@Param("end") Long end) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post feed list", postService.getFeed(pageable, user)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post feed list", postService.getFeed(end, user)));
     }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<PostResponse>>> searchAllPosts(@RequestParam("search") String search) {
+        log.info(">> keyword : {}", search);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("search Post list", postService.searchAllPosts(search)));
+    }
+
+
 
 
 }

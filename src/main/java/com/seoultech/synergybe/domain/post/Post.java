@@ -35,6 +35,11 @@ public class Post extends BaseTime {
 
     private String content;
 
+    private String authorName;
+
+    private String authorId;
+
+
     @OneToMany(
             mappedBy = "post"
     )
@@ -58,6 +63,8 @@ public class Post extends BaseTime {
         this.content = content;
         this.likes = likes;
         this.comments = comments;
+        this.authorName = user.getUsername();
+        this.authorId = user.getUserId();
         this.isDeleted = false;
     }
 
