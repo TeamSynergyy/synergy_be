@@ -1,6 +1,9 @@
 package com.seoultech.synergybe.domain.user.repository;
 
 import com.seoultech.synergybe.domain.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM user WHERE user_id IN (:userIds)",nativeQuery = true)
     List<User> findAllByUserId(@Param("userIds") String userIds);
+
+    Page<User> findAll(Specification<User> spec, Pageable pageable);
 }
