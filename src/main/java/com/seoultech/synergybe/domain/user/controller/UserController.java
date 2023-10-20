@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.user.controller;
 
+import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.response.UserResponse;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.domain.user.User;
@@ -50,6 +51,15 @@ public class UserController {
         log.info(">> keyword : {}", search);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("search Post list", userService.searchAllUsers(search, pageable)));
+    }
+
+    @PutMapping(value = "/me/info")
+    public ResponseEntity<ApiResponse<UserResponse>> updateMyInfo(@RequestBody UpdateUserRequest request) {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("update my info", userService.updateMyInfo(user, request)));
     }
 }
 

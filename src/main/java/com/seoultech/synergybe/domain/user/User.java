@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seoultech.synergybe.domain.auth.entity.ProviderType;
 import com.seoultech.synergybe.domain.auth.entity.RoleType;
+import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -88,6 +89,14 @@ public class User implements Serializable {
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
         this.bio = "36.5";
+    }
+
+    public User update(UpdateUserRequest request) {
+        this.username = request.getUsername();
+        this.bio = request.getBio();
+        this.major = request.getMajor();
+
+        return this;
     }
 }
 

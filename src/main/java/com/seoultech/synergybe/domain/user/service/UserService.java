@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.user.service;
 
+import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.response.UserResponse;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
@@ -68,6 +69,12 @@ public class UserService {
                 }
             }
         };
+    }
+
+    public UserResponse updateMyInfo(User user, UpdateUserRequest request) {
+        User updatedUser = userRepository.save(user.update(request));
+
+        return UserResponse.from(updatedUser);
     }
 }
 
