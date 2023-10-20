@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.project.controller;
 
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.dto.response.ListProjectResponse;
 import com.seoultech.synergybe.domain.project.dto.response.ProjectResponse;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.user.User;
@@ -64,5 +65,14 @@ public class ProjectController {
     public ResponseEntity<ApiResponse<List<ProjectResponse>>> searchAllProjects(@RequestParam("search") String search) {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project search result", projectService.searchAllProjects(search)));
+    }
+
+    @GetMapping(value = "/me/likes")
+    public ResponseEntity<ApiResponse<ListProjectResponse>> getLikedProjects() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("liked project list", projectService.getLikedProjectList(user)));
     }
 }

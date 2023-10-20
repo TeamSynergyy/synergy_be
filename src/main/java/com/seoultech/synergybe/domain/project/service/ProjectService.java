@@ -3,8 +3,10 @@ package com.seoultech.synergybe.domain.project.service;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.dto.response.ListProjectResponse;
 import com.seoultech.synergybe.domain.project.dto.response.ProjectResponse;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
+import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
 import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistProjectException;
@@ -24,6 +26,8 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
 
     private final ProjectUserService projectUserService;
+
+    private final ProjectLikeService projectLikeService;
 
     public ProjectResponse createProject(User user, CreateProjectRequest request) {
         Project savedProject = projectRepository.save(request.toEntity(user));
@@ -91,5 +95,12 @@ public class ProjectService {
                 }
             }
         };
+    }
+
+    public ListProjectResponse getLikedProjectList(User user) {
+        List<Long> projectIds = projectLikeService.findLikedProjectIds(user);
+        List<Project> projects = projectRepository.findAllById(projectIds);
+
+        return ListProjectResponse.from(ProjectResponse.from(projects));
     }
 }
