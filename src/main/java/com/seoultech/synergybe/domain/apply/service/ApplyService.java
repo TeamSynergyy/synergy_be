@@ -12,6 +12,7 @@ import com.seoultech.synergybe.system.exception.NotExistApplyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -65,5 +66,12 @@ public class ApplyService {
         } else {
             throw new NotExistApplyException();
         }
+    }
+
+    public List<ApplyResponse> getMyApplyList(User user) {
+        List<Apply> applies = applyRepository.findAllByUserId(user.getUserId());
+
+        return ApplyResponse.from(applies);
+
     }
 }

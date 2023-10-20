@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/v1/applies")
 @RequiredArgsConstructor
@@ -56,6 +58,15 @@ public class ApplyController {
         User user = userService.getUser(principal.getUsername());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("reject apply", applyService.rejectApply(request.getUserId(), projectId)));
+    }
+
+    @GetMapping(value = "/me")
+    public ResponseEntity<ApiResponse<List<ApplyResponse>>> getApplyList() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("me apply list", applyService.getMyApplyList(user)));
     }
 
 
