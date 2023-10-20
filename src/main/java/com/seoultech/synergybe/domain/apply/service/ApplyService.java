@@ -7,7 +7,7 @@ import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistApplyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

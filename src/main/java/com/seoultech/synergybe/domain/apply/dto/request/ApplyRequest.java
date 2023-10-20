@@ -2,7 +2,7 @@ package com.seoultech.synergybe.domain.apply.dto.request;
 
 import com.seoultech.synergybe.domain.apply.Apply;
 import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,7 +10,6 @@ import lombok.Getter;
 @Getter
 public class ApplyRequest {
     private String userId;
-    private Long projectId;
 
     public Apply toEntity(User user, Project project) {
         return Apply.builder()

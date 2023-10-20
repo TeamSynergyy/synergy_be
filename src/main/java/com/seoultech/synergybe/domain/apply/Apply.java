@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.apply;
 
 import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

@@ -5,7 +5,7 @@ import com.seoultech.synergybe.domain.apply.dto.response.AcceptApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
 import com.seoultech.synergybe.domain.apply.service.ApplyService;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
