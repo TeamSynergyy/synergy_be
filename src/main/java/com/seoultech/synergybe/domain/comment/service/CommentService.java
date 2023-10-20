@@ -11,6 +11,8 @@ import com.seoultech.synergybe.system.exception.NotExistCommentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -50,5 +52,13 @@ public class CommentService {
         Comment comment = this.findCommentById(commentId);
 
         return CommentResponse.from(comment);
+    }
+
+    public List<CommentResponse> getCommentList(Long postId) {
+        List<Long> commentIds = commentRepository.findCommentIdsByPostId(postId);
+
+        List<Comment> comments = commentRepository.findAllById(commentIds);
+
+        return CommentResponse.from(comments);
     }
 }

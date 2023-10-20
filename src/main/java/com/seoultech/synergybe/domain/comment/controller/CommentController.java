@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/v1/comments")
 @RequiredArgsConstructor
@@ -43,5 +45,10 @@ public class CommentController {
     @GetMapping(value = "/{commentId}")
     public ResponseEntity<ApiResponse<CommentResponse>> getComment(@PathVariable("commentId") Long commentId) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("comment get", commentService.getComment(commentId)));
+    }
+
+    @GetMapping(value = "/{postId}")
+    public ResponseEntity<ApiResponse<List<CommentResponse>>> getCommentList(@PathVariable("postId") Long postId) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("comment list from post", commentService.getCommentList(postId)));
     }
 }
