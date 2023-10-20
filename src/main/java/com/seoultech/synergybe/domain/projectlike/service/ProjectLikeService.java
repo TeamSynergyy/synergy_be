@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.projectlike.service;
 
 import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.projectlike.LikeStatus;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
@@ -8,6 +9,7 @@ import com.seoultech.synergybe.domain.projectlike.ProjectLikeType;
 import com.seoultech.synergybe.domain.projectlike.dto.response.ProjectLikeResponse;
 import com.seoultech.synergybe.domain.projectlike.repository.ProjectLikeRepository;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.system.exception.NotExistProjectException;
 import com.seoultech.synergybe.system.exception.NotExistProjectLikeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ import java.util.Optional;
 public class ProjectLikeService {
     private final ProjectLikeRepository projectLikeRepository;
 
-    private final ProjectService projectService;
+    private final ProjectRepository projectRepository;
 
 
     @Transactional
@@ -49,7 +51,9 @@ public class ProjectLikeService {
 
             return projectLikeOptional.get();
         } else {
-            Project project = projectService.findProjectById(projectId);
+//            Project project = projectService.findProjectById(projectId);
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(NotExistProjectException::new);
             ProjectLike projectLike = ProjectLike.builder()
                     .user(user)
                     .project(project)

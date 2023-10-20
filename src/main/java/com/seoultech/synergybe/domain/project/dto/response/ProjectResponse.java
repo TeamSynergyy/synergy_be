@@ -6,6 +6,7 @@ import com.seoultech.synergybe.domain.project.ProjectStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +38,20 @@ public class ProjectResponse {
     public static ProjectResponse from(Project project) {
         return new ProjectResponse(project.getId(), project.getName(), project.getContent(), project.getField(),
                 project.getStatus(), project.getStartAt(), project.getEndAt(), project.getLeaderId());
+    }
+
+    public static Page<ProjectResponse> from(Page<Project> projects) {
+        return projects.map(project -> ProjectResponse.builder()
+                .projectId(project.getId())
+                .name(project.getName())
+                .content(project.getContent())
+                .field(project.getField())
+                .status(project.getStatus())
+                .startAt(project.getStartAt())
+                .endAt(project.getEndAt())
+                .leaderId(project.getLeaderId())
+                .build()
+        );
     }
 
     public static List<ProjectResponse> from(List<Project> projects) {

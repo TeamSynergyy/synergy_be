@@ -11,6 +11,8 @@ import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistProjectException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -70,11 +72,11 @@ public class ProjectService {
         return ProjectResponse.from(projects);
     }
 
-    public List<ProjectResponse> searchAllProjects(String keyword) {
+    public Page<ProjectResponse> searchAllProjects(String keyword, Pageable pageable) {
 
         Specification<Project> spec = this.search(keyword);
 
-        List<Project> projects = projectRepository.findAll(spec);
+        Page<Project> projects = projectRepository.findAll(spec, pageable);
 
         return ProjectResponse.from(projects);
     }

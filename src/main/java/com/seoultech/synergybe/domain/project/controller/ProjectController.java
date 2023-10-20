@@ -9,7 +9,10 @@ import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,16 +58,16 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project get", projectService.getProject(projectId)));
     }
 
-    @GetMapping("/list")
+    @GetMapping("/recent")
     public ResponseEntity<ApiResponse<List<ProjectResponse>>> getProjectList(@Param("end") Long end) {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project list", projectService.getProjectList(end)));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProjectResponse>>> searchAllProjects(@RequestParam("search") String search) {
+    public ResponseEntity<ApiResponse<Page<ProjectResponse>>> searchAllProjects(@RequestParam("search") String search, @PageableDefault(size = 7) Pageable pageable) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project search result", projectService.searchAllProjects(search)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project search result", projectService.searchAllProjects(search, pageable)));
     }
 
     @GetMapping(value = "/me/likes")

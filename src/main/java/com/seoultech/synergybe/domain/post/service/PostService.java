@@ -12,6 +12,9 @@ import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistPostException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.seoultech.synergybe.domain.user.service.UserService;
@@ -136,14 +139,13 @@ public class PostService {
         return ListPostResponse.from(PostResponse.from(lastTenPosts), isNext);
     }
 
-    public List<PostResponse> searchAllPosts(String keyword) {
+    public Page<PostResponse> searchAllPosts(String keyword, Pageable pageable) {
         // query 생성
         Specification<Post> spec = this.search(keyword);
 
-        List<Post> posts = postRepository.findAll(spec);
+        Page<Post> posts = postRepository.findAll(spec, pageable);
 
         return PostResponse.from(posts);
-
     }
 
     public Specification<Post> search(String keyword) {
