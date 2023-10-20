@@ -54,7 +54,8 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors().disable()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -66,8 +67,8 @@ public class SecurityConfig {
                 .accessDeniedHandler(tokenAccessDeniedHandler)
                 .and()
                 .authorizeRequests()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().permitAll()
-//                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 //                .antMatchers("/swagger-ui/**").permitAll()
 //                .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
 //                .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
@@ -150,7 +151,7 @@ public class SecurityConfig {
         corsConfig.setAllowedMethods(Arrays.asList(corsProperties.getAllowedMethods().split(",")));
         corsConfig.setAllowedOrigins(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
         corsConfig.setAllowCredentials(true);
-        corsConfig.setMaxAge(corsConfig.getMaxAge());
+        corsConfig.setMaxAge(corsProperties.getMaxAge());
 
         corsConfigSource.registerCorsConfiguration("/**", corsConfig);
         return corsConfigSource;
