@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.domain.user.repository;
 
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

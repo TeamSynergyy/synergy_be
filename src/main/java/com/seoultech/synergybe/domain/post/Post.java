@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.post;
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.postlike.PostLike;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,7 +28,7 @@ public class Post extends BaseTime {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
     private String title;
@@ -36,8 +36,6 @@ public class Post extends BaseTime {
     private String content;
 
     private String authorName;
-
-    private String authorId;
 
 
     @OneToMany(
@@ -56,15 +54,13 @@ public class Post extends BaseTime {
     private boolean isDeleted;
 
     @Builder
-    public Post(Long id, User user, String title, String content, List<PostLike> likes, List<Comment> comments) {
-        this.id = id;
+    public Post(User user, String title, String content, List<PostLike> likes, List<Comment> comments) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.likes = likes;
         this.comments = comments;
         this.authorName = user.getUsername();
-        this.authorId = user.getUserId();
         this.isDeleted = false;
     }
 

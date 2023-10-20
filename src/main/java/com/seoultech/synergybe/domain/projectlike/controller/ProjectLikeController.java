@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.projectlike.controller;
 import com.seoultech.synergybe.domain.projectlike.ProjectLikeType;
 import com.seoultech.synergybe.domain.projectlike.dto.response.ProjectLikeResponse;
 import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;

@@ -19,4 +19,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByUserId(@Param("userId") String userId);
 
     List<Post> findAll(Specification<Post> spec);
+
+    @Query(value = "SELECT * FROM (SELECT * FROM post WHERE user_user_id = :userId) p WHERE post_id < :end AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
+    List<Post> findAllByFollowingIdAndEndId(@Param("userId") String userId, @Param("end") Long end);
+
+    @Query(value = "SELECT count(*) FROM post WHERE post_id < :end", nativeQuery = true)
+    int countPostList(@Param("end") Long end);
+
+    @Query(value = "SELECT count(*) FROM (SELECT * FROM post WHERE user_id = :userId) p WHERE post_id < :end", nativeQuery = true)
+    int countFeed(@Param("end") Long end);
 }

@@ -4,7 +4,7 @@ import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
 import com.seoultech.synergybe.domain.postlike.dto.response.PostLikeResponse;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;

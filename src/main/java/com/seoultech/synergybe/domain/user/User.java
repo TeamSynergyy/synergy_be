@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.user.entity;
+package com.seoultech.synergybe.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seoultech.synergybe.domain.auth.entity.ProviderType;
@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,46 +18,46 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class User {
+public class User implements Serializable {
     @JsonIgnore
     @Id
-    @Column(name = "USER_SEQ")
+    @Column(name = "user_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userSeq;
 
-    @Column(name = "USER_ID", length = 64, unique = true)
+    @Column(name = "user_id", length = 64, unique = true)
     private String userId;
 
-    @Column(name = "USERNAME", length = 100)
+    @Column(name = "username", length = 100)
     private String username;
 
     @JsonIgnore
-    @Column(name = "PASSWORD", length = 128)
+    @Column(name = "password", length = 128)
     private String password;
 
-    @Column(name = "EMAIL", length = 512, unique = true)
+    @Column(name = "email", length = 512, unique = true)
     private String email;
 
-    @Column(name = "EMAIL_VERIFIED_YN", length = 1)
+    @Column(name = "email_verified_yn", length = 1)
     @NotNull
     private String emailVerifiedYn;
 
-    @Column(name = "PROFILE_IMAGE_URL", length = 512)
+    @Column(name = "profile_image_url", length = 512)
     private String profileImageUrl;
 
-    @Column(name = "PROVIDER_TYPE", length = 20)
+    @Column(name = "provider_type", length = 20)
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    @Column(name = "ROLE_TYPE", length = 20)
+    @Column(name = "role_type", length = 20)
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "create_at")
     @NotNull
     private LocalDateTime createdAt;
 
-    @Column(name = "MODIFIED_AT")
+    @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
     private String major;

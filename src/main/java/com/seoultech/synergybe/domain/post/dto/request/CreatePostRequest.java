@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.post.dto.request;
 
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

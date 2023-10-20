@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.follow.controller;
 import com.seoultech.synergybe.domain.follow.dto.request.FollowType;
 import com.seoultech.synergybe.domain.follow.dto.response.FollowResponse;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;

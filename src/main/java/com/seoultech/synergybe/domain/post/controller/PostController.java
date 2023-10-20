@@ -2,18 +2,14 @@ package com.seoultech.synergybe.domain.post.controller;
 
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
+import com.seoultech.synergybe.domain.post.dto.response.PostListResponse;
 import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
 import com.seoultech.synergybe.domain.post.service.PostService;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -71,23 +67,23 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post", postService.getPost(user, postId)));
     }
 
+//    @GetMapping(value = "/recent")
+//    public ResponseEntity<ApiResponse<Page<PostResponse>>> getRecentPostList(@PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable) {
+//        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        User user = userService.getUser(principal.getUsername());
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post recent list", postService.getRecentPostList(pageable)));
+//    }
+
     @GetMapping(value = "/recent")
-    public ResponseEntity<ApiResponse<Page<PostResponse>>> getRecentPostList(@PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
-
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post recent list", postService.getRecentPostList(pageable)));
-    }
-
-    @GetMapping(value = "/list")
-    public ResponseEntity<ApiResponse<List<PostResponse>>> getPostList(@Param("end") Long end) {
+    public ResponseEntity<ApiResponse<PostListResponse>> getPostList(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post list", postService.getPostList(end)));
     }
 
     @GetMapping(value = "/feed")
-    public ResponseEntity<ApiResponse<List<PostResponse>>> getFeed(@Param("end") Long end) {
+    public ResponseEntity<ApiResponse<PostListResponse>> getFeed(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
@@ -101,8 +97,4 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("search Post list", postService.searchAllPosts(search)));
     }
-
-
-
-
 }

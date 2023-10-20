@@ -6,7 +6,7 @@ import com.seoultech.synergybe.domain.auth.entity.UserPrincipal;
 import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfo;
 import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfoFactory;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.OAuthProviderMissMatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;

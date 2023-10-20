@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.user.entity;
+package com.seoultech.synergybe.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

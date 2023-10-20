@@ -2,8 +2,7 @@ package com.seoultech.synergybe.domain.projectlike;
 
 
 import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.ProjectStatus;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +20,7 @@ public class ProjectLike {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)

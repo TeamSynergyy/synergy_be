@@ -8,7 +8,7 @@ import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfoFactory;
 import com.seoultech.synergybe.domain.auth.token.AuthToken;
 import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
 import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenRepository;
-import com.seoultech.synergybe.domain.user.entity.UserRefreshToken;
+import com.seoultech.synergybe.domain.user.UserRefreshToken;
 import com.seoultech.synergybe.system.config.properties.AppProperties;
 import com.seoultech.synergybe.system.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;

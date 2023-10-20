@@ -5,7 +5,7 @@ import com.seoultech.synergybe.domain.follow.FollowStatus;
 import com.seoultech.synergybe.domain.follow.dto.request.FollowType;
 import com.seoultech.synergybe.domain.follow.dto.response.FollowResponse;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.exception.NotExistFollowException;
 import lombok.RequiredArgsConstructor;

@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.project.dto.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.ProjectField;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

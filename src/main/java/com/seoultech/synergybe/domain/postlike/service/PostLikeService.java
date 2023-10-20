@@ -7,7 +7,7 @@ import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
 import com.seoultech.synergybe.domain.postlike.dto.response.PostLikeResponse;
 import com.seoultech.synergybe.domain.postlike.repository.PostLikeRepository;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistPostLikeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

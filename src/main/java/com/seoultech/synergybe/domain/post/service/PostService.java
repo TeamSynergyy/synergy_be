@@ -4,9 +4,10 @@ import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
+import com.seoultech.synergybe.domain.post.dto.response.PostListResponse;
 import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistPostException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,8 +57,8 @@ public class PostService {
                 .orElseThrow(NotExistPostException::new);
     }
 
-    public List<Post> findPostsByUserId(String userId) {
-        return postRepository.findAllByUserId(userId);
+    public List<Post> findAllByFollowingIdAndEndId(String userId, Long end) {
+        return postRepository.findAllByFollowingIdAndEndId(userId, end);
     }
 
     public PostResponse getPost(User user, Long postId) {
@@ -72,30 +73,58 @@ public class PostService {
         return PostResponse.from(posts);
     }
 
-    public List<PostResponse> getPostList(Long end) {
+    public PostListResponse getPostList(Long end) {
         List<Post> posts = postRepository.findAllByEndId(end);
 
-        return PostResponse.from(posts);
+        int count = postRepository.countPostList(end);
+
+        boolean isNext;
+        int pageSize = 10;
+
+        if (count > pageSize + 1) {
+            isNext = true;
+        } else {
+            isNext = false;
+        }
+
+        return PostListResponse.from(PostResponse.from(posts), isNext);
     }
 
-    public List<PostResponse> getFeed(Long end, User user) {
+    public PostListResponse getFeed(Long end, User user) {
         List<String> followingIds = followService.findFollowingIdsByUserId(user.getUserId());
+        log.info("followingIds Size{}",followingIds.size());
         List<Post> allPosts = new ArrayList<>();
-        log.info("userId : {}",user.getUserId());
 
 
         for (String id : followingIds) {
-            List<Post> postList = this.findPostsByUserId(id);
+            // 각 팔로잉 유저 기준 10개씩 fetch
+            List<Post> postList = this.findAllByFollowingIdAndEndId(id, end);
             allPosts.addAll(postList);
         }
-
-        // Object to Stream<Post> : 리스트 내에서 createAt 기준으로 내림차순 정렬을 진행합니다
-        Stream<Post> sortedDescPostStream = allPosts.stream().sorted(Comparator.comparing(Post::getCreateAt).reversed());
-
+        log.info("post size {}",allPosts.size());
+//         Object to Stream<Post> : 리스트 내에서 createAt 기준으로 내림차순 정렬을 진행합니다
+        Stream<Post> sortedDescPostStream = allPosts.stream().sorted(Comparator.comparing(Post::getId).reversed());
         // Stream<Post> to List
         List<Post> sortedDescPostList = sortedDescPostStream.collect(Collectors.toList());
 
-        return PostResponse.from(sortedDescPostList);
+        // 리스트 크기 계산
+        int totalSize = sortedDescPostList.size();
+        log.info("{}", totalSize);
+        int lastTenElements = 10;
+
+        // 가장 마지막 10개 원소 fetch
+        List<Post> lastTenPosts = sortedDescPostList.subList(Math.max(totalSize - lastTenElements, 0), totalSize);
+
+        boolean isNext;
+        int pageSize = 10;
+
+        if (totalSize > pageSize) {
+            isNext = true;
+        } else {
+            isNext = false;
+        }
+
+        return PostListResponse.from(PostResponse.from(lastTenPosts), isNext);
     }
 
     public List<PostResponse> searchAllPosts(String keyword) {

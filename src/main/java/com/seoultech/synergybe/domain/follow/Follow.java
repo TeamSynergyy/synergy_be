@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.domain.follow;
 
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,11 +16,11 @@ public class Follow {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_id")
+    @JoinColumn(name = "follower_id", referencedColumnName = "user_id")
     private User follower;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_id")
+    @JoinColumn(name = "following_id", referencedColumnName = "user_id")
     private User following;
 
     @Column(name = "status")

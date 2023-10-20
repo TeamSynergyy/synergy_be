@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.projectuser.service;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.projectuser.repository.ProjectUserRepository;
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistProjectUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

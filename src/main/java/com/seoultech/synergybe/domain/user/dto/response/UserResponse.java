@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.domain.user.dto.response;
 
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
