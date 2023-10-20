@@ -4,7 +4,7 @@ import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
-import com.seoultech.synergybe.domain.post.dto.response.PostListResponse;
+import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
@@ -12,8 +12,6 @@ import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistPostException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.seoultech.synergybe.domain.user.service.UserService;
@@ -76,15 +74,15 @@ public class PostService {
 //    }
 
 
-    public PostListResponse getLikedPostList(User user) {
+    public ListPostResponse getLikedPostList(User user) {
         List<Long> postIds = postLikeService.findLikedPostIds(user);
 
-        List<Post> posts = postRepository.findAllByIn(postIds);
+        List<Post> posts = postRepository.findAllById(postIds);
 
-        return PostListResponse.from(PostResponse.from(posts));
+        return ListPostResponse.from(PostResponse.from(posts));
     }
 
-    public PostListResponse getPostList(Long end) {
+    public ListPostResponse getPostList(Long end) {
         List<Post> posts = postRepository.findAllByEndId(end);
 
         int count = postRepository.countPostList(end);
@@ -98,10 +96,10 @@ public class PostService {
             isNext = false;
         }
 
-        return PostListResponse.from(PostResponse.from(posts), isNext);
+        return ListPostResponse.from(PostResponse.from(posts), isNext);
     }
 
-    public PostListResponse getFeed(Long end, User user) {
+    public ListPostResponse getFeed(Long end, User user) {
         List<String> followingIds = followService.findFollowingIdsByUserId(user.getUserId());
         log.info("followingIds Size{}",followingIds.size());
         List<Post> allPosts = new ArrayList<>();
@@ -135,7 +133,7 @@ public class PostService {
             isNext = false;
         }
 
-        return PostListResponse.from(PostResponse.from(lastTenPosts), isNext);
+        return ListPostResponse.from(PostResponse.from(lastTenPosts), isNext);
     }
 
     public List<PostResponse> searchAllPosts(String keyword) {

@@ -2,7 +2,7 @@ package com.seoultech.synergybe.domain.post.controller;
 
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
-import com.seoultech.synergybe.domain.post.dto.response.PostListResponse;
+import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
 import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.user.User;
@@ -77,13 +77,13 @@ public class PostController {
 //    }
 
     @GetMapping(value = "/recent")
-    public ResponseEntity<ApiResponse<PostListResponse>> getPosts(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
+    public ResponseEntity<ApiResponse<ListPostResponse>> getPosts(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post list", postService.getPostList(end)));
     }
 
     @GetMapping(value = "/feed")
-    public ResponseEntity<ApiResponse<PostListResponse>> getFeed(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
+    public ResponseEntity<ApiResponse<ListPostResponse>> getFeed(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
@@ -99,7 +99,7 @@ public class PostController {
     }
 
     @GetMapping(value = "/me/likes")
-    public ResponseEntity<ApiResponse<PostListResponse>> getLikedPosts() {
+    public ResponseEntity<ApiResponse<ListPostResponse>> getLikedPosts() {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
