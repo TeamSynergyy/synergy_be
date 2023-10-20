@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,12 +30,17 @@ public class UserController {
     }
 
     @GetMapping(value = "/me/info")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserInfo() {
+    public ResponseEntity<ApiResponse<UserResponse>> getMyInfo() {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("user info", userService.getUserInfo(user)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("user info", userService.getMyInfo(user)));
+    }
+
+    @GetMapping(value = "/{userId}")
+    public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable("userId") String userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("user info", userService.getUserInfo(userId)));
     }
 }
 
