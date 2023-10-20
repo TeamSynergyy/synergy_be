@@ -7,6 +7,8 @@ import com.seoultech.synergybe.system.exception.NotExistUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -26,6 +28,10 @@ public class UserService {
 
     public User findUserById(String userId) {
         return userRepository.findByUserId(userId);
+    }
+
+    public List<User> getUsers(String userIds) {
+        return userRepository.findAllByUserId(userIds);
     }
 }
 

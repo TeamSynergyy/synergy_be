@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.apply.controller;
 import com.seoultech.synergybe.domain.apply.dto.request.ApplyRequest;
 import com.seoultech.synergybe.domain.apply.dto.response.AcceptApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ApplyResponse;
+import com.seoultech.synergybe.domain.apply.dto.response.ListApplyUserResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
 import com.seoultech.synergybe.domain.apply.service.ApplyService;
 import com.seoultech.synergybe.domain.user.User;
@@ -69,5 +70,8 @@ public class ApplyController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("me apply list", applyService.getMyApplyList(user)));
     }
 
-
+    @GetMapping(value = "/{projectId}")
+    public ResponseEntity<ApiResponse<ListApplyUserResponse>> getListApplyUser(@PathVariable("projectId") Long projectId) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("apply user list", applyService.getApplyUserList(projectId)));
+    }
 }
