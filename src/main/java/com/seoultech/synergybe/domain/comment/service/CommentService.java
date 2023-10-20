@@ -21,6 +21,7 @@ public class CommentService {
     public CommentResponse createComment(User user, CommentRequest request) {
         Post post = postService.findPostById(request.getPostId());
         Comment savedComment = commentRepository.save(request.toEntity(user, post, request.getComment()));
+        savedComment.addPost(post);
 
         return CommentResponse.from(savedComment);
     }
