@@ -7,6 +7,7 @@ import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.response.PostListResponse;
 import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
+import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistPostException;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     private final FollowService followService;
+    private final PostLikeService postLikeService;
 
     private final UserService userService;
 
@@ -40,7 +42,7 @@ public class PostService {
 
     public PostResponse updatePost(User user, UpdatePostRequest request) {
         Post post = this.findPostById(request.getPostId());
-        Post updatedPost = post.updatePost(request);
+        Post updatedPost = postRepository.save(post.updatePost(request));
 
         return PostResponse.from(updatedPost);
     }
@@ -67,10 +69,19 @@ public class PostService {
         return PostResponse.from(post);
     }
 
-    public Page<PostResponse> getRecentPostList(Pageable pageable) {
-        Page<Post> posts = postRepository.findAll(pageable);
+//    public Page<PostResponse> getRecentPostList(Pageable pageable) {
+//        Page<Post> posts = postRepository.findAll(pageable);
+//
+//        return PostResponse.from(posts);
+//    }
 
-        return PostResponse.from(posts);
+
+    public PostListResponse getLikedPostList(User user) {
+        List<Long> postIds = postLikeService.findLikedPostIds(user);
+
+        List<Post> posts = postRepository.findAllByIn(postIds);
+
+        return PostListResponse.from(PostResponse.from(posts));
     }
 
     public PostListResponse getPostList(Long end) {

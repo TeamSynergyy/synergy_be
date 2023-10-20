@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.postlike.service;
 
 import com.seoultech.synergybe.domain.post.Post;
+import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.postlike.LikeStatus;
 import com.seoultech.synergybe.domain.postlike.PostLike;
@@ -8,11 +9,13 @@ import com.seoultech.synergybe.domain.postlike.PostLikeType;
 import com.seoultech.synergybe.domain.postlike.dto.response.PostLikeResponse;
 import com.seoultech.synergybe.domain.postlike.repository.PostLikeRepository;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.system.exception.NotExistPostException;
 import com.seoultech.synergybe.system.exception.NotExistPostLikeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,7 +23,7 @@ import java.util.Optional;
 public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
 
-    private final PostService postService;
+    private final PostRepository postRepository;
 
     @Transactional
     public PostLikeResponse updatePostLike(User user, Long postId, PostLikeType type) {
@@ -47,13 +50,20 @@ public class PostLikeService {
 
             return postLikeOptional.get();
         } else {
-            Post post = postService.findPostById(postId);
+            // postService 호출시 순환참조 발생
+//            Post post = postService.findPostById(postId);
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(NotExistPostException::new);
             PostLike postLike = PostLike.builder()
                     .user(user)
                     .post(post)
                     .build();
             return postLikeRepository.saveAndFlush(postLike);
         }
+    }
 
+
+    public List<Long> findLikedPostIds(User user) {
+        return postLikeRepository.findPostIdsByUserId(user.getUserId());
     }
 }

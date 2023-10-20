@@ -28,4 +28,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "SELECT count(*) FROM (SELECT * FROM post WHERE user_id = :userId) p WHERE post_id < :end", nativeQuery = true)
     int countFeed(@Param("end") Long end);
+
+    @Query(value = "SELECT * FROM post WHERE post_id IN (postIds)",nativeQuery = true)
+    List<Post> findAllByIn(@Param("postIds") List<Long> postIds);
 }

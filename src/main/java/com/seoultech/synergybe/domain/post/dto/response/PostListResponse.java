@@ -14,4 +14,12 @@ public class PostListResponse {
     public static PostListResponse from(List<PostResponse> postResponses, boolean isNext) {
         return new PostListResponse(postResponses, isNext);
     }
+
+    public static PostListResponse from(List<PostResponse> postResponses) {
+        return new PostListResponse(postResponses);
+    }
+
+    public PostListResponse(List<PostResponse> postResponses) {
+        this.content = postResponses;
+    }
 }

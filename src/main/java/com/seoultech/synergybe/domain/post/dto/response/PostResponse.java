@@ -25,7 +25,6 @@ public class PostResponse {
     public static PostResponse from(Post post) {
         return new PostResponse(post.getId(), post.getTitle(), post.getContent(), post.getUser().getUserId(), post.getUser().getUsername(),
                  post.getCreateAt(), post.getUpdateAt());
-//        post.getLikes().size(), post.getComments(),
     }
 
     public static Page<PostResponse> from(Page<Post> posts) {

@@ -77,7 +77,7 @@ public class PostController {
 //    }
 
     @GetMapping(value = "/recent")
-    public ResponseEntity<ApiResponse<PostListResponse>> getPostList(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
+    public ResponseEntity<ApiResponse<PostListResponse>> getPosts(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post list", postService.getPostList(end)));
     }
@@ -96,5 +96,14 @@ public class PostController {
         log.info(">> keyword : {}", search);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("search Post list", postService.searchAllPosts(search)));
+    }
+
+    @GetMapping(value = "/me/likes")
+    public ResponseEntity<ApiResponse<PostListResponse>> getLikedPosts() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("liked posts", postService.getLikedPostList(user)));
     }
 }
