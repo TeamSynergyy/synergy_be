@@ -101,6 +101,13 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("search Post list", postService.searchAllPosts(search, pageable)));
     }
 
+    @GetMapping(value = "/other")
+    public ResponseEntity<ApiResponse<ListPostResponse>> getPostsByUser(@RequestParam("userId") String userId) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post list by user", postService.getPostListByUser(userId)));
+    }
+
+
     @GetMapping(value = "/me/likes")
     public ResponseEntity<ApiResponse<ListPostResponse>> getLikedPosts() {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

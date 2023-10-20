@@ -102,6 +102,15 @@ public class PostService {
         return ListPostResponse.from(PostResponse.from(posts), isNext);
     }
 
+
+
+    public ListPostResponse getPostListByUser(String userId) {
+        List<Post> posts = postRepository.findAllByUserId(userId);
+
+        return ListPostResponse.from(PostResponse.from(posts));
+
+    }
+
     public ListPostResponse getFeed(Long end, User user) {
         List<String> followingIds = followService.findFollowingIdsByUserId(user.getUserId());
         log.info("followingIds Size{}",followingIds.size());
