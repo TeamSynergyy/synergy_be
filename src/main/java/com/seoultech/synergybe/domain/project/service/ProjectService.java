@@ -105,4 +105,10 @@ public class ProjectService {
 
         return ListProjectResponse.from(ProjectResponse.from(projects));
     }
+
+    public ListProjectResponse getProjectListByUser(String userId) {
+        List<Project> projects = projectRepository.findAllByUserId(userId);
+
+        return ListProjectResponse.from(ProjectResponse.from(projects));
+    }
 }

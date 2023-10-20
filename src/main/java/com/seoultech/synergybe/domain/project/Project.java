@@ -44,6 +44,8 @@ public class Project extends BaseTime {
 
     private String leaderId;
 
+    private String location;
+
     @Column(name = "is_deleted")
     private boolean isDeleted;
 

@@ -78,4 +78,9 @@ public class ProjectController {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("liked project list", projectService.getLikedProjectList(user)));
     }
+
+    @GetMapping(value = "/other")
+    public ResponseEntity<ApiResponse<ListProjectResponse>> getProjectsByUser(@RequestParam("userId") String userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project list by user", projectService.getProjectListByUser(userId)));
+    }
 }
