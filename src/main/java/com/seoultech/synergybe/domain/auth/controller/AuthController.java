@@ -6,7 +6,7 @@ import com.seoultech.synergybe.domain.auth.entity.UserPrincipal;
 import com.seoultech.synergybe.domain.auth.token.AuthToken;
 import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
 import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenRepository;
-import com.seoultech.synergybe.domain.user.entity.UserRefreshToken;
+import com.seoultech.synergybe.domain.user.UserRefreshToken;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import com.seoultech.synergybe.system.config.properties.AppProperties;
 import com.seoultech.synergybe.system.utils.CookieUtil;
@@ -54,6 +54,8 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Date now = new Date();
+
+        // access token 생성
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userId,
                 ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
@@ -61,6 +63,8 @@ public class AuthController {
         );
 
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+
+        // refresh token 생성
         AuthToken refreshToken = tokenProvider.createAuthToken(
                 appProperties.getAuth().getTokenSecret(),
                 new Date(now.getTime() + refreshTokenExpiry)
