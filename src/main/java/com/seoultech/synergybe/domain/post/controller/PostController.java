@@ -67,16 +67,6 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post", postService.getPost(user, postId)));
     }
-
-//    @GetMapping(value = "/recent")
-//    public ResponseEntity<ApiResponse<Page<PostResponse>>> getRecentPostList(@PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable) {
-//        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//
-//        User user = userService.getUser(principal.getUsername());
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("post recent list", postService.getRecentPostList(pageable)));
-//    }
-
     @GetMapping(value = "/recent")
     public ResponseEntity<ApiResponse<ListPostResponse>> getPosts(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
 
