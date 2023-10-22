@@ -6,6 +6,7 @@ import com.seoultech.synergybe.domain.project.ProjectField;
 import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +20,10 @@ public class UpdateProjectRequest {
     private String content;
 
     private ProjectField field;
+
+    private Double longitude;
+
+    private Double latitude;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy hh:mm:ss.SSS", timezone = "Asia/Seoul")
     private LocalDateTime startAt;
@@ -35,5 +40,9 @@ public class UpdateProjectRequest {
                 .endAt(endAt)
                 .leaderId(user.getUserId())
                 .build();
+    }
+
+    public Point getLocation() {
+        return new Point(this.longitude, this.latitude);
     }
 }

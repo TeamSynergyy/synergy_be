@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -44,7 +45,7 @@ public class Project extends BaseTime {
 
     private String leaderId;
 
-    private String location;
+    private Point location;
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
@@ -65,11 +66,12 @@ public class Project extends BaseTime {
     private List<ProjectUser> projectUsers = new ArrayList<>();
 
     @Builder
-    public Project(String name, String content, ProjectField field, LocalDateTime startAt,
+    public Project(String name, String content, ProjectField field, Point location, LocalDateTime startAt,
                    LocalDateTime endAt, String leaderId) {
         this.name = name;
         this.content = content;
         this.field = field;
+        this.location = location;
         this.status = ProjectStatus.READY;
         this.startAt = startAt;
         this.endAt = endAt;
@@ -81,6 +83,7 @@ public class Project extends BaseTime {
         this.name = request.getName();
         this.content = request.getContent();
         this.field = request.getField();
+        this.location = request.getLocation();
         this.startAt = request.getStartAt();
         this.endAt = request.getEndAt();
 

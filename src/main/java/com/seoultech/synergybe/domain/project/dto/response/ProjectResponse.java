@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
+import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,12 +33,14 @@ public class ProjectResponse {
 
     private String leaderId;
 
+    private Point location;
+
 //    private int likes;
 
 
     public static ProjectResponse from(Project project) {
         return new ProjectResponse(project.getId(), project.getName(), project.getContent(), project.getField(),
-                project.getStatus(), project.getStartAt(), project.getEndAt(), project.getLeaderId());
+                project.getStatus(), project.getStartAt(), project.getEndAt(), project.getLeaderId(), project.getLocation());
     }
 
     public static Page<ProjectResponse> from(Page<Project> projects) {

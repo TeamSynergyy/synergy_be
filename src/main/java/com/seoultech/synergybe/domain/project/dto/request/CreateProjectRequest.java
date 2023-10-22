@@ -6,6 +6,9 @@ import com.seoultech.synergybe.domain.project.ProjectField;
 import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
+import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +21,10 @@ public class CreateProjectRequest {
 
     private ProjectField field;
 
+    private Double longitude;
+
+    private Double latitude;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy hh:mm:ss.SSS", timezone = "Asia/Seoul")
     private LocalDateTime startAt;
 
@@ -25,13 +32,19 @@ public class CreateProjectRequest {
     private LocalDateTime endAt;
 
     public Project toEntity(User user) {
-        return Project.builder()
-                .name(name)
-                .content(content)
-                .field(field)
-                .startAt(startAt)
-                .endAt(endAt)
-                .leaderId(user.getUserId())
-                .build();
+        Point point = new Point(longitude, latitude);
+        try {
+            return Project.builder()
+                    .name(name)
+                    .content(content)
+                    .field(field)
+                    .location(point)
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .leaderId(user.getUserId())
+                    .build();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("point parse exception");
+        }
     }
 }
