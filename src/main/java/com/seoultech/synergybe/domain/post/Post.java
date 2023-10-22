@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.post;
 
 import com.seoultech.synergybe.domain.comment.Comment;
+import com.seoultech.synergybe.domain.image.Image;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.user.User;
@@ -37,6 +38,9 @@ public class Post extends BaseTime {
 
     private String authorName;
 
+    @OneToMany
+    @JoinColumn(name = "post_id")
+    private List<Image> images;
 
     @OneToMany(
             mappedBy = "post"
@@ -54,12 +58,13 @@ public class Post extends BaseTime {
     private boolean isDeleted;
 
     @Builder
-    public Post(User user, String title, String content, List<PostLike> likes, List<Comment> comments) {
+    public Post(User user, String title, String content, List<PostLike> likes, List<Comment> comments, List<Image> images) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.likes = likes;
         this.comments = comments;
+        this.images = images;
         this.authorName = user.getUsername();
         this.isDeleted = false;
     }

@@ -21,10 +21,11 @@ public class PostResponse {
     private String authorName;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+    private List<String> imagesUrl;
 
-    public static PostResponse from(Post post) {
+    public static PostResponse from(Post post, List<String> imagesUrl) {
         return new PostResponse(post.getId(), post.getTitle(), post.getContent(), post.getUser().getUserId(), post.getUser().getUsername(),
-                 post.getCreateAt(), post.getUpdateAt());
+                 post.getCreateAt(), post.getUpdateAt(), imagesUrl);
     }
 
     public static Page<PostResponse> from(Page<Post> posts) {

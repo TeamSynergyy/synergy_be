@@ -1,6 +1,8 @@
 package com.seoultech.synergybe.domain.post.service;
 
 import com.seoultech.synergybe.domain.follow.service.FollowService;
+import com.seoultech.synergybe.domain.image.Image;
+import com.seoultech.synergybe.domain.image.service.ImageService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
@@ -13,11 +15,11 @@ import com.seoultech.synergybe.system.exception.NotExistPostException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.*;
 import java.util.*;
@@ -35,24 +37,33 @@ public class PostService {
 
     private final UserService userService;
 
-    public PostResponse createPost(User user, CreatePostRequest request) {
-        Post savedPost = postRepository.save(request.toEntity(user));
+    private final ImageService imageService;
 
-        return PostResponse.from(savedPost);
+    public PostResponse createPost(User user, CreatePostRequest request) {
+        List<MultipartFile> files = request.getFiles();
+        List<Image> images = imageService.storeImageList(files);
+
+        Post post = request.toEntity(user, images);
+        Post savedPost = postRepository.save(post);
+        List<String> imagesUrl = imageService.getImageUrlByPostId(savedPost.getId());
+
+        return PostResponse.from(savedPost, imagesUrl);
     }
 
     public PostResponse updatePost(User user, UpdatePostRequest request) {
         Post post = this.findPostById(request.getPostId());
         Post updatedPost = postRepository.save(post.updatePost(request));
+        List<String> imagesUrl = imageService.getImageUrlByPostId(request.getPostId());
 
-        return PostResponse.from(updatedPost);
+        return PostResponse.from(updatedPost, imagesUrl);
     }
 
     public PostResponse deletePost(User user, Long postId) {
         Post post = this.findPostById(postId);
         postRepository.delete(post);
+        List<String> imagesUrl = imageService.getImageUrlByPostId(postId);
 
-        return PostResponse.from(post);
+        return PostResponse.from(post, imagesUrl);
     }
 
     public Post findPostById(Long postId) {
@@ -66,15 +77,10 @@ public class PostService {
 
     public PostResponse getPost(User user, Long postId) {
         Post post = this.findPostById(postId);
+        List<String> imagesUrl = imageService.getImageUrlByPostId(postId);
 
-        return PostResponse.from(post);
+        return PostResponse.from(post, imagesUrl);
     }
-
-//    public Page<PostResponse> getRecentPostList(Pageable pageable) {
-//        Page<Post> posts = postRepository.findAll(pageable);
-//
-//        return PostResponse.from(posts);
-//    }
 
 
     public ListPostResponse getLikedPostList(User user) {
@@ -153,6 +159,7 @@ public class PostService {
         Specification<Post> spec = this.search(keyword);
 
         Page<Post> posts = postRepository.findAll(spec, pageable);
+        // 위에서 post를 바로 images url을 넣어서 전달해야함
 
         return PostResponse.from(posts);
     }
