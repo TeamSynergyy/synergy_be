@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.system.config.security;
+package com.seoultech.synergybe.system.config;
 
 import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
 import org.springframework.beans.factory.annotation.Value;
