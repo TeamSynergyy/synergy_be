@@ -62,14 +62,15 @@ public class ProjectService {
 
     public ProjectResponse getProject(Long projectId) {
         Project project = this.findProjectById(projectId);
+        List<String> projectUserIds = projectUserService.getProjectUserIds(project);
 
         return ProjectResponse.from(project);
     }
 
-    public List<ProjectResponse> getProjectList(Long end) {
+    public ListProjectResponse getProjectList(Long end) {
         List<Project> projects = projectRepository.findAllByEndId(end);
 
-        return ProjectResponse.from(projects);
+        return ListProjectResponse.from(ProjectResponse.from(projects));
     }
 
     public Page<ProjectResponse> searchAllProjects(String keyword, Pageable pageable) {

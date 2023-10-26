@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.project.dto.response;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.ProjectField;
 import com.seoultech.synergybe.domain.project.ProjectStatus;
+import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,12 +36,13 @@ public class ProjectResponse {
 
     private Point location;
 
-//    private int likes;
+    private List<String> teamUserIds;
 
 
     public static ProjectResponse from(Project project) {
         return new ProjectResponse(project.getId(), project.getName(), project.getContent(), project.getField(),
-                project.getStatus(), project.getStartAt(), project.getEndAt(), project.getLeaderId(), project.getLocation());
+                project.getStatus(), project.getStartAt(), project.getEndAt(), project.getLeaderId(), project.getLocation(),
+                project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()));
     }
 
     public static Page<ProjectResponse> from(Page<Project> projects) {
@@ -53,6 +55,7 @@ public class ProjectResponse {
                 .startAt(project.getStartAt())
                 .endAt(project.getEndAt())
                 .leaderId(project.getLeaderId())
+                .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()))
                 .build()
         );
     }
@@ -68,6 +71,7 @@ public class ProjectResponse {
                         .startAt(project.getStartAt())
                         .endAt(project.getEndAt())
                         .leaderId(project.getLeaderId())
+                        .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()))
                         .build())
                 .collect(Collectors.toList());
     }

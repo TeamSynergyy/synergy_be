@@ -59,7 +59,7 @@ public class ProjectController {
     }
 
     @GetMapping("/recent")
-    public ResponseEntity<ApiResponse<List<ProjectResponse>>> getProjectList(@Param("end") Long end) {
+    public ResponseEntity<ApiResponse<ListProjectResponse>> getProjectList(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project list", projectService.getProjectList(end)));
     }
