@@ -12,10 +12,12 @@ import java.util.Optional;
 @Repository
 public interface ApplyRepository extends JpaRepository<Apply, Long> {
 
-    Optional<Apply> findByUserUserIdAndProjectId(String userId, Long projectId);
+    @Query(value = "SELECT * FROM apply WHERE user_id = :userId AND project_id = :projectId", nativeQuery = true)
+    Optional<Apply> findByUserIdAndProjectId(@Param("userId") String userId, @Param("projectId") Long projectId);
 
     @Query(value = "SELECT * FROM apply WHERE user_id = :userId", nativeQuery = true)
     List<Apply> findAllByUserId(@Param("userId") String userId);
 
-    List<String> findUserIdsByProjectId(Long projectId);
+    @Query(value = "SELECT user_id FROM apply WHERE project_id = :projectId", nativeQuery = true)
+    List<String> findUserIdsByProjectId(@Param("projectId") Long projectId);
 }

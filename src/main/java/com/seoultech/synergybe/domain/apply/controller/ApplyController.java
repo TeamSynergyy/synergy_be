@@ -44,7 +44,7 @@ public class ApplyController {
     }
 
     @PostMapping(value = "/accept/{projectId}")
-    public ResponseEntity<ApiResponse<AcceptApplyResponse>> acceptApply(@PathVariable("projectId") Long projectId, ApplyRequest request) {
+    public ResponseEntity<ApiResponse<AcceptApplyResponse>> acceptApply(@PathVariable("projectId") Long projectId, @RequestBody ApplyRequest request) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
@@ -53,7 +53,7 @@ public class ApplyController {
     }
 
     @DeleteMapping("/reject/{projectId}")
-    public ResponseEntity<ApiResponse<RejectApplyResponse>> rejectApply(@PathVariable("projectId") Long projectId, ApplyRequest request) {
+    public ResponseEntity<ApiResponse<RejectApplyResponse>> rejectApply(@PathVariable("projectId") Long projectId, @RequestBody ApplyRequest request) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());

@@ -8,22 +8,27 @@ import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
+import com.seoultech.synergybe.domain.projectuser.ProjectUser;
+import com.seoultech.synergybe.domain.projectuser.repository.ProjectUserRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.exception.NotExistApplyException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ApplyService {
     private final ApplyRepository applyRepository;
 
     private final ProjectService projectService;
+    private final ProjectUserRepository projectUserRepository;
     private final UserService userService;
 
     public ApplyResponse createApply(User user, Long projectId) {
@@ -37,7 +42,7 @@ public class ApplyService {
     }
 
     public ApplyResponse deleteApply(User user, Long projectId) {
-        Optional<Apply> applyOptional = applyRepository.findByUserUserIdAndProjectId(user.getUserId(), projectId);
+        Optional<Apply> applyOptional = applyRepository.findByUserIdAndProjectId(user.getUserId(), projectId);
 
         if (applyOptional.isPresent()) {
             applyRepository.delete(applyOptional.get());
@@ -49,10 +54,19 @@ public class ApplyService {
     }
 
     public AcceptApplyResponse acceptApply(String userId, Long projectId) {
-        Optional<Apply> applyOptional = applyRepository.findByUserUserIdAndProjectId(userId, projectId);
+        log.info(">> userId {}",userId);
+        Optional<Apply> applyOptional = applyRepository.findByUserIdAndProjectId(userId, projectId);
 
         if (applyOptional.isPresent()) {
-            applyOptional.get().acceptedApplyStatus();
+            Apply acceptedApply = applyOptional.get();
+            acceptedApply.acceptedApplyStatus();
+            applyRepository.save(acceptedApply);
+            Project project = projectService.findProjectById(projectId);
+            User user = userService.getUser(userId);
+
+            ProjectUser projectUser = new ProjectUser(project, user);
+            project.getProjectUsers().add(projectUser);
+            projectUserRepository.save(projectUser);
 
             return AcceptApplyResponse.from(applyOptional.get());
         } else {
@@ -61,7 +75,7 @@ public class ApplyService {
     }
 
     public RejectApplyResponse rejectApply(String userId, Long projectId) {
-        Optional<Apply> applyOptional = applyRepository.findByUserUserIdAndProjectId(userId, projectId);
+        Optional<Apply> applyOptional = applyRepository.findByUserIdAndProjectId(userId, projectId);
 
         if (applyOptional.isPresent()) {
             applyOptional.get().acceptedApplyStatus();
