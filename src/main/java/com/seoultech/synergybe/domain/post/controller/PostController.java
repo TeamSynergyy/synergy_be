@@ -2,12 +2,15 @@ package com.seoultech.synergybe.domain.post.controller;
 
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
+import com.seoultech.synergybe.domain.post.dto.response.DeletePostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
 import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/posts")
+@Tag(name = "게시물 api", description = "게시글을 CRUD하는 api 입니다")
 public class PostController {
     private final PostService postService;
 
@@ -32,6 +36,8 @@ public class PostController {
         return "2023-10-18";
     }
 
+
+    @Operation(summary = "post 생성", description = "post를 생성하며 이미지를 받을 수 있습니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponse>> createPost(@ModelAttribute CreatePostRequest request) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -51,7 +57,7 @@ public class PostController {
     }
 
     @DeleteMapping(value = "/{postId}")
-    public ResponseEntity<ApiResponse<PostResponse>> deletePost(@PathVariable("postId") Long postId) {
+    public ResponseEntity<ApiResponse<DeletePostResponse>> deletePost(@PathVariable("postId") Long postId) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
@@ -103,5 +109,23 @@ public class PostController {
         User user = userService.getUser(principal.getUsername());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("liked posts", postService.getLikedPostList(user)));
+    }
+
+    @GetMapping(value = "/recommend")
+    public ResponseEntity<ApiResponse<ListPostResponse>> getRecommendPosts(@RequestParam(value = "end", required = false, defaultValue = "10") Long end) {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("recommend posts", postService.getRecommendPostList(user, end)));
+    }
+
+    @GetMapping(value = "/week")
+    public ResponseEntity<ApiResponse<ListPostResponse>> getWeekBestPosts() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("week best posts", postService.getWeekBestPostList(user)));
     }
 }

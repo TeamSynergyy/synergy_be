@@ -25,4 +25,12 @@ public class CreatePostRequest {
                 .content(content)
                 .build();
     }
+
+    public Post toEntity(User user) {
+        return Post.builder()
+                .user(user)
+                .title(title)
+                .content(content)
+                .build();
+    }
 }

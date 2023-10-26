@@ -34,6 +34,7 @@ public class Post extends BaseTime {
 
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private String authorName;

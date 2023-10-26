@@ -21,11 +21,29 @@ public class PostResponse {
     private String authorName;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+
     private List<String> imagesUrl;
+
+    private int likes;
+
+    public PostResponse(Post post) {
+        this.postId = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.userId = post.getUser().getUserId();
+        this.authorName = post.getAuthorName();
+        this.createAt = post.getCreateAt();
+        this.updateAt = post.getUpdateAt();
+        this.likes = post.getLikes().size();
+    }
+
+    public static PostResponse from(Post post) {
+        return new PostResponse(post);
+    }
 
     public static PostResponse from(Post post, List<String> imagesUrl) {
         return new PostResponse(post.getId(), post.getTitle(), post.getContent(), post.getUser().getUserId(), post.getUser().getUsername(),
-                 post.getCreateAt(), post.getUpdateAt(), imagesUrl);
+                 post.getCreateAt(), post.getUpdateAt(), imagesUrl, post.getLikes().size());
     }
 
     public static Page<PostResponse> from(Page<Post> posts) {
@@ -35,6 +53,7 @@ public class PostResponse {
                 .content(post.getContent())
                 .userId(post.getUser().getUserId())
                 .authorName(post.getUser().getUsername())
+                .likes(post.getLikes().size())
                 .createAt(post.getCreateAt())
                 .updateAt(post.getUpdateAt())
                 .build()
@@ -44,14 +63,15 @@ public class PostResponse {
     public static List<PostResponse> from(List<Post> posts) {
         return posts.stream()
                 .map(post -> PostResponse.builder()
-                                .postId(post.getId())
-                                .title(post.getTitle())
-                                .content(post.getContent())
-                                .authorName(post.getUser().getUsername())
-                                .userId(post.getUser().getUserId())
-                                .createAt(post.getCreateAt())
-                                .updateAt(post.getUpdateAt())
-                                .build())
+                    .postId(post.getId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .authorName(post.getUser().getUsername())
+                    .userId(post.getUser().getUserId())
+                    .likes(post.getLikes().size())
+                    .createAt(post.getCreateAt())
+                    .updateAt(post.getUpdateAt())
+                    .build())
                 .collect(Collectors.toList());
     }
 }

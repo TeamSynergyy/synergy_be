@@ -1,11 +1,15 @@
 package com.seoultech.synergybe.domain.post.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.image.Image;
 import com.seoultech.synergybe.domain.image.service.ImageService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
+import com.seoultech.synergybe.domain.post.dto.response.DeletePostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
@@ -19,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.*;
@@ -40,14 +45,23 @@ public class PostService {
     private final ImageService imageService;
 
     public PostResponse createPost(User user, CreatePostRequest request) {
-        List<MultipartFile> files = request.getFiles();
-        List<Image> images = imageService.storeImageList(files);
+        if (request.getFiles() == null) {
+            log.info(">> getfiles is null");
+            Post post = request.toEntity(user);
+            Post savedPost = postRepository.save(post);
 
-        Post post = request.toEntity(user, images);
-        Post savedPost = postRepository.save(post);
-        List<String> imagesUrl = imageService.getImageUrlByPostId(savedPost.getId());
+            return PostResponse.from(savedPost);
+        } else {
+            log.info(">> getfiles is NOT NULL");
+            List<MultipartFile> files = request.getFiles();
+            List<Image> images = imageService.storeImageList(files);
 
-        return PostResponse.from(savedPost, imagesUrl);
+            Post post = request.toEntity(user, images);
+            Post savedPost = postRepository.save(post);
+            List<String> imagesUrl = imageService.getImageUrlByPostId(savedPost.getId());
+
+            return PostResponse.from(savedPost, imagesUrl);
+        }
     }
 
     public PostResponse updatePost(User user, UpdatePostRequest request) {
@@ -58,12 +72,12 @@ public class PostService {
         return PostResponse.from(updatedPost, imagesUrl);
     }
 
-    public PostResponse deletePost(User user, Long postId) {
+    public DeletePostResponse deletePost(User user, Long postId) {
         Post post = this.findPostById(postId);
         postRepository.delete(post);
-        List<String> imagesUrl = imageService.getImageUrlByPostId(postId);
 
-        return PostResponse.from(post, imagesUrl);
+
+        return DeletePostResponse.from(post);
     }
 
     public Post findPostById(Long postId) {
@@ -115,6 +129,14 @@ public class PostService {
 
         return ListPostResponse.from(PostResponse.from(posts));
 
+    }
+
+
+
+    public ListPostResponse getWeekBestPostList(User user) {
+        List<Post> posts = postRepository.findAllByLikeAndDate();
+
+        return ListPostResponse.from(PostResponse.from(posts));
     }
 
     public ListPostResponse getFeed(Long end, User user) {
@@ -187,5 +209,54 @@ public class PostService {
                 }
             }
         };
+    }
+
+    public ListPostResponse getRecommendPostList(User user, Long end) {
+        log.info("get recommend post list start");
+        String userId = user.getUserId();
+
+        RestTemplate restTemplate = new RestTemplate();
+        String fastApiUrl = "http://fastapi:8000"; // 컨테이너 이름과 포트
+        String response = restTemplate.getForObject(fastApiUrl + "/recommend/" + userId, String.class);
+        log.info("Response from FastAPI: {}", response);
+
+//            // URI에 사용자 ID 값을 대체하여 요청 생성
+//            URI uri = URI.create("http://fastapi:80/recommend/" + userId);
+//
+//            HttpClient client = HttpClient.newHttpClient();
+//            HttpRequest request = HttpRequest.newBuilder()
+//                    .uri(uri)
+//                    .build();
+//            log.info("cliend send before");
+//            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        log.info("http response {}", response);
+
+        List<Long> postIds = this.extractIds(response);
+
+        // start, end 인덱스 계산 후 이전 게시글에서 추가로 10개만 가져옴
+        int startIdx = end.intValue();
+        int endIdx = startIdx + 10;
+
+        List<Long> result = postIds.subList(startIdx, Math.min(endIdx + 1, postIds.size()));
+
+        List<Post> posts = postRepository.findAllById(result);
+
+
+        log.info("Response from FastAPI: {}",response);
+
+        return ListPostResponse.from(PostResponse.from(posts));
+    }
+
+    private List<Long> extractIds(String response) {
+        try {
+            // 받은 JSON 응답을 자바 리스트로 파싱
+            ObjectMapper objectMapper = new ObjectMapper();
+            log.error(">> http cliend response body {}", response);
+
+            return objectMapper.readValue(response, new TypeReference<List<Long>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
