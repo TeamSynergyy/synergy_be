@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
-    @Query(value = "SELECT store_file_name FROM Image WHERE post_id = :postId", nativeQuery = true)
+    @Query(value = "SELECT store_file_name FROM image WHERE post_id = :postId", nativeQuery = true)
     List<String> findStoreFileNamesByPostId(@Param("postId") Long postId);
 }
