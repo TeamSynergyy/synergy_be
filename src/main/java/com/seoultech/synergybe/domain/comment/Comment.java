@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.comment;
 import com.seoultech.synergybe.domain.comment.dto.request.CommentRequest;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.system.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import javax.persistence.*;
 @Getter
 @Where(clause = "is_deleted = false")
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE comment_id = ?")
-public class Comment {
+public class Comment extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")

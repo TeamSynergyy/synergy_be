@@ -42,11 +42,6 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("comment delete", commentService.deleteComment(request)));
     }
 
-    @GetMapping(value = "/{commentId}")
-    public ResponseEntity<ApiResponse<CommentResponse>> getComment(@PathVariable("commentId") Long commentId) {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("comment get", commentService.getComment(commentId)));
-    }
-
     @GetMapping(value = "/{postId}")
     public ResponseEntity<ApiResponse<List<CommentResponse>>> getCommentList(@PathVariable("postId") Long postId) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("comment list from post", commentService.getCommentList(postId)));
