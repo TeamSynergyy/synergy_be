@@ -12,12 +12,14 @@ import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistPostException;
 import com.seoultech.synergybe.system.exception.NotExistPostLikeException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostLikeService {
@@ -34,8 +36,9 @@ public class PostLikeService {
             status = LikeStatus.UNLIKE;
         }
         try {
+            log.info("updatePostLike update before");
             PostLike updatedPostLike = this.update(user, postId, status);
-
+            log.info("updatePostLike update after");
             return PostLikeResponse.from(updatedPostLike);
         } catch (Exception e) {
             throw new NotExistPostLikeException();
@@ -54,10 +57,12 @@ public class PostLikeService {
 //            Post post = postService.findPostById(postId);
             Post post = postRepository.findById(postId)
                     .orElseThrow(NotExistPostException::new);
+            log.info("updatePostLike builder before");
             PostLike postLike = PostLike.builder()
                     .user(user)
                     .post(post)
                     .build();
+            log.info("updatePostLike builder after");
             return postLikeRepository.saveAndFlush(postLike);
         }
     }
