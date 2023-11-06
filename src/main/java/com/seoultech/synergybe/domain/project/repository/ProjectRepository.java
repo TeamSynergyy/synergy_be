@@ -19,6 +19,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Page<Project> findAll(Specification<Project> spec, Pageable pageable);
 
-    @Query(value = "SELECT * FROM post WHERE user_id = :userId", nativeQuery = true)
-    List<Project> findAllByUserId(@Param("userId") String userId);
+    @Query(value = "SELECT * FROM project WHERE leader_id = :userId", nativeQuery = true)
+    List<Project> findAllByLeaderId(@Param("userId") String userId);
 }

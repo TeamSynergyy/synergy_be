@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.project.service;
 
+import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
+import com.seoultech.synergybe.domain.apply.service.ApplyService;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
@@ -21,6 +23,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,8 @@ public class ProjectService {
     private final ProjectUserService projectUserService;
 
     private final ProjectLikeService projectLikeService;
+
+    private final ApplyRepository applyRepository;
 
     public ProjectResponse createProject(User user, CreateProjectRequest request) {
         Project savedProject = projectRepository.save(request.toEntity(user));
@@ -42,6 +48,7 @@ public class ProjectService {
     public ProjectResponse updateProject(User user, UpdateProjectRequest request) {
         Project project = this.findProjectById(request.getProjectId());
         Project updatedProject = project.updateProject(request);
+        projectRepository.save(updatedProject);
 
         return ProjectResponse.from(updatedProject);
     }
@@ -91,7 +98,8 @@ public class ProjectService {
                 try {
                     return cb.or(
                             cb.like(projectRoot.get("name"), "%" + keyword + "%"),
-                            cb.like(projectRoot.get("content"), "%" + keyword + "%")
+                            cb.like(projectRoot.get("content"), "%" + keyword + "%"),
+                            cb.like(projectRoot.get("field").as(String.class),"%" + keyword + "%")
                     );
                 } catch (Exception e) {
                     throw new NotExistProjectException();
@@ -107,9 +115,22 @@ public class ProjectService {
         return ListProjectResponse.from(ProjectResponse.from(projects));
     }
 
+    // todo
+    // 현재 user가 참여하고 있는 projectList가 필요함
+    // leaderId로 찾을 수 있고
+    // projectMember를 통해서 project를 찾을 수 있음
+    // 현재 진행중인 프로젝트만 찾아야 함
     public ListProjectResponse getProjectListByUser(String userId) {
-        List<Project> projects = projectRepository.findAllByUserId(userId);
 
-        return ListProjectResponse.from(ProjectResponse.from(projects));
+        List<Long> projectIds = applyRepository.findProjectIdsByUserId(userId);
+
+        List<Project> projectsByUserId = projectRepository.findAllById(projectIds);
+
+        List<Project> projectsByLeader = projectRepository.findAllByLeaderId(userId);
+
+        List<Project> combinedProjects = Stream.concat(projectsByUserId.stream(), projectsByLeader.stream())
+                .collect(Collectors.toList());
+
+        return ListProjectResponse.from(ProjectResponse.from(combinedProjects));
     }
 }
