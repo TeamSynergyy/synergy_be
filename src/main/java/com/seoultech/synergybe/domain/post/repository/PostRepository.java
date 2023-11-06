@@ -32,7 +32,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     int countFeed(@Param("end") Long end);
 
     @Query(value =
-            "SELECT p.post_id, p.create_at, p.update_at, p.author_name, p.content, p.is_deleted, p.title, p.user_id, COUNT(pl.post_like_id) AS like_count " +
+            "SELECT p.post_id, p.create_at, p.update_at, p.author_name, p.content, p.is_deleted, p.title, p.user_id, p.thumbnail_image_id, COUNT(pl.post_like_id) AS like_count " +
             "FROM post p " +
             "LEFT JOIN post_like pl ON p.post_id = pl.post_id " +
             "WHERE p.create_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) AND p.is_deleted = 0 " +
