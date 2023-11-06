@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.system.handler;
 
-import com.seoultech.synergybe.domain.auth.dao.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.seoultech.synergybe.domain.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.seoultech.synergybe.system.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.seoultech.synergybe.domain.auth.dao.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static com.seoultech.synergybe.domain.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 
 @Component

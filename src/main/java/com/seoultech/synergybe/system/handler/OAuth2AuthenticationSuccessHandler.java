@@ -1,14 +1,14 @@
 package com.seoultech.synergybe.system.handler;
 
-import com.seoultech.synergybe.domain.auth.dao.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.seoultech.synergybe.domain.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.seoultech.synergybe.domain.auth.entity.ProviderType;
 import com.seoultech.synergybe.domain.auth.entity.RoleType;
 import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfo;
 import com.seoultech.synergybe.domain.auth.info.OAuth2UserInfoFactory;
 import com.seoultech.synergybe.domain.auth.token.AuthToken;
 import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
-import com.seoultech.synergybe.domain.user.dao.UserRefreshTokenRepository;
-import com.seoultech.synergybe.domain.user.entity.UserRefreshToken;
+import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenRepository;
+import com.seoultech.synergybe.domain.user.UserRefreshToken;
 import com.seoultech.synergybe.system.config.properties.AppProperties;
 import com.seoultech.synergybe.system.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
-import static com.seoultech.synergybe.domain.auth.dao.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-import static com.seoultech.synergybe.domain.auth.dao.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
+import static com.seoultech.synergybe.domain.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static com.seoultech.synergybe.domain.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
 
 @Component
 @RequiredArgsConstructor

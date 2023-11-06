@@ -27,6 +27,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // 좌표 저장
+    implementation group: 'org.hibernate', name: 'hibernate-spatial'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     //lombok
@@ -45,7 +50,8 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     // swagger
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+//    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
 
     // gson
     implementation 'com.google.code.gson:gson:2.9.0'

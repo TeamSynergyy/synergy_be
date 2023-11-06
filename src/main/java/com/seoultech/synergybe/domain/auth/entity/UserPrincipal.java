@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.domain.auth.entity;
 
-import com.seoultech.synergybe.domain.user.entity.User;
+import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -4,8 +4,10 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
 *.yml
-*.properties
+
+application.yml
 
 ### STS ###
 .apt_generated
@@ -26,6 +28,7 @@ bin/
 *.ipr
 out/
 !**/src/main/**/out/
+!**/src/main/resources/
 !**/src/test/**/out/
 
 ### NetBeans ###
