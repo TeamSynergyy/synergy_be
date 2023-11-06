@@ -64,7 +64,7 @@ public class PostService {
         }
     }
 
-    public PostResponse updatePost(User user, UpdatePostRequest request) {
+    public PostResponse updatePost(UpdatePostRequest request) {
         Post post = this.findPostById(request.getPostId());
         Post updatedPost = postRepository.save(post.updatePost(request));
         List<String> imagesUrl = imageService.getImageUrlByPostId(request.getPostId());
@@ -72,7 +72,7 @@ public class PostService {
         return PostResponse.from(updatedPost, imagesUrl);
     }
 
-    public DeletePostResponse deletePost(User user, Long postId) {
+    public DeletePostResponse deletePost(Long postId) {
         Post post = this.findPostById(postId);
         postRepository.delete(post);
 
@@ -133,7 +133,7 @@ public class PostService {
 
 
 
-    public ListPostResponse getWeekBestPostList(User user) {
+    public ListPostResponse getWeekBestPostList() {
         List<Post> posts = postRepository.findAllByLikeAndDate();
 
         return ListPostResponse.from(PostResponse.from(posts));
@@ -212,40 +212,35 @@ public class PostService {
     }
 
     public ListPostResponse getRecommendPostList(User user, Long end) {
-        log.info("get recommend post list start");
-        String userId = user.getUserId();
+        try {
+            log.info("get recommend post list start");
+            String userId = user.getUserId();
+            log.info("user Id {}", userId);
 
-        RestTemplate restTemplate = new RestTemplate();
-        String fastApiUrl = "http://fastapi:8000"; // 컨테이너 이름과 포트
-        String response = restTemplate.getForObject(fastApiUrl + "/recommend/" + userId, String.class);
-        log.info("Response from FastAPI: {}", response);
+            RestTemplate restTemplate = new RestTemplate();
+            log.info("rest template new");
+            String fastApiUrl = "http://fastapi:8000"; // 컨테이너 이름과 포트
+            String response = restTemplate.getForObject(fastApiUrl + "/recommend/" + userId, String.class);
 
-//            // URI에 사용자 ID 값을 대체하여 요청 생성
-//            URI uri = URI.create("http://fastapi:80/recommend/" + userId);
-//
-//            HttpClient client = HttpClient.newHttpClient();
-//            HttpRequest request = HttpRequest.newBuilder()
-//                    .uri(uri)
-//                    .build();
-//            log.info("cliend send before");
-//            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            log.info("Response from FastAPI: {}", response);
 
-        log.info("http response {}", response);
+            List<Long> postIds = this.extractIds(response);
 
-        List<Long> postIds = this.extractIds(response);
+            // start, end 인덱스 계산 후 이전 게시글에서 추가로 10개만 가져옴
+            int startIdx = end.intValue();
+            int endIdx = startIdx + 10;
 
-        // start, end 인덱스 계산 후 이전 게시글에서 추가로 10개만 가져옴
-        int startIdx = end.intValue();
-        int endIdx = startIdx + 10;
+            List<Long> result = postIds.subList(startIdx, Math.min(endIdx + 1, postIds.size()));
 
-        List<Long> result = postIds.subList(startIdx, Math.min(endIdx + 1, postIds.size()));
-
-        List<Post> posts = postRepository.findAllById(result);
+            List<Post> posts = postRepository.findAllById(result);
 
 
-        log.info("Response from FastAPI: {}",response);
+            log.info("Response from FastAPI: {}", response);
 
-        return ListPostResponse.from(PostResponse.from(posts));
+            return ListPostResponse.from(PostResponse.from(posts));
+        } catch (Exception e) {
+            throw new NotExistPostException();
+        }
     }
 
     private List<Long> extractIds(String response) {
