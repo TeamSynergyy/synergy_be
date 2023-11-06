@@ -2,10 +2,12 @@ package com.seoultech.synergybe.domain.post.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class ListPostResponse {
     private List<PostResponse> content;
