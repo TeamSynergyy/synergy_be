@@ -102,4 +102,8 @@ public class ApplyService {
 
         return ListApplyUserResponse.from(users);
     }
+
+    public List<Long> getProjectIdsByUserId(String userId) {
+        return applyRepository.findProjectIdsByUserId(userId);
+    }
 }

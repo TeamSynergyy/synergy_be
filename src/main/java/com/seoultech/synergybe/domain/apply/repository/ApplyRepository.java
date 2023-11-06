@@ -20,4 +20,7 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
 
     @Query(value = "SELECT user_id FROM apply WHERE project_id = :projectId", nativeQuery = true)
     List<String> findUserIdsByProjectId(@Param("projectId") Long projectId);
+
+    @Query(value = "SELECT project_id FROM apply WHERE user_id = :userId AND status = \"COMPLETED\"",nativeQuery = true)
+    List<Long> findProjectIdsByUserId(@Param("userId") String userId);
 }
