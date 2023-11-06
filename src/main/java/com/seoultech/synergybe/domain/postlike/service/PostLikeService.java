@@ -45,18 +45,42 @@ public class PostLikeService {
         }
     }
 
+
+    /**
+     * case 1
+     * postlike가 없을경우 새로 생성
+     *
+     * case 2, 3
+     * postlike가 있을 경우
+     *
+     * 2 - status가 unlike이면 unlike 로 변경
+     * post에서 해당 postlike 삭제
+     * 3 - status가 like이면 like 로 변경
+     * post에서 해당 postlike 추가
+     */
     public synchronized PostLike update(User user, Long postId, LikeStatus status) {
         Optional<PostLike> postLikeOptional = postLikeRepository.findByUserUserIdAndPostId(user.getUserId(), postId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(NotExistPostException::new);
 
         if (postLikeOptional.isPresent()) {
             postLikeOptional.get().updateStatus(status);
 
-            return postLikeOptional.get();
+            // like 시 like로 변경, postlike +1
+            if (status == LikeStatus.LIKE) {
+                post.getLikes().add(postLikeOptional.get());
+            } else if (status == LikeStatus.UNLIKE) {
+                post.deletePostLike(postLikeOptional.get());
+            }
+
+            // unlike 시 unlike로 변경, -1
+
+            return postLikeRepository.saveAndFlush(postLikeOptional.get());
         } else {
+            // 없을 경우 생성
             // postService 호출시 순환참조 발생
-//            Post post = postService.findPostById(postId);
-            Post post = postRepository.findById(postId)
-                    .orElseThrow(NotExistPostException::new);
+
             log.info("updatePostLike builder before");
             PostLike postLike = PostLike.builder()
                     .user(user)
