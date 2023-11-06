@@ -13,6 +13,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -64,8 +66,12 @@ public class User implements Serializable {
     private String major;
 
     private String temperature;
-
     private String bio;
+    private String minor;
+
+    private String interestAreas;
+
+    private String skills;
 
     public User(
             String userId,
@@ -89,12 +95,18 @@ public class User implements Serializable {
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
         this.bio = "36.5";
+        this.minor = "";
+        this.interestAreas = "";
+        this.skills = "";
     }
 
     public User update(UpdateUserRequest request) {
         this.username = request.getUsername();
         this.bio = request.getBio();
         this.major = request.getMajor();
+        this.minor = request.getMinor();
+        this.interestAreas = request.getInterestAreas();
+        this.skills = request.getSkills();
 
         return this;
     }

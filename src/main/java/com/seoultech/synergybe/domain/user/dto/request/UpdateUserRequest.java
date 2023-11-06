@@ -1,6 +1,5 @@
 package com.seoultech.synergybe.domain.user.dto.request;
 
-import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,4 +9,7 @@ public class UpdateUserRequest {
     private String username;
     private String bio;
     private String major;
+    private String minor;
+    private String interestAreas;
+    private String skills;
 }
