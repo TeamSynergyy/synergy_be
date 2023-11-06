@@ -22,9 +22,11 @@ public class PostResponse {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
+    private String thumbnailImageUrl;
+
     private List<String> imagesUrl;
 
-    private int likes;
+//    private int likes;
 
     public PostResponse(Post post) {
         this.postId = post.getId();
@@ -34,7 +36,7 @@ public class PostResponse {
         this.authorName = post.getAuthorName();
         this.createAt = post.getCreateAt();
         this.updateAt = post.getUpdateAt();
-        this.likes = post.getLikes().size();
+//        this.likes = post.getLikes().size();
     }
 
     public static PostResponse from(Post post) {
@@ -43,7 +45,7 @@ public class PostResponse {
 
     public static PostResponse from(Post post, List<String> imagesUrl) {
         return new PostResponse(post.getId(), post.getTitle(), post.getContent(), post.getUser().getUserId(), post.getUser().getUsername(),
-                 post.getCreateAt(), post.getUpdateAt(), imagesUrl, post.getLikes().size());
+                 post.getCreateAt(), post.getUpdateAt(), imagesUrl.get(0), imagesUrl);
     }
 
     public static Page<PostResponse> from(Page<Post> posts) {
@@ -53,7 +55,7 @@ public class PostResponse {
                 .content(post.getContent())
                 .userId(post.getUser().getUserId())
                 .authorName(post.getUser().getUsername())
-                .likes(post.getLikes().size())
+//                .likes(post.getLikes().size())
                 .createAt(post.getCreateAt())
                 .updateAt(post.getUpdateAt())
                 .build()
@@ -64,11 +66,12 @@ public class PostResponse {
         return posts.stream()
                 .map(post -> PostResponse.builder()
                     .postId(post.getId())
+                    .thumbnailImageUrl(post.getImages().get(0).getStoreFileName())
                     .title(post.getTitle())
                     .content(post.getContent())
                     .authorName(post.getUser().getUsername())
                     .userId(post.getUser().getUserId())
-                    .likes(post.getLikes().size())
+//                    .likes(post.getLikes().size())
                     .createAt(post.getCreateAt())
                     .updateAt(post.getUpdateAt())
                     .build())

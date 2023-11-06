@@ -20,6 +20,7 @@ public class CreatePostRequest {
     public Post toEntity(User user, List<Image> images) {
         return Post.builder()
                 .user(user)
+                .thumbnailImageId(images.get(0).getId())
                 .images(images)
                 .title(title)
                 .content(content)

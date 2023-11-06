@@ -39,6 +39,8 @@ public class Post extends BaseTime {
 
     private String authorName;
 
+    private Long thumbnailImageId;
+
     @OneToMany
     @JoinColumn(name = "post_id")
     private List<Image> images;
@@ -59,10 +61,11 @@ public class Post extends BaseTime {
     private boolean isDeleted;
 
     @Builder
-    public Post(User user, String title, String content, List<PostLike> likes, List<Comment> comments, List<Image> images) {
+    public Post(User user, String title, String content, List<PostLike> likes, List<Comment> comments, List<Image> images, Long thumbnailImageId) {
         this.user = user;
         this.title = title;
         this.content = content;
+        this.thumbnailImageId = thumbnailImageId;
         this.likes = likes;
         this.comments = comments;
         this.images = images;
@@ -75,5 +78,9 @@ public class Post extends BaseTime {
         this.content = request.getContent();
 
         return this;
+    }
+
+    public void deletePostLike(PostLike postLike) {
+        likes.removeIf(postLike1 -> postLike1.getId().equals(postLike.getId()));
     }
 }
