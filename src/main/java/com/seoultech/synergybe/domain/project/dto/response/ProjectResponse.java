@@ -75,4 +75,9 @@ public class ProjectResponse {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    public static List<ProjectResponse> fromEmpty(List<Project> projects) {
+        return projects.stream()
+                .map(project -> ProjectResponse.builder().build()).collect(Collectors.toList());
+    }
 }
