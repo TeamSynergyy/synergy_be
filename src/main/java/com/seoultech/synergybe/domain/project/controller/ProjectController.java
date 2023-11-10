@@ -11,7 +11,6 @@ import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,5 +81,14 @@ public class ProjectController {
     @GetMapping(value = "/other")
     public ResponseEntity<ApiResponse<ListProjectResponse>> getProjectsByUser(@RequestParam("userId") String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project list by user", projectService.getProjectListByUser(userId)));
+    }
+
+    @GetMapping(value = "/recommend")
+    public ResponseEntity<ApiResponse<ListProjectResponse>> getRecommendProjects(@RequestParam(value = "end", required = false, defaultValue = "0") Long end) {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("recommend projects", projectService.getRecommendListByUser(user, end)));
     }
 }
