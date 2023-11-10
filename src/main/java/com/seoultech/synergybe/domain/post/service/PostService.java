@@ -118,6 +118,9 @@ public class PostService {
         } else {
             isNext = false;
         }
+        // todo
+        // 썸네일이 없을 경우 없는채로 처리가 되어야 함
+
 
         return ListPostResponse.from(PostResponse.from(posts), isNext);
     }
@@ -220,25 +223,30 @@ public class PostService {
             RestTemplate restTemplate = new RestTemplate();
             log.info("rest template new");
             String fastApiUrl = "http://fastapi:8000"; // 컨테이너 이름과 포트
-            String response = restTemplate.getForObject(fastApiUrl + "/recommend/" + userId, String.class);
+            String response = restTemplate.getForObject(fastApiUrl + "/recommend/posts/" + userId, String.class);
 
             log.info("Response from FastAPI: {}", response);
 
             List<Long> postIds = this.extractIds(response);
 
-            // start, end 인덱스 계산 후 이전 게시글에서 추가로 10개만 가져옴
-            int startIdx = end.intValue();
-            int endIdx = startIdx + 10;
+            // 빈 배열일 경우 빈 배열 리턴
+            if (postIds.isEmpty()) {
+                List<Post> posts = new ArrayList<>();
+                return ListPostResponse.from(PostResponse.fromEmpty(posts));
+            }
 
-            List<Long> result = postIds.subList(startIdx, Math.min(endIdx + 1, postIds.size()));
+            // end 기준 end ~ end + 10 순서에 있는 게시글 가져오기
+            int startIdx = end.intValue();
+            int endIdx = Math.min(startIdx + 10, postIds.size());
+
+            List<Long> result = postIds.subList(startIdx, endIdx);
+            log.info(">> postIds result {} ", result);
 
             List<Post> posts = postRepository.findAllById(result);
 
-
-            log.info("Response from FastAPI: {}", response);
-
             return ListPostResponse.from(PostResponse.from(posts));
         } catch (Exception e) {
+            log.error(">> 추천 게시글 가져오기 실패 {}", e.getMessage());
             throw new NotExistPostException();
         }
     }
@@ -251,6 +259,7 @@ public class PostService {
 
             return objectMapper.readValue(response, new TypeReference<List<Long>>() {});
         } catch (JsonProcessingException e) {
+            log.error(">> 객체 변환 실패 {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

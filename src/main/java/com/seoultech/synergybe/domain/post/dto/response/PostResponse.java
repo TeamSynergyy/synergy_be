@@ -64,17 +64,27 @@ public class PostResponse {
 
     public static List<PostResponse> from(List<Post> posts) {
         return posts.stream()
-                .map(post -> PostResponse.builder()
-                    .postId(post.getId())
-                    .thumbnailImageUrl(post.getImages().get(0).getStoreFileName())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .authorName(post.getUser().getUsername())
-                    .userId(post.getUser().getUserId())
-//                    .likes(post.getLikes().size())
-                    .createAt(post.getCreateAt())
-                    .updateAt(post.getUpdateAt())
-                    .build())
+                .map(post -> {
+                    PostResponse.PostResponseBuilder builder = PostResponse.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .content(post.getContent())
+                            .authorName(post.getUser().getUsername())
+                            .userId(post.getUser().getUserId())
+                            .createAt(post.getCreateAt())
+                            .updateAt(post.getUpdateAt());
+
+                    if (post.getImages() != null && !post.getImages().isEmpty()) {
+                        builder.thumbnailImageUrl(post.getImages().get(0).getStoreFileName());
+                    }
+
+                    return builder.build();
+                })
                 .collect(Collectors.toList());
+    }
+
+    public static List<PostResponse> fromEmpty(List<Post> posts) {
+        return posts.stream()
+                .map(post -> PostResponse.builder().build()).collect(Collectors.toList());
     }
 }
