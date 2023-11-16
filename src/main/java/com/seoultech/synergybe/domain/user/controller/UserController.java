@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.user.controller;
 
 import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.response.ListUserResponse;
+import com.seoultech.synergybe.domain.user.dto.response.UserIdsResponse;
 import com.seoultech.synergybe.domain.user.dto.response.UserResponse;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.domain.user.User;
@@ -63,6 +64,24 @@ public class UserController {
         User user = userService.getUser(principal.getUsername());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("recommend users", userService.getRecommendListByUser(user, end)));
+    }
+
+    @GetMapping(value = "/followers")
+    public ResponseEntity<ApiResponse<UserIdsResponse>> getFollowerIds() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("followers", userService.getFollowerIds(user)));
+    }
+
+    @GetMapping(value = "/followings")
+    public ResponseEntity<ApiResponse<UserIdsResponse>> getFollowingIds() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("followers", userService.getFollowingIds(user)));
     }
 }
 

@@ -19,16 +19,15 @@ public class UserResponse {
     private String profileImageUrl;
     private String backImage;
     private String major;
-    private String temperature;
-    private String bio;
     private String minor;
+    private Double temperature;
+    private String bio;
     private String interestAreas;
     private String skills;
 
-
     public static UserResponse from(User user) {
         return new UserResponse(user.getUserId(), user.getUsername(), user.getEmail(), user.getProfileImageUrl(),
-                "", user.getMajor(), user.getTemperature(), user.getBio(), user.getMinor(), user.getInterestAreas(),
+                "", user.getMajor(), user.getMinor(), user.getTemperature(), user.getBio(), user.getInterestAreas(),
                 user.getSkills());
     }
 

@@ -15,7 +15,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUserId(String userId);
 
-    @Query(value = "SELECT * FROM user WHERE user_id IN :userIds",nativeQuery = true)
+    @Query(value = "SELECT * FROM user WHERE user_id IN :userIds", nativeQuery = true)
     List<User> findAllByUserId(@Param("userIds") List<String> userIds);
 
     Page<User> findAll(Specification<User> spec, Pageable pageable);

@@ -3,8 +3,10 @@ package com.seoultech.synergybe.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
 import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.response.ListUserResponse;
+import com.seoultech.synergybe.domain.user.dto.response.UserIdsResponse;
 import com.seoultech.synergybe.domain.user.dto.response.UserResponse;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
@@ -29,6 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
     public User getUser(String userId) {
         return userRepository.findByUserId(userId);
@@ -133,6 +136,16 @@ public class UserService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public UserIdsResponse getFollowerIds(User user) {
+
+        return UserIdsResponse.from(followRepository.findFollowerIdsByFollowingId(user.getUserId()));
+    }
+
+    public UserIdsResponse getFollowingIds(User user) {
+
+        return UserIdsResponse.from(followRepository.findFollowingIdsByFollowerId(user.getUserId()));
     }
 }
 

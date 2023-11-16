@@ -12,4 +12,5 @@ public class UpdateUserRequest {
     private String minor;
     private String interestAreas;
     private String skills;
+    private String organization;
 }
