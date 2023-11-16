@@ -39,6 +39,9 @@ public class UserResponse {
                 .major(user.getMajor())
                 .temperature(user.getTemperature())
                 .bio(user.getBio())
+                .minor(user.getMinor())
+                .interestAreas(user.getInterestAreas())
+                .skills(user.getSkills())
                 .build()
         );
     }

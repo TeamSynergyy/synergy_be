@@ -1,7 +1,9 @@
 package com.seoultech.synergybe.domain.project.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
-import com.seoultech.synergybe.domain.apply.service.ApplyService;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
@@ -13,20 +15,26 @@ import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistProjectException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
@@ -132,5 +140,55 @@ public class ProjectService {
                 .collect(Collectors.toList());
 
         return ListProjectResponse.from(ProjectResponse.from(combinedProjects));
+    }
+
+    public ListProjectResponse getRecommendListByUser(User user, Long end) {
+
+        try {
+            log.info("get recommend project list start");
+            String userId = user.getUserId();
+            log.info("user Id {}", userId);
+
+            RestTemplate restTemplate = new RestTemplate();
+            log.info("rest template new");
+            String fastApiUrl = "http://fastapi:8000"; // 컨테이너 이름과 포트
+            String response = restTemplate.getForObject(fastApiUrl + "/recommend/projects/" + userId, String.class);
+
+            log.info("Response from FastAPI: {}", response);
+
+            List<Long> projectIds = this.extractIds(response);
+
+            if (projectIds.isEmpty()) {
+                List<Project> projects = new ArrayList<>();
+                return ListProjectResponse.from(ProjectResponse.fromEmpty(projects));
+            }
+
+            // end 기준 end ~ end + 10 순서에 있는 게시글 가져오기
+            int startIdx = end.intValue();
+            int endIdx = Math.min(startIdx + 10, projectIds.size());
+
+            List<Long> result = projectIds.subList(startIdx, endIdx);
+
+            List<Project> projects = projectRepository.findAllById(result);
+
+
+            log.info("Response from FastAPI: {}", response);
+            return ListProjectResponse.from(ProjectResponse.from(projects));
+        } catch (Exception e) {
+            log.error(">> 추천 프르젝트 가져오기 실패 {}", e.getMessage());
+            throw new NotExistProjectException();
+        }
+    }
+
+    private List<Long> extractIds(String response) {
+        try {
+            // 받은 JSON 응답을 자바 리스트로 파싱
+            ObjectMapper objectMapper = new ObjectMapper();
+            log.error(">> http cliend response body {}", response);
+
+            return objectMapper.readValue(response, new TypeReference<List<Long>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

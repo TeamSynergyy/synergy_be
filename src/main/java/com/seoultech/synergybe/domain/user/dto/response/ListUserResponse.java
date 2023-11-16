@@ -13,4 +13,5 @@ public class ListUserResponse {
     public static ListUserResponse from(List<UserResponse> userResponses) {
         return new ListUserResponse(userResponses);
     }
+
 }
