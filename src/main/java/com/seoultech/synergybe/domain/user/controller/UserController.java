@@ -1,10 +1,13 @@
 package com.seoultech.synergybe.domain.user.controller;
 
 import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
+import com.seoultech.synergybe.domain.user.dto.response.ListUserResponse;
+import com.seoultech.synergybe.domain.user.dto.response.UserIdsResponse;
 import com.seoultech.synergybe.domain.user.dto.response.UserResponse;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.common.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,18 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@Tag(name = "유저 api", description = "유저 관련 api 입니다")
 public class UserController {
 
     private final UserService userService;
-
-//    @GetMapping
-//    public ApiResponse getUser() {
-//        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//
-//        User user = userService.getUser(principal.getUsername());
-//
-//        return ApiResponse.success("user", user);
-//    }
 
     @GetMapping(value = "/me/info")
     public ResponseEntity<ApiResponse<UserResponse>> getMyInfo() {
@@ -50,7 +45,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<Page<UserResponse>>> searchAllPosts(@RequestParam("search") String search, @PageableDefault(size = 15) Pageable pageable) {
         log.info(">> keyword : {}", search);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("search Post list", userService.searchAllUsers(search, pageable)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("search user list", userService.searchAllUsers(search, pageable)));
     }
 
     @PutMapping(value = "/me/info")
@@ -60,6 +55,33 @@ public class UserController {
         User user = userService.getUser(principal.getUsername());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("update my info", userService.updateMyInfo(user, request)));
+    }
+
+    @GetMapping(value = "/recommend")
+    public ResponseEntity<ApiResponse<ListUserResponse>> getRecommendUsers(@RequestParam(value = "end", required = false, defaultValue = "0") Long end) {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("recommend users", userService.getRecommendListByUser(user, end)));
+    }
+
+    @GetMapping(value = "/followers")
+    public ResponseEntity<ApiResponse<UserIdsResponse>> getFollowerIds() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("followers", userService.getFollowerIds(user)));
+    }
+
+    @GetMapping(value = "/followings")
+    public ResponseEntity<ApiResponse<UserIdsResponse>> getFollowingIds() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUser(principal.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("followers", userService.getFollowingIds(user)));
     }
 }
 
