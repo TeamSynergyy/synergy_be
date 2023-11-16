@@ -65,13 +65,13 @@ public class User implements Serializable {
 
     private String major;
 
-    private String temperature;
+    private Double temperature;
+    @Column(columnDefinition = "TEXT")
     private String bio;
     private String minor;
-
     private String interestAreas;
-
     private String skills;
+    private String organization;
 
     public User(
             String userId,
@@ -94,10 +94,12 @@ public class User implements Serializable {
         this.roleType = roleType;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
-        this.bio = "36.5";
+        this.temperature = 36.5;
+        this.bio = "Hello, this is for bio";
         this.minor = "";
         this.interestAreas = "";
         this.skills = "";
+        this.organization = "";
     }
 
     public User update(UpdateUserRequest request) {
@@ -107,6 +109,13 @@ public class User implements Serializable {
         this.minor = request.getMinor();
         this.interestAreas = request.getInterestAreas();
         this.skills = request.getSkills();
+        this.organization = request.getOrganization();
+
+        return this;
+    }
+
+    public User updateTemperature(double temperature) {
+        this.temperature = temperature;
 
         return this;
     }
