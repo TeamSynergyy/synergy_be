@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
-    @Query(value = "SELECT notice_id FROM comment WHERE project_id = :projectId", nativeQuery = true)
+    @Query(value = "SELECT notice_id FROM notice WHERE project_id = :projectId", nativeQuery = true)
     List<Long> findNoticeIdsByProjectId(@Param("projectId") Long projectId);
 }

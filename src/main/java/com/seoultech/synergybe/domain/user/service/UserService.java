@@ -86,11 +86,9 @@ public class UserService {
         return UserResponse.from(updatedUser);
     }
 
-    public ListUserResponse getRecommendListByUser(User user, Long end) {
+    public ListUserResponse getSimilarUserListByUser(String userId, Long end) {
 
         try {
-            log.info("get recommend user list start");
-            String userId = user.getUserId();
             log.info("user Id {}", userId);
 
             RestTemplate restTemplate = new RestTemplate();

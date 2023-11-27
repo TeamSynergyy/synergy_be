@@ -95,10 +95,9 @@ public class ApplyService {
 
     public ListApplyUserResponse getApplyUserList(Long projectId) {
         List<String> userIds = applyRepository.findUserIdsByProjectId(projectId);
-        String userIdsString = String.join(",", userIds);
 
         // user_id 는 PK가 아닌 UNIQUE KEY 이므로 findAllById() 사용 못함
-        List<User> users = userService.getUsers(userIdsString);
+        List<User> users = userService.getUsers(userIds);
 
         return ListApplyUserResponse.from(users);
     }
