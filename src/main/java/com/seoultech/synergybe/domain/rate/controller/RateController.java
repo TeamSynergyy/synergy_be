@@ -6,12 +6,13 @@ import com.seoultech.synergybe.domain.rate.dto.response.UserRateResponse;
 import com.seoultech.synergybe.domain.rate.service.RateService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/rates")
@@ -22,12 +23,14 @@ public class RateController {
 
     @PostMapping
     public ResponseEntity<RateResponse> createRate(@RequestBody RateRequest request) {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.getUser(principal.getUsername());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(rateService.createRate(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(rateService.createRate(request, user));
     }
 
-    @PutMapping("/{projectId}/evaluate-user")
-    public ResponseEntity<UserRateResponse> updateUserRate(@PathVariable("projectId") Long projectId) {
+    @PutMapping("/{projectId}/evaluations")
+    public ResponseEntity<List<UserRateResponse>> updateUserRate(@PathVariable("projectId") Long projectId) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
