@@ -4,6 +4,8 @@ import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.text.DecimalFormat;
+
 @AllArgsConstructor
 @Getter
 public class UserRateResponse {
@@ -11,7 +13,8 @@ public class UserRateResponse {
     private Double rateNumber;
     private Double temperature;
 
-    public static UserRateResponse from(User user, double rateNumber) {
-        return new UserRateResponse(user.getUserId(), rateNumber, user.getTemperature());
+    public static UserRateResponse from(User user, double rateNumber, double temperature) {
+        DecimalFormat df = new DecimalFormat("#.#");
+        return new UserRateResponse(user.getUserId(), rateNumber, Double.parseDouble(df.format(temperature)));
     }
 }
