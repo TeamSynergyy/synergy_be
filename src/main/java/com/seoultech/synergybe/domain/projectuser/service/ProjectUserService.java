@@ -33,8 +33,8 @@ public class ProjectUserService {
         }
     }
 
-    public List<String> getProjectUserIds(Project project) {
-        return projectUserRepository.findProjectUserIdsByProjectId(project.getId());
+    public List<String> getProjectUserIds(Long projectId) {
+        return projectUserRepository.findProjectUserIdsByProjectId(projectId);
     }
 
     public void deleteProjectUser(Project project, User user) {

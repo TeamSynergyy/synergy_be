@@ -13,6 +13,7 @@ import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
 import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.exception.NotExistProjectException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,7 @@ public class ProjectService {
     private final ProjectLikeService projectLikeService;
 
     private final ApplyRepository applyRepository;
+    private final UserService userService;
 
     public ProjectResponse createProject(User user, CreateProjectRequest request) {
         Project savedProject = projectRepository.save(request.toEntity(user));
@@ -77,7 +79,6 @@ public class ProjectService {
 
     public ProjectResponse getProject(Long projectId) {
         Project project = this.findProjectById(projectId);
-        List<String> projectUserIds = projectUserService.getProjectUserIds(project);
 
         return ProjectResponse.from(project);
     }
@@ -122,6 +123,17 @@ public class ProjectService {
 
         return ListProjectResponse.from(ProjectResponse.from(projects));
     }
+
+    public List<User> getUserListByProject(Long projectId) {
+        List<String> userIds = projectUserService.getProjectUserIds(projectId);
+        List<User> userList = new ArrayList<>();
+        for (String userId : userIds) {
+            userList.add(userService.getUser(userId));
+        }
+
+        return userList;
+    }
+
 
     // todo
     // 현재 user가 참여하고 있는 projectList가 필요함

@@ -10,7 +10,6 @@ import lombok.Getter;
 @Getter
 public class RateRequest {
     private Long projectId;
-    private String giveUserId;
     private String receiveUserId;
     private String content;
     private Integer score;
