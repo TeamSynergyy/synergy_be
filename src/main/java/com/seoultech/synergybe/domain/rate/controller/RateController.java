@@ -21,16 +21,16 @@ public class RateController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<RateResponse>> createRate(@RequestBody RateRequest request) {
+    public ResponseEntity<RateResponse> createRate(@RequestBody RateRequest request) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.create("rate create", rateService.createRate(request)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(rateService.createRate(request));
     }
 
     @PutMapping("/{projectId}/evaluate-user")
-    public ResponseEntity<ApiResponse<UserRateResponse>> updateUserRate(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<UserRateResponse> updateUserRate(@PathVariable("projectId") Long projectId) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = userService.getUser(principal.getUsername());
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("rate update", rateService.updateTemperature(projectId, user)));
+        return ResponseEntity.status(HttpStatus.OK).body(rateService.updateTemperature(projectId, user));
     }
 }
