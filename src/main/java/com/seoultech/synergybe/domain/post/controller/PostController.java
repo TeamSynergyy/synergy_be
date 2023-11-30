@@ -8,6 +8,7 @@ import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
 import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -39,40 +39,32 @@ public class PostController {
     @Operation(summary = "post 생성", description = "PostResponse가 반환되며 이미지가 함께 저장됩니다.")
     @PostMapping
 //    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<PostResponse> createPost(@ModelAttribute CreatePostRequest request) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<PostResponse> createPost(@ModelAttribute CreatePostRequest request, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(user, request));
     }
 
     @Operation(summary = "post 수정", description = "PostResponse가 반환되며 UpdatePostRequest에 담긴 내용으로 수정됩니다.")
     @PutMapping
-    public ResponseEntity<PostResponse> updatePost(@RequestBody UpdatePostRequest request) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<PostResponse> updatePost(@RequestBody UpdatePostRequest request, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.updatePost(request));
     }
 
     @Operation(summary = "post 삭제", description = "DeletePostResponse가 반환되며, post의 isDelete = true 로 값이 변경됩니다")
     @DeleteMapping(value = "/{postId}")
-    public ResponseEntity<DeletePostResponse> deletePost(@PathVariable("postId") Long postId) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<DeletePostResponse> deletePost(@PathVariable("postId") Long postId, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(postId));
     }
 
     @Operation(summary = "단건 Post Get", description = "요청된 1개의 Post가 반환됩니다")
     @GetMapping(value = "/{postId}")
-    public ResponseEntity<PostResponse> getPost(@PathVariable("postId") Long postId) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<PostResponse> getPost(@PathVariable("postId") Long postId, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(user, postId));
     }
@@ -86,10 +78,8 @@ public class PostController {
 
     @Operation(summary = "Feed Post Get", description = "요청된 1개의 Post가 반환됩니다")
     @GetMapping(value = "/feed")
-    public ResponseEntity<ListPostResponse> getFeed(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<ListPostResponse> getFeed(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getFeed(end, user));
     }
@@ -109,28 +99,21 @@ public class PostController {
 
 
     @GetMapping(value = "/me/likes")
-    public ResponseEntity<ListPostResponse> getLikedPosts() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<ListPostResponse> getLikedPosts(@LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getLikedPostList(user));
     }
 
     @GetMapping(value = "/recommend")
-    public ResponseEntity<ListPostResponse> getRecommendPosts(@RequestParam(value = "end", required = false, defaultValue = "0") Long end) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<ListPostResponse> getRecommendPosts(@RequestParam(value = "end", required = false, defaultValue = "0") Long end, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getRecommendPostList(user, end));
     }
 
     @GetMapping(value = "/week")
-    public ResponseEntity<ListPostResponse> getWeekBestPosts() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<ListPostResponse> getWeekBestPosts(@LoginUser String userId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getWeekBestPostList());
     }

@@ -5,10 +5,10 @@ import com.seoultech.synergybe.domain.comment.dto.response.CommentResponse;
 import com.seoultech.synergybe.domain.comment.service.CommentService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import com.seoultech.synergybe.system.config.login.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +21,8 @@ public class CommentController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<CommentResponse> createComment(@RequestBody CommentRequest request) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<CommentResponse> createComment(@RequestBody CommentRequest request, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(user, request));
     }

@@ -19,7 +19,6 @@ public class ScheduleController {
     @PostMapping
     public ResponseEntity<ScheduleResponse> createSchedule(@RequestBody ScheduleRequest request) {
 
-
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.createSchedule(request));
     }
 
