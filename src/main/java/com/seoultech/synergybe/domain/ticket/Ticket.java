@@ -50,6 +50,7 @@ public class Ticket {
         this.user = user;
         this.project = project;
         this.status = TicketStatus.BACKLOG;
+        this.isDeleted = false;
     }
 
     public Ticket update(TicketRequest request, TicketStatus status) {
