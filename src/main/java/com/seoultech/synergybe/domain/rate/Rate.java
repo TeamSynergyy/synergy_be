@@ -47,5 +47,6 @@ public class Rate {
         this.receiveUser = receiveUser;
         this.score = score;
         this.content = content;
+        this.isDeleted = false;
     }
 }
