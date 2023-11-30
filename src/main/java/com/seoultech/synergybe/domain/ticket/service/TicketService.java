@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.ticket.service;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.ticket.Ticket;
+import com.seoultech.synergybe.domain.ticket.TicketStatus;
 import com.seoultech.synergybe.domain.ticket.dto.TicketRequest;
 import com.seoultech.synergybe.domain.ticket.dto.TicketResponse;
 import com.seoultech.synergybe.domain.ticket.repository.TicketRepository;
@@ -35,15 +36,30 @@ public class TicketService {
         return TicketResponse.from(tickets);
     }
 
-    public TicketResponse updateTicket(TicketRequest request, User user) {
-        Ticket ticket = ticketRepository.findById(request.getTicketId())
+    public TicketResponse updateTicket(TicketRequest request, User user, Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(NotExistTicketException::new);
 
         if (!ticket.getUser().equals(user)) {
             throw new InvalidAccessException();
         }
 
-        return TicketResponse.from(ticket.update(request));
+        Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+
+        return TicketResponse.from(updatedTicket);
+    }
+
+    private TicketStatus checkStatus(String status) {
+        switch (status) {
+            case "backlog":
+                return TicketStatus.BACKLOG;
+            case "in_progress":
+                return TicketStatus.IN_PROGRESS;
+            case "review":
+                return TicketStatus.REVIEW;
+            default:
+                return TicketStatus.DONE;
+        }
     }
 
     public TicketResponse deleteTicket(Long ticketId, User user) {
