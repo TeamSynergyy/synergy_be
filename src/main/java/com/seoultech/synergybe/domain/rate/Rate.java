@@ -6,12 +6,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "is_deleted = false")
+@SQLDelete(sql = "UPDATE rate SET is_deleted = true WHERE rate_id = ?")
 public class Rate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +33,9 @@ public class Rate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receive_user_id", referencedColumnName = "user_id")
     private User receiveUser;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 
     private Integer score;
     private String content;
