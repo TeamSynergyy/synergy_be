@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/ticket")
+@RequestMapping(value = "/api/v1/tickets")
 public class TicketController {
     private final TicketService ticketService;
     private final UserService userService;
@@ -38,7 +38,7 @@ public class TicketController {
                                                        @RequestBody TicketRequest request) {
         User user = userService.findUserById(userId);
 
-        return ResponseEntity.ok(ticketService.updateTicket(request, user));
+        return ResponseEntity.ok(ticketService.updateTicket(request, user, ticketId));
     }
 
     @DeleteMapping(value = "/{ticketId}")

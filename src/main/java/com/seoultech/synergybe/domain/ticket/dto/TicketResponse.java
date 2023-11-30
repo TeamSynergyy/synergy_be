@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.ticket.dto;
 
 import com.seoultech.synergybe.domain.ticket.Ticket;
+import com.seoultech.synergybe.domain.ticket.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,10 +16,11 @@ public class TicketResponse {
     private Long ticketId;
     private String title;
     private String tag;
+    private TicketStatus status;
 
     public static TicketResponse from(Ticket savedTicket) {
         return new TicketResponse(savedTicket.getId(), savedTicket.getTitle(),
-                savedTicket.getTag());
+                savedTicket.getTag(), savedTicket.getStatus());
     }
 
     public static List<TicketResponse> from(List<Ticket> tickets) {
@@ -27,6 +29,7 @@ public class TicketResponse {
                         .ticketId(ticket.getId())
                         .title(ticket.getTitle())
                         .tag(ticket.getTag())
+                        .status(ticket.getStatus())
                         .build())
                 .collect(Collectors.toList());
     }

@@ -35,6 +35,10 @@ public class Ticket {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private TicketStatus status;
+
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
@@ -45,11 +49,13 @@ public class Ticket {
         this.endAt = endAt;
         this.user = user;
         this.project = project;
+        this.status = TicketStatus.BACKLOG;
     }
 
-    public Ticket update(TicketRequest request) {
+    public Ticket update(TicketRequest request, TicketStatus status) {
         this.title = request.getTitle();
         this.tag = request.getTag();
+        this.status = status;
 
         return this;
     }
