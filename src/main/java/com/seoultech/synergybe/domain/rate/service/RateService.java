@@ -84,4 +84,10 @@ public class RateService {
             throw new NotProjectLeaderException();
         }
     }
+
+    public List<RateResponse> getRateListByProject(Long projectId) {
+        List<Rate> rates = rateRepository.findAllByProjectId(projectId);
+
+        return RateResponse.from(rates);
+    }
 }

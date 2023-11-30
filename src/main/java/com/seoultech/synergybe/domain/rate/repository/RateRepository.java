@@ -11,4 +11,7 @@ public interface RateRepository extends JpaRepository<Rate, Long> {
 
     @Query(value = "SELECT * FROM rate WHERE project_id = :projectId AND receive_user_id = :receiverUserId", nativeQuery = true)
     List<Rate> findAllByProjectIdAndReceiverId(@Param("projectId") Long projectId, @Param("receiverUserId") String receiveUserId);
+
+    @Query(value = "SELECT * FROM rate WHERE project_id = :projectId", nativeQuery = true)
+    List<Rate> findAllByProjectId(@Param("projectId") Long projectId);
 }

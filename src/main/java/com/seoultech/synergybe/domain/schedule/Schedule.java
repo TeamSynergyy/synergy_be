@@ -48,6 +48,7 @@ public class Schedule {
         this.project = project;
         this.startAt = startAt;
         this.endAt = endAt;
+        this.isDeleted = false;
     }
 
     public void addProject(Project project) {

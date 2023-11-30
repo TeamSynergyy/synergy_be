@@ -34,4 +34,10 @@ public class RateController {
 
         return ResponseEntity.status(HttpStatus.OK).body(rateService.updateTemperature(projectId, user));
     }
+
+    @GetMapping("/{projectId}")
+    public ResponseEntity<List<RateResponse>> getRateList(@PathVariable("projectId") Long projectId) {
+
+        return ResponseEntity.ok().body(rateService.getRateListByProject(projectId));
+    }
 }
