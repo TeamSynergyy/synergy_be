@@ -6,6 +6,7 @@ import com.seoultech.synergybe.domain.user.dto.response.UserIdsResponse;
 import com.seoultech.synergybe.domain.user.dto.response.UserResponse;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -27,16 +27,15 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping(value = "/me/info")
-    public ResponseEntity<UserResponse> getMyInfo() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<UserResponse> getMyInfo(@LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getMyInfo(user));
     }
 
     @GetMapping(value = "/{userId}")
     public ResponseEntity<UserResponse> getUser(@PathVariable("userId") String userId) {
+
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo(userId));
     }
 
@@ -48,37 +47,28 @@ public class UserController {
     }
 
     @PutMapping(value = "/me/info")
-    public ResponseEntity<UserResponse> updateMyInfo(@RequestBody UpdateUserRequest request) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<UserResponse> updateMyInfo(@RequestBody UpdateUserRequest request, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateMyInfo(user, request));
     }
 
     @GetMapping(value = "/similar/{userId}")
     public ResponseEntity<ListUserResponse> getSimilarUsers(@PathVariable("userId") String userId, @RequestParam(value = "end", required = false, defaultValue = "0") Long end) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getSimilarUserListByUser(userId, end));
     }
 
     @GetMapping(value = "/followers")
-    public ResponseEntity<UserIdsResponse> getFollowerIds() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<UserIdsResponse> getFollowerIds(@LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getFollowerIds(user));
     }
 
     @GetMapping(value = "/followings")
-    public ResponseEntity<UserIdsResponse> getFollowingIds() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<UserIdsResponse> getFollowingIds(@LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getFollowingIds(user));
     }

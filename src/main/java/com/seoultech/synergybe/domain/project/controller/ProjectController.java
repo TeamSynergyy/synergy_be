@@ -7,6 +7,7 @@ import com.seoultech.synergybe.domain.project.dto.response.ProjectResponse;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import com.seoultech.synergybe.system.config.login.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,25 +26,21 @@ public class ProjectController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<ProjectResponse> createProject(@RequestBody CreateProjectRequest request) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<ProjectResponse> createProject(@RequestBody CreateProjectRequest request, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(user, request));
     }
 
     @PutMapping
-    public ResponseEntity<ProjectResponse> updateProject(@RequestBody UpdateProjectRequest request) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<ProjectResponse> updateProject(@RequestBody UpdateProjectRequest request, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(projectService.updateProject(user, request));
     }
 
     @DeleteMapping(value = "/{projectId}")
-    public ResponseEntity<ProjectResponse> deleteProject(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<ProjectResponse> deleteProject(@PathVariable("projectId") Long projectId, @LoginUser String userId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(projectService.deleteProject(projectId));
     }
@@ -67,10 +64,8 @@ public class ProjectController {
     }
 
     @GetMapping(value = "/me/likes")
-    public ResponseEntity<ListProjectResponse> getLikedProjects() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<ListProjectResponse> getLikedProjects(@LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(projectService.getLikedProjectList(user));
     }
@@ -81,10 +76,8 @@ public class ProjectController {
     }
 
     @GetMapping(value = "/recommend")
-    public ResponseEntity<ListProjectResponse> getRecommendProjects(@RequestParam(value = "end", required = false, defaultValue = "0") Long end) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<ListProjectResponse> getRecommendProjects(@RequestParam(value = "end", required = false, defaultValue = "0") Long end, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(projectService.getRecommendListByUser(user, end));
     }

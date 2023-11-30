@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.notice.controller;
 import com.seoultech.synergybe.domain.notice.dto.request.NoticeRequest;
 import com.seoultech.synergybe.domain.notice.dto.response.NoticeResponse;
 import com.seoultech.synergybe.domain.notice.service.NoticeService;
+import com.seoultech.synergybe.system.config.login.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,8 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @PostMapping
-    public ResponseEntity<NoticeResponse> createNotice(@RequestBody NoticeRequest request) {
+    public ResponseEntity<NoticeResponse> createNotice(@RequestBody NoticeRequest request, @LoginUser String userId) {
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.createNotice(request));
     }
@@ -29,7 +31,7 @@ public class NoticeController {
     }
 
     @DeleteMapping("/{noticeId}")
-    public ResponseEntity<NoticeResponse> deleteNotice(@PathVariable("noticeId") Long noticeId) {
+    public ResponseEntity<NoticeResponse> deleteNotice(@PathVariable("noticeId") Long noticeId, @LoginUser String userId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(noticeService.deleteNotice(noticeId));
     }
