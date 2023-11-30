@@ -5,11 +5,10 @@ import com.seoultech.synergybe.domain.projectlike.dto.response.ProjectLikeRespon
 import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.common.ApiResponse;
+import com.seoultech.synergybe.system.config.login.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,11 +20,9 @@ public class ProjectLikeController {
     private final UserService userService;
 
     @PutMapping(value = "/{projectId}/like")
-    public ResponseEntity<ApiResponse<ProjectLikeResponse>> updateProjectLike(@PathVariable("projectId") Long projectId, @RequestBody ProjectLikeType type) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<ProjectLikeResponse> updateProjectLike(@PathVariable("projectId") Long projectId, @RequestBody ProjectLikeType type, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
-        User user = userService.getUser(principal.getUsername());
-
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("project like update", projectLikeService.updateProjectLike(user, projectId, type)));
+        return ResponseEntity.status(HttpStatus.OK).body(projectLikeService.updateProjectLike(user, projectId, type));
     }
 }

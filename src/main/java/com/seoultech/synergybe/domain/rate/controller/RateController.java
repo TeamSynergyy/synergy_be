@@ -6,10 +6,10 @@ import com.seoultech.synergybe.domain.rate.dto.response.UserRateResponse;
 import com.seoultech.synergybe.domain.rate.service.RateService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import com.seoultech.synergybe.system.config.login.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,18 +22,16 @@ public class RateController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<RateResponse> createRate(@RequestBody RateRequest request) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.getUser(principal.getUsername());
+    public ResponseEntity<RateResponse> createRate(@RequestBody RateRequest request, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(rateService.createRate(request, user));
     }
 
     @PutMapping("/{projectId}/evaluations")
-    public ResponseEntity<List<UserRateResponse>> updateUserRate(@PathVariable("projectId") Long projectId) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<List<UserRateResponse>> updateUserRate(@PathVariable("projectId") Long projectId, @LoginUser String userId) {
+        User user = userService.getUser(userId);
 
-        User user = userService.getUser(principal.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(rateService.updateTemperature(projectId, user));
     }
 }
