@@ -22,7 +22,9 @@ public class ControllerExceptionHandler {
             NotExistProjectUserException.class,
             NotExistScheduleException.class,
             NotExistUserException.class,
-            NotProjectLeaderException.class
+            NotProjectLeaderException.class,
+            NotExistTicketException.class,
+            InvalidAccessException.class
     })
     public ResponseEntity<NotFoundFailResponse> notFound(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -9,9 +9,11 @@ import com.seoultech.synergybe.domain.schedule.repository.ScheduleRepository;
 import com.seoultech.synergybe.system.exception.NotExistScheduleException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
@@ -19,14 +21,15 @@ public class ScheduleService {
     private final ProjectService projectService;
 
     public ScheduleResponse createSchedule(ScheduleRequest request) {
-        Schedule savedSchedule = scheduleRepository.save(request.toEntity());
         Project project = projectService.findProjectById(request.getProjectId());
+        Schedule savedSchedule = scheduleRepository.save(request.toEntity(project));
         savedSchedule.addProject(project);
 
         return ScheduleResponse.from(savedSchedule);
     }
 
 
+    @Transactional(readOnly = true)
     public List<ScheduleResponse> getScheduleList(Long projectId) {
         Project project = projectService.findProjectById(projectId);
 
@@ -48,7 +51,6 @@ public class ScheduleService {
 
     public ScheduleResponse deleteSchedule(Long scheduleId) {
         Schedule schedule = this.findScheduleById(scheduleId);
-
         scheduleRepository.delete(schedule);
 
         return ScheduleResponse.from(schedule);
