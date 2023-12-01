@@ -29,6 +29,9 @@ public class Ticket {
 
     private String title;
     private String tag;
+    private String tagColor;
+    private Double assignedTime;
+    private Integer orderNumber;
     private LocalDateTime endAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,20 +46,31 @@ public class Ticket {
     private boolean isDeleted;
 
     @Builder
-    public Ticket(String title, String tag, LocalDateTime endAt, User user, Project project) {
+    public Ticket(String title, Integer orderNumber, String tag, LocalDateTime endAt, User user, Project project, TicketStatus status,
+                  String tagColor, Double assignedTime) {
         this.title = title;
         this.tag = tag;
         this.endAt = endAt;
         this.user = user;
+        this.orderNumber = orderNumber;
         this.project = project;
-        this.status = TicketStatus.BACKLOG;
+        this.status = status;
+        this.tagColor = tagColor;
+        this.assignedTime = assignedTime;
         this.isDeleted = false;
     }
 
     public Ticket update(TicketRequest request, TicketStatus status) {
         this.title = request.getTitle();
         this.tag = request.getTag();
+        this.orderNumber = request.getOrderNumber();
         this.status = status;
+
+        return this;
+    }
+
+    public Ticket increaseOrderNum() {
+        this.orderNumber += 1;
 
         return this;
     }
