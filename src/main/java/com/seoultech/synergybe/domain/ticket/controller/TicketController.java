@@ -21,24 +21,24 @@ public class TicketController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketRequest request, @LoginUser String userId) {
-        User user = userService.findUserById(userId);
+    public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketRequest request) {
+        User assignedUser = userService.getUser(request.getAssignedUserId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.createTicket(request, user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.createTicket(request, assignedUser));
     }
 
     @GetMapping(value = "/{projectId}")
-    public ResponseEntity<List<TicketResponse>> getTicketList(@RequestBody TicketRequest request) {
+    public ResponseEntity<List<TicketResponse>> getTicketList(@PathVariable("projectId") Long projectId) {
 
-        return ResponseEntity.ok(ticketService.getTicketList(request));
+        return ResponseEntity.ok(ticketService.getTicketList(projectId));
     }
 
     @PutMapping(value = "/{ticketId}")
-    public ResponseEntity<TicketResponse> updateTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId,
+    public ResponseEntity<List<TicketResponse>> updateTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId,
                                                        @RequestBody TicketRequest request) {
         User user = userService.findUserById(userId);
 
-        return ResponseEntity.ok(ticketService.updateTicket(request, user, ticketId));
+        return ResponseEntity.ok(ticketService.updateTickets(request, user, ticketId));
     }
 
     @DeleteMapping(value = "/{ticketId}")
