@@ -14,22 +14,41 @@ import java.util.stream.Collectors;
 @Builder
 public class TicketResponse {
     private Long ticketId;
+    private Long projectId;
+    private Integer orderNumber;
     private String title;
     private String tag;
+    private String tagColor;
     private TicketStatus status;
+    private List<String> assignedUserIds;
+    private Double assignedTime;
 
-    public static TicketResponse from(Ticket savedTicket) {
-        return new TicketResponse(savedTicket.getId(), savedTicket.getTitle(),
-                savedTicket.getTag(), savedTicket.getStatus());
+    public static TicketResponse from(Ticket ticket) {
+        return TicketResponse.builder()
+                .ticketId(ticket.getId())
+                .projectId(ticket.getProject().getId())
+                .orderNumber(ticket.getOrderNumber())
+                .title(ticket.getTitle())
+                .tag(ticket.getTag())
+                .tagColor(ticket.getTagColor())
+                .status(ticket.getStatus())
+                .assignedUserIds(ticket.getTicketUsers().stream().map(ticketUser -> ticketUser.getUser().getUserId()).collect(Collectors.toList()))
+                .assignedTime(ticket.getAssignedTime())
+                .build();
     }
 
     public static List<TicketResponse> from(List<Ticket> tickets) {
         return tickets.stream()
                 .map(ticket -> TicketResponse.builder()
                         .ticketId(ticket.getId())
+                        .projectId(ticket.getProject().getId())
+                        .orderNumber(ticket.getOrderNumber())
                         .title(ticket.getTitle())
                         .tag(ticket.getTag())
+                        .tagColor(ticket.getTagColor())
                         .status(ticket.getStatus())
+                        .assignedUserIds(ticket.getTicketUsers().stream().map(ticketUser -> ticketUser.getUser().getUserId()).collect(Collectors.toList()))
+                        .assignedTime(ticket.getAssignedTime())
                         .build())
                 .collect(Collectors.toList());
     }

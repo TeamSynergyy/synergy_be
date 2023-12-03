@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.apply.controller;
 
+import com.seoultech.synergybe.domain.apply.dto.request.ApplyRequest;
 import com.seoultech.synergybe.domain.apply.dto.response.AcceptApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ListApplyUserResponse;
@@ -11,7 +12,6 @@ import com.seoultech.synergybe.system.config.login.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,23 +33,21 @@ public class ApplyController {
 
     @DeleteMapping(value = "/{projectId}")
     public ResponseEntity<ApplyResponse> deleteApply(@PathVariable("projectId") Long projectId, @LoginUser String userId) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUser(principal.getUsername());
+        User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(applyService.deleteApply(user, projectId));
     }
 
     @PostMapping(value = "/accept/{projectId}")
-    public ResponseEntity<AcceptApplyResponse> acceptApply(@PathVariable("projectId") Long projectId, @LoginUser String userId) {
+    public ResponseEntity<AcceptApplyResponse> acceptApply(@PathVariable("projectId") Long projectId, @RequestBody ApplyRequest request) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(applyService.acceptApply(userId, projectId));
+        return ResponseEntity.status(HttpStatus.OK).body(applyService.acceptApply(request.getUserId(), projectId));
     }
 
     @DeleteMapping("/reject/{projectId}")
-    public ResponseEntity<RejectApplyResponse> rejectApply(@PathVariable("projectId") Long projectId,@LoginUser String userId) {
+    public ResponseEntity<RejectApplyResponse> rejectApply(@PathVariable("projectId") Long projectId, @RequestBody ApplyRequest request) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(applyService.rejectApply(userId, projectId));
+        return ResponseEntity.status(HttpStatus.OK).body(applyService.rejectApply(request.getUserId(), projectId));
     }
 
     @GetMapping(value = "/me")
