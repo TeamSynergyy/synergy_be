@@ -11,6 +11,7 @@ import com.seoultech.synergybe.domain.ticketUser.service.TicketUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.exception.InvalidAccessException;
+import com.seoultech.synergybe.system.exception.InvalidUpdateTicketException;
 import com.seoultech.synergybe.system.exception.NotExistTicketException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,8 +86,6 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(NotExistTicketException::new);
 
-        List<Ticket> changeTicketList = new ArrayList<>();
-
         boolean isEqualStatus = false;
 
         // 동일 status 인지 check
@@ -108,47 +107,54 @@ public class TicketService {
             }
         }
 
-        // status가 동일할 경우
+        // status가 동일한지 check
         if (isEqualStatus) {
-            if (postTicketOrderNum > preTicketOrderNum) {
-                List<Ticket> tickets = ticketRepository.findAllLowToBigOrderNumber(request.getProjectId(), request.getStatus(), preTicketOrderNum, postTicketOrderNum);
-                decreaseOrderNum(tickets);
-                Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
-                changeTicketList.addAll(tickets);
-                changeTicketList.add(updatedTicket);
-            } else if (preTicketOrderNum > postTicketOrderNum) {
-                List<Ticket> tickets = ticketRepository.findAllBigToLowOrderNumber(request.getProjectId(), request.getStatus(), postTicketOrderNum, preTicketOrderNum);
-                increaseOrderNum(tickets);
-                Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
-                changeTicketList.addAll(tickets);
-                changeTicketList.add(updatedTicket);
-            }
-            return TicketResponse.from(changeTicketList);
+            return equalStatus(preTicketOrderNum, postTicketOrderNum, ticket, request);
+        } else {
+            return notEqualStatus(preTicketOrderNum, postTicketOrderNum, ticket, request, preStatus, postStatus);
         }
+    }
 
+    private List<TicketResponse> equalStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, TicketRequest request) {
+        List<Ticket> changeTicketList = new ArrayList<>();
+        if (postTicketOrderNum > preTicketOrderNum) {
+            List<Ticket> tickets = ticketRepository.findAllLowToBigOrderNumber(request.getProjectId(), request.getStatus(), preTicketOrderNum, postTicketOrderNum);
+            decreaseOrderNum(tickets);
+            Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+            changeTicketList.addAll(tickets);
+            changeTicketList.add(updatedTicket);
+        } else if (preTicketOrderNum > postTicketOrderNum) {
+            List<Ticket> tickets = ticketRepository.findAllBigToLowOrderNumber(request.getProjectId(), request.getStatus(), postTicketOrderNum, preTicketOrderNum);
+            increaseOrderNum(tickets);
+            Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+            changeTicketList.addAll(tickets);
+            changeTicketList.add(updatedTicket);
+        }
+        return TicketResponse.from(changeTicketList);
+    }
+
+    private List<TicketResponse> notEqualStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, TicketRequest request,
+                                                TicketStatus preStatus, TicketStatus postStatus) {
         // status가 다를 경우
         // 이전 ticket들을 가져옴, orderNum이 pre 보다 큰
-        List<Ticket> PreStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.getProjectId(), preStatus.name(), preTicketOrderNum);
+        List<Ticket> changeTicketList = new ArrayList<>();
 
-        //-1
-        decreaseOrderNum(PreStatusTickets);
-        changeTicketList.addAll(PreStatusTickets);
+        // 기존 status의 tickets
+        List<Ticket> preStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.getProjectId(), preStatus.name(), preTicketOrderNum);
+
+        // 요청된 ticket의 orderNum 보다 큰 orderNum을 가진 ticket들에 대해 -1
+        decreaseOrderNum(preStatusTickets);
+        changeTicketList.addAll(preStatusTickets);
 
 
-
-        // get postTickets
+        // 요청된 status의 tickets
         List<Ticket> postStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.getProjectId(), postStatus.name(), postTicketOrderNum);
 
-        //+1
+        // 요청된 ticket의 orderNum 보다 작은 orderNum을 가진 ticket들에 대해 +1
         increaseOrderNum(postStatusTickets);
-        Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
         changeTicketList.addAll(postStatusTickets);
+        Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
         changeTicketList.add(updatedTicket);
-
-        // 변경될 tickets 들이 있을 경우
-        // 해당하는 ticket들에 대해 +1을 해준다
-
-        // 변경된 ticket들을 반환한다
 
         return TicketResponse.from(changeTicketList);
     }
