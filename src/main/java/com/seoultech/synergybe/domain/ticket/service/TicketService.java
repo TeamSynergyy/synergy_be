@@ -70,12 +70,12 @@ public class TicketService {
      * 3. 변경이 필요한 티켓들에 대해 변경을 반영한다.
      *
      * case 1 동일한 Status일 경우
-     * 요청받은 order 보다 뒤에 존재하는 order가 있을 경우 모두 +1일 해준뒤 업데이트를 한다
+     * 기존 orderNum 보다 클 경우 사잇값 -1
+     * 기존 orderNum 보다 작을 경우 사잇값 +1
      *
      * case 2 다른 Status일 경우
-     * 1. status를 변경한다
-     * 2. 요청받은 order 보다 뒤에 존재하는 order가 있을 경우 해당되는 티켓들을 모두 +1일 해준 뒤 업데이트를 한다
-     * 3. 변경된 티겟들만 정보를 반환한다.
+     * 이전 status의 ticket들의 orderNum이 큰 ticket에 대해 -1
+     * 수정 할 status의 ticket들 중 orderNum이 큰 ticket들에 대해 +1
      */
     public List<TicketResponse> updateTickets(TicketRequest request, User user, Long ticketId) {
         // check User
@@ -85,40 +85,84 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(NotExistTicketException::new);
 
-        // get tickets
-        List<Ticket> tickets = ticketRepository.findAllByProjectIdAndStatusAndOrder(request.getProjectId(), request.getStatus(), request.getOrderNumber());
+        List<Ticket> changeTicketList = new ArrayList<>();
 
+        boolean isEqualStatus = false;
+
+        // 동일 status 인지 check
+        TicketStatus preStatus = ticket.getStatus();    // 이전 ticket의 상태
+        TicketStatus postStatus = checkStatus(request.getStatus()); // 이후 ticket의 상태
+
+        if (preStatus.equals(postStatus)) {
+            isEqualStatus = true;
+        }
+
+        Integer preTicketOrderNum = ticket.getOrderNumber();    // 이전 ticket의 index 번호
+        Integer postTicketOrderNum = request.getOrderNumber();  // 이후 ticket의 index 번호
+
+        // assignedUser 추가
         if (request.getAssignedUserIds() != null) {
-            // assignedUser 추가
             List<User> assignedUsers = userService.getUsers(request.getAssignedUserIds());
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }
         }
 
-
-        // 추가로 변경될 tickets 들이 있는지 check
-        // 변경될 tickets들이 없을 경우
-        if (tickets.isEmpty()) {
-            List<Ticket> changeTicketList = new ArrayList<>();
-            Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
-            changeTicketList.add(updatedTicket);
+        // status가 동일할 경우
+        if (isEqualStatus) {
+            if (postTicketOrderNum > preTicketOrderNum) {
+                List<Ticket> tickets = ticketRepository.findAllLowToBigOrderNumber(request.getProjectId(), request.getStatus(), preTicketOrderNum, postTicketOrderNum);
+                decreaseOrderNum(tickets);
+                Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+                changeTicketList.addAll(tickets);
+                changeTicketList.add(updatedTicket);
+            } else if (preTicketOrderNum > postTicketOrderNum) {
+                List<Ticket> tickets = ticketRepository.findAllBigToLowOrderNumber(request.getProjectId(), request.getStatus(), postTicketOrderNum, preTicketOrderNum);
+                increaseOrderNum(tickets);
+                Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+                changeTicketList.addAll(tickets);
+                changeTicketList.add(updatedTicket);
+            }
             return TicketResponse.from(changeTicketList);
         }
+
+        // status가 다를 경우
+        // 이전 ticket들을 가져옴, orderNum이 pre 보다 큰
+        List<Ticket> PreStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.getProjectId(), preStatus.name(), preTicketOrderNum);
+
+        //-1
+        decreaseOrderNum(PreStatusTickets);
+        changeTicketList.addAll(PreStatusTickets);
+
+
+
+        // get postTickets
+        List<Ticket> postStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.getProjectId(), postStatus.name(), postTicketOrderNum);
+
+        //+1
+        increaseOrderNum(postStatusTickets);
+        Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+        changeTicketList.addAll(postStatusTickets);
+        changeTicketList.add(updatedTicket);
 
         // 변경될 tickets 들이 있을 경우
         // 해당하는 ticket들에 대해 +1을 해준다
 
-        List<Ticket> changeTicketList = new ArrayList<>();
-        for (Ticket changeTicket : tickets) {
-            changeTicketList.add(changeTicket.increaseOrderNum());
-        }
-        Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
-        changeTicketList.add(updatedTicket);
-
         // 변경된 ticket들을 반환한다
 
         return TicketResponse.from(changeTicketList);
+    }
+
+    private void increaseOrderNum(List<Ticket> tickets) {
+        for (Ticket ticket : tickets) {
+            ticket.increaseOrderNum();
+        }
+    }
+
+    private void decreaseOrderNum(List<Ticket> tickets) {
+        for (Ticket ticket : tickets) {
+            ticket.decreaseOrderNum();
+        }
     }
 
     // check user authentication
