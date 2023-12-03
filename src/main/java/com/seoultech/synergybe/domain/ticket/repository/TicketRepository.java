@@ -14,7 +14,24 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByProjectId(@Param("projectId") Long projectId);
 
     @Query(value = "SELECT * FROM ticket WHERE project_id = :projectId AND status = UPPER(:status) AND order_number >= :orderNumber", nativeQuery = true)
-    List<Ticket> findAllByProjectIdAndStatusAndOrder(@Param("projectId") Long projectId, @Param("status") String status, @Param("orderNumber") Integer orderNumber);
+    List<Ticket> findAllByBiggerOrderNumber(@Param("projectId") Long projectId, @Param("status") String status, @Param("orderNumber") Integer orderNumber);
+
+    @Query(value = "SELECT * " +
+            "FROM ticket " +
+            "WHERE project_id = :projectId " +
+            "  AND status = UPPER(:status) " +
+            "  AND order_number > :lowOrderNum " +
+            "  AND order_number <= :bigOrderNum", nativeQuery = true)
+    List<Ticket> findAllLowToBigOrderNumber(@Param("projectId") Long projectId, @Param("status") String status, @Param("lowOrderNum") Integer lowOrderNum, @Param("bigOrderNum") Integer bigOrderNum);
+
+    @Query(value = "SELECT * " +
+            "FROM ticket " +
+            "WHERE project_id = :projectId " +
+            "  AND status = UPPER(:status) " +
+            "  AND order_number >= :lowOrderNum " +
+            "  AND order_number < :bigOrderNum", nativeQuery = true)
+    List<Ticket> findAllBigToLowOrderNumber(@Param("projectId") Long projectId, @Param("status") String status, @Param("lowOrderNum") Integer lowOrderNum, @Param("bigOrderNum") Integer bigOrderNum);
+
 
     @Query(value = "SELECT COALESCE(COUNT(*), 1) "
             + "FROM ticket " +
