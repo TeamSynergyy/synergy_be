@@ -3,7 +3,6 @@ package com.seoultech.synergybe.domain.ticket;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.ticket.dto.TicketRequest;
 import com.seoultech.synergybe.domain.ticketUser.TicketUser;
-import com.seoultech.synergybe.domain.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +23,7 @@ import java.util.List;
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ticket_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,6 +31,9 @@ public class Ticket {
     private Project project;
 
     private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
     private String tag;
     private String tagColor;
     private Double assignedTime;
@@ -48,9 +51,10 @@ public class Ticket {
     private boolean isDeleted;
 
     @Builder
-    public Ticket(String title, Integer orderNumber, String tag, LocalDateTime endAt, Project project, TicketStatus status,
+    public Ticket(String title, String content, Integer orderNumber, String tag, LocalDateTime endAt, Project project, TicketStatus status,
                   String tagColor, Double assignedTime) {
         this.title = title;
+        this.content = content;
         this.tag = tag;
         this.endAt = endAt;
         this.orderNumber = orderNumber;
@@ -63,6 +67,7 @@ public class Ticket {
 
     public Ticket update(TicketRequest request, TicketStatus status) {
         this.title = request.getTitle();
+        this.content = request.getContent();
         this.tag = request.getTag();
         this.orderNumber = request.getOrderNumber();
         this.status = status;
@@ -72,6 +77,12 @@ public class Ticket {
 
     public Ticket increaseOrderNum() {
         this.orderNumber += 1;
+
+        return this;
+    }
+
+    public Ticket decreaseOrderNum() {
+        this.orderNumber -=1;
 
         return this;
     }
