@@ -5,6 +5,8 @@ import com.seoultech.synergybe.domain.follow.FollowStatus;
 import com.seoultech.synergybe.domain.follow.dto.request.FollowType;
 import com.seoultech.synergybe.domain.follow.dto.response.FollowResponse;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
+import com.seoultech.synergybe.domain.notification.NotificationType;
+import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.exception.NotExistFollowException;
@@ -21,6 +23,7 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     private final UserService userService;
+    private final NotificationService notificationService;
 
     public List<String> findFollowingIdsByUserId(String userId) {
         return followRepository.findFollowingIdsByFollowerId(userId);
@@ -52,6 +55,8 @@ public class FollowService {
 
         if (followOptional.isPresent()) {
             followOptional.get().updateStatus(status);
+            User following = userService.getUser(followingId);
+            notificationService.send(following, NotificationType.FOLLOW, "팔로우 신청이 완료되었습니다.", Long.valueOf(followingId));
 
             return followOptional.get();
         } else {
@@ -60,6 +65,7 @@ public class FollowService {
                     .follower(user)
                     .following(following)
                     .build();
+            notificationService.send(following, NotificationType.FOLLOW, "팔로우 신청이 완료되었습니다.", Long.valueOf(followingId));
 
             return followRepository.saveAndFlush(follow);
         }

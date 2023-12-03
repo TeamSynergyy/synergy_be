@@ -6,6 +6,8 @@ import com.seoultech.synergybe.domain.apply.dto.response.ApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ListApplyUserResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
+import com.seoultech.synergybe.domain.notification.NotificationType;
+import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
@@ -30,6 +32,7 @@ public class ApplyService {
     private final ProjectService projectService;
     private final ProjectUserRepository projectUserRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     public ApplyResponse createApply(User user, Long projectId) {
         Project project = projectService.findProjectById(projectId);
@@ -37,6 +40,9 @@ public class ApplyService {
         Apply apply = Apply.builder()
                 .user(user).project(project).build();
         Apply savedApply = applyRepository.save(apply);
+        // 리더에게 알림
+        User leader = userService.getUser(projectService.getProject(projectId).getLeaderId());
+        notificationService.send(leader, NotificationType.PROJECT_APPLY, "프로젝트 신청이 완료되었습니다.", projectId);
 
         return ApplyResponse.from(savedApply);
     }
@@ -67,6 +73,9 @@ public class ApplyService {
             ProjectUser projectUser = new ProjectUser(project, user);
             project.getProjectUsers().add(projectUser);
             projectUserRepository.save(projectUser);
+            User applyUser = userService.getUser(userId);
+
+            notificationService.send(applyUser, NotificationType.PROJECT_ACCEPT, "신청이 수락되었습니다.", projectId);
 
             return AcceptApplyResponse.from(applyOptional.get());
         } else {
@@ -79,6 +88,8 @@ public class ApplyService {
 
         if (applyOptional.isPresent()) {
             applyOptional.get().acceptedApplyStatus();
+            User applyUser = userService.getUser(userId);
+            notificationService.send(applyUser, NotificationType.PROJECT_REJECT, "신청이 거절되었습니다.", projectId);
 
             return RejectApplyResponse.from(applyOptional.get());
         } else {
