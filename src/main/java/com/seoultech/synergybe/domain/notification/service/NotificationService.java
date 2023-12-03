@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-    private static final Long DEFAULT_TIMEOUT = 1000 * 30L;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
     private final EmitterRepository emitterRepository;
 
@@ -49,9 +49,9 @@ public class NotificationService {
         }
     }
 
-    public void send(User receiver, NotificationType type, String content) {
+    public void send(User receiver, NotificationType type, String content, Long id) {
         Notification notification = Notification.builder()
-                .user(receiver).type(type).content(content).build();
+                .user(receiver).type(type).content(content).entityId(id).build();
         String userId = receiver.getUserId();
 
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(userId);
@@ -65,5 +65,13 @@ public class NotificationService {
                     System.out.println("데이터 전송");
                 }
         );
+    }
+
+    private Notification createNotification(User receiver, String content) {
+        return Notification.builder()
+                .user(receiver)
+                .content(content)
+                .isRead(false)
+                .build();
     }
 }
