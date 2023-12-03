@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.ticket.TicketStatus;
-import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,6 +15,7 @@ import java.util.List;
 public class TicketRequest {
     private Long projectId;
     private String title;
+    private String content;
     private String tag;
     private String tagColor;
     private Integer orderNumber;
@@ -29,6 +29,7 @@ public class TicketRequest {
     public Ticket toEntity(Project project, TicketStatus status, Integer orderNumber) {
         return Ticket.builder()
                 .title(title)
+                .content(content)
                 .tag(tag)
                 .orderNumber(orderNumber)
                 .endAt(endAt)
