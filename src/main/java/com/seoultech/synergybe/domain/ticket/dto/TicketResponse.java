@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ public class TicketResponse {
     private TicketStatus status;
     private List<String> assignedUserIds;
     private Double assignedTime;
+    private LocalDateTime endAt;
 
     public static TicketResponse from(Ticket ticket) {
         return TicketResponse.builder()
@@ -34,6 +36,7 @@ public class TicketResponse {
                 .status(ticket.getStatus())
                 .assignedUserIds(ticket.getTicketUsers().stream().map(ticketUser -> ticketUser.getUser().getUserId()).collect(Collectors.toList()))
                 .assignedTime(ticket.getAssignedTime())
+                .endAt(ticket.getEndAt())
                 .build();
     }
 
@@ -49,6 +52,7 @@ public class TicketResponse {
                         .status(ticket.getStatus())
                         .assignedUserIds(ticket.getTicketUsers().stream().map(ticketUser -> ticketUser.getUser().getUserId()).collect(Collectors.toList()))
                         .assignedTime(ticket.getAssignedTime())
+                        .endAt(ticket.getEndAt())
                         .build())
                 .collect(Collectors.toList());
     }
