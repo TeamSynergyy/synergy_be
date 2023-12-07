@@ -30,21 +30,29 @@ public class TicketController {
     @GetMapping(value = "/{projectId}")
     public ResponseEntity<List<TicketResponse>> getTicketList(@PathVariable("projectId") Long projectId) {
 
-        return ResponseEntity.ok(ticketService.getTicketList(projectId));
+        return ResponseEntity.ok().body(ticketService.getTicketList(projectId));
     }
 
     @PutMapping(value = "/{ticketId}")
-    public ResponseEntity<List<TicketResponse>> updateTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId,
+    public ResponseEntity<TicketResponse> updateTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId,
+                                                       @RequestBody TicketRequest request) {
+        User user = userService.findUserById(userId);
+
+        return ResponseEntity.ok().body(ticketService.updateTicket(request, user, ticketId));
+    }
+
+    @PutMapping(value = "/change/{ticketId}")
+    public ResponseEntity<List<TicketResponse>> changeTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId,
                                                        @RequestBody TicketRequest request) {
         User allocatedUser = userService.findUserById(userId);
 
-        return ResponseEntity.ok(ticketService.updateTickets(request, allocatedUser, ticketId));
+        return ResponseEntity.ok().body(ticketService.changeTickets(request, allocatedUser, ticketId));
     }
 
     @DeleteMapping(value = "/{ticketId}")
     public ResponseEntity<TicketResponse> deleteTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId) {
         User allocatedUser = userService.findUserById(userId);
 
-        return ResponseEntity.ok(ticketService.deleteTicket(ticketId, allocatedUser));
+        return ResponseEntity.ok().body(ticketService.deleteTicket(ticketId, allocatedUser));
     }
 }

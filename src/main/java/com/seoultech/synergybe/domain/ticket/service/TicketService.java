@@ -11,7 +11,6 @@ import com.seoultech.synergybe.domain.ticketUser.service.TicketUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.exception.InvalidAccessException;
-import com.seoultech.synergybe.system.exception.InvalidUpdateTicketException;
 import com.seoultech.synergybe.system.exception.NotExistTicketException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +77,7 @@ public class TicketService {
      * 이전 status의 ticket들의 orderNum이 큰 ticket에 대해 -1
      * 수정 할 status의 ticket들 중 orderNum이 큰 ticket들에 대해 +1
      */
-    public List<TicketResponse> updateTickets(TicketRequest request, User user, Long ticketId) {
+    public List<TicketResponse> changeTickets(TicketRequest request, User user, Long ticketId) {
         // check User
         List<User> authUsers = projectService.getUserListByProject(request.getProjectId());
         checkUser(authUsers, user);
@@ -100,7 +99,10 @@ public class TicketService {
         Integer postTicketOrderNum = request.getOrderNumber();  // 이후 ticket의 index 번호
 
         // assignedUser 추가
-        if (request.getAssignedUserIds() != null) {
+        if (!request.getAssignedUserIds().isEmpty()) {
+            // 기존 assignedUser을 삭제 후 추가해야함
+            ticket.deleteAssignedUsers();
+            ticketUserService.deleteAssignedUser(ticket);
             List<User> assignedUsers = userService.getUsers(request.getAssignedUserIds());
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
@@ -208,6 +210,30 @@ public class TicketService {
         checkUser(authUsers, user);
 
         ticketRepository.delete(ticket);
+
+        return TicketResponse.from(ticket);
+    }
+
+    public TicketResponse updateTicket(TicketRequest request, User user, Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(NotExistTicketException::new);
+        // check User
+        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getId());
+        checkUser(authUsers, user);
+
+        // assignedUser 수정
+        if (!request.getAssignedUserIds().isEmpty()) {
+            // 기존 assignedUser을 삭제 후 추가해야함
+            ticket.deleteAssignedUsers();
+            ticketUserService.deleteAssignedUser(ticket);
+
+            List<User> assignedUsers = userService.getUsers(request.getAssignedUserIds());
+            for (User assignedUser : assignedUsers) {
+                ticketUserService.createTicketUser(ticket, assignedUser);
+            }
+        }
+
+        ticket.update(request, checkStatus(request.getStatus()));
 
         return TicketResponse.from(ticket);
     }

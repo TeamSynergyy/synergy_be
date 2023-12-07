@@ -86,4 +86,8 @@ public class Ticket {
 
         return this;
     }
+
+    public void deleteAssignedUsers() {
+        ticketUsers.clear();
+    }
 }

@@ -137,21 +137,11 @@ public class ProjectService {
 
     // todo
     // 현재 user가 참여하고 있는 projectList가 필요함
-    // leaderId로 찾을 수 있고
-    // projectMember를 통해서 project를 찾을 수 있음
     // 현재 진행중인 프로젝트만 찾아야 함
     public ListProjectResponse getProjectListByUser(String userId) {
+        List<Long> projectIds = projectUserService.getProjectIdsByUserId(userId);
 
-        List<Long> projectIds = applyRepository.findProjectIdsByUserId(userId);
-
-        List<Project> projectsByUserId = projectRepository.findAllById(projectIds);
-
-        List<Project> projectsByLeader = projectRepository.findAllByLeaderId(userId);
-
-        List<Project> combinedProjects = Stream.concat(projectsByUserId.stream(), projectsByLeader.stream())
-                .collect(Collectors.toList());
-
-        return ListProjectResponse.from(ProjectResponse.from(combinedProjects));
+        return ListProjectResponse.from(ProjectResponse.from(projectRepository.findAllById(projectIds)));
     }
 
     public ListProjectResponse getRecommendListByUser(User user, Long end) {

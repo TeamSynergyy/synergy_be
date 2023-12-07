@@ -34,6 +34,7 @@ public class PostLike {
         this.user = user;
         this.post = post;
         this.status = LikeStatus.LIKE;
+        post.getLikes().add(this);
     }
 
     public void updateStatus(LikeStatus status) {

@@ -30,4 +30,8 @@ public class TicketUserService {
     public List<String> getTicketUserIds(Long ticketId) {
         return ticketUserRepository.findTicketUserIdsByTicketId(ticketId);
     }
+
+    public void deleteAssignedUser(Ticket ticket) {
+        ticketUserRepository.deleteAllByTicket(ticket);
+    }
 }
