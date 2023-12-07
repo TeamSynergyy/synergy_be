@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Where(clause = "is_deleted = false")
-@SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE post_id = ?")
+@SQLDelete(sql = "UPDATE apply SET is_deleted = true WHERE apply_id = ?")
 public class Apply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,11 @@ public class Apply {
         this.isDeleted = false;
     }
 
-    public void acceptedApplyStatus() {
+    public void accepted() {
         this.status = ApplyStatus.COMPLETED;
+    }
+
+    public void rejected() {
+        this.status = ApplyStatus.REJECTED;
     }
 }
