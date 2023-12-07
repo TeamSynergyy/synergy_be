@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.ticketUser.repository;
 
+import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.ticketUser.TicketUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,6 @@ public interface TicketUserRepository extends JpaRepository<TicketUser, Long> {
 
     @Query(value = "SELECT user_id FROM ticket_user WHERE ticket_id = :ticketId", nativeQuery = true)
     List<String> findTicketUserIdsByTicketId(@Param("ticketId") Long ticketId);
+
+    void deleteAllByTicket(Ticket ticket);
 }
