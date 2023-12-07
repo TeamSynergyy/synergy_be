@@ -12,11 +12,13 @@ import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistNoticeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class NoticeService {
     private final NoticeRepository noticeRepository;
