@@ -34,10 +34,10 @@ public class Notification {
     }
 
     @Builder
-    public Notification(User user, Boolean isRead, String content, NotificationType type, Long entityId) {
+    public Notification(User user, String content, NotificationType type, Long entityId) {
         this.user = user;
         this.content = content;
-        this.isRead = isRead;
+        this.isRead = false;
         this.type = type;
         this.entityId = entityId;
     }
