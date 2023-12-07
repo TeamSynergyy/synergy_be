@@ -18,6 +18,7 @@ import com.seoultech.synergybe.system.exception.NotExistApplyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ApplyService {
     private final ApplyRepository applyRepository;
@@ -40,6 +42,7 @@ public class ApplyService {
         Apply apply = Apply.builder()
                 .user(user).project(project).build();
         Apply savedApply = applyRepository.save(apply);
+
         // 리더에게 알림
         User leader = userService.getUser(projectService.getProject(projectId).getLeaderId());
         notificationService.send(leader, NotificationType.PROJECT_APPLY, "프로젝트 신청이 완료되었습니다.", projectId);
@@ -60,45 +63,46 @@ public class ApplyService {
     }
 
     public AcceptApplyResponse acceptApply(String userId, Long projectId) {
-        log.info(">> userId {}",userId);
-        Optional<Apply> applyOptional = applyRepository.findByUserIdAndProjectId(userId, projectId);
+        Apply apply = applyRepository.findByUserIdAndProjectId(userId, projectId)
+                .orElseThrow(NotExistApplyException::new);
 
-        if (applyOptional.isPresent()) {
-            Apply acceptedApply = applyOptional.get();
-            acceptedApply.acceptedApplyStatus();
-            applyRepository.save(acceptedApply);
-            Project project = projectService.findProjectById(projectId);
-            User user = userService.getUser(userId);
+        apply.accepted();
+        Project project = projectService.findProjectById(projectId);
+        User user = userService.getUser(userId);
 
-            ProjectUser projectUser = new ProjectUser(project, user);
-            project.getProjectUsers().add(projectUser);
-            projectUserRepository.save(projectUser);
-            User applyUser = userService.getUser(userId);
 
-            notificationService.send(applyUser, NotificationType.PROJECT_ACCEPT, "신청이 수락되었습니다.", projectId);
+        // projectUser 추가
+        ProjectUser projectUser = new ProjectUser(project, user);
+        project.getProjectUsers().add(projectUser);
+        projectUserRepository.save(projectUser);
+        User applyUser = userService.getUser(userId);
 
-            return AcceptApplyResponse.from(applyOptional.get());
-        } else {
-            throw new NotExistApplyException();
-        }
+        // apply 삭제
+//        applyRepository.delete(apply);
+
+        // 알림 발송
+        notificationService.send(applyUser, NotificationType.PROJECT_ACCEPT, "신청이 수락되었습니다.", projectId);
+
+        return AcceptApplyResponse.from(apply);
     }
 
     public RejectApplyResponse rejectApply(String userId, Long projectId) {
-        Optional<Apply> applyOptional = applyRepository.findByUserIdAndProjectId(userId, projectId);
+        Apply apply = applyRepository.findByUserIdAndProjectId(userId, projectId)
+                .orElseThrow(NotExistApplyException::new);
+        apply.rejected();
 
-        if (applyOptional.isPresent()) {
-            applyOptional.get().acceptedApplyStatus();
-            User applyUser = userService.getUser(userId);
-            notificationService.send(applyUser, NotificationType.PROJECT_REJECT, "신청이 거절되었습니다.", projectId);
+        // apply 삭제
+        applyRepository.delete(apply);
 
-            return RejectApplyResponse.from(applyOptional.get());
-        } else {
-            throw new NotExistApplyException();
-        }
+        // 알림 발송
+        User applyUser = userService.getUser(userId);
+        notificationService.send(applyUser, NotificationType.PROJECT_REJECT, "신청이 거절되었습니다.", projectId);
+
+        return RejectApplyResponse.from(apply);
     }
 
     public List<ApplyResponse> getMyApplyList(User user) {
-        List<Apply> applies = applyRepository.findAllByUserId(user.getUserId());
+        List<Apply> applies = applyRepository.findAllProcessByUserId(user.getUserId());
 
         return ApplyResponse.from(applies);
 
@@ -111,9 +115,5 @@ public class ApplyService {
         List<User> users = userService.getUsers(userIds);
 
         return ListApplyUserResponse.from(users);
-    }
-
-    public List<Long> getProjectIdsByUserId(String userId) {
-        return applyRepository.findProjectIdsByUserId(userId);
     }
 }
