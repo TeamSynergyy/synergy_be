@@ -18,11 +18,13 @@ import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistPostException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -93,6 +96,10 @@ public class PostService {
         Post post = this.findPostById(postId);
         List<String> imagesUrl = imageService.getImageUrlByPostId(postId);
 
+        if (imagesUrl.isEmpty()) {
+            return PostResponse.from(post);
+        }
+
         return PostResponse.from(post, imagesUrl);
     }
 
@@ -136,6 +143,8 @@ public class PostService {
 
 
 
+    @Transactional(readOnly = true)
+//    @Cacheable(value = "posts", key = "'weekBestPostList'", cacheManager = "contentCacheManager")
     public ListPostResponse getWeekBestPostList() {
         List<Post> posts = postRepository.findAllByLikeAndDate();
 
