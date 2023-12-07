@@ -18,14 +18,16 @@ public class NoticeResponse {
     private String content;
 
     private LocalDateTime updateAt;
+    private Long projectId;
 
-    public NoticeResponse(Long contentId, String content) {
-        this.noticeId = contentId;
-        this.content = content;
-    }
 
     public static NoticeResponse from(Notice notice) {
-        return new NoticeResponse(notice.getId(), notice.getContent());
+        return NoticeResponse.builder()
+                .noticeId(notice.getId())
+                .content(notice.getContent())
+                .updateAt(notice.getUpdateAt())
+                .projectId(notice.getProject().getId())
+                .build();
     }
 
     public static List<NoticeResponse> from(List<Notice> notices) {

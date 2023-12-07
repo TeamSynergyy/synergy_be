@@ -4,6 +4,8 @@ import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.comment.dto.request.CommentRequest;
 import com.seoultech.synergybe.domain.comment.dto.response.CommentResponse;
 import com.seoultech.synergybe.domain.comment.repository.CommentRepository;
+import com.seoultech.synergybe.domain.notification.NotificationType;
+import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.user.User;
@@ -20,10 +22,14 @@ public class CommentService {
 
     private final PostService postService;
 
+    private final NotificationService notificationService;
+
     public CommentResponse createComment(User user, CommentRequest request) {
         Post post = postService.findPostById(request.getPostId());
         Comment savedComment = commentRepository.save(request.toEntity(user, post, request.getComment()));
         savedComment.addPost(post);
+        User postUser = post.getUser();
+        notificationService.send(postUser, NotificationType.COMMENT, "댓글이 생성되었습니다", post.getId());
 
         return CommentResponse.from(savedComment);
     }

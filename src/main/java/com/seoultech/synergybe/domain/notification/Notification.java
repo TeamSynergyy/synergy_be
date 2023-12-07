@@ -19,7 +19,8 @@ public class Notification {
 
     private String content;
 
-    private boolean isRead;
+    private Boolean isRead;
+    private Long entityId;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;
@@ -28,10 +29,16 @@ public class Notification {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public void setRead(Boolean isRead) {
+        this.isRead = isRead;
+    }
+
     @Builder
-    public Notification(User user, String content, NotificationType type) {
+    public Notification(User user, String content, NotificationType type, Long entityId) {
         this.user = user;
         this.content = content;
+        this.isRead = false;
         this.type = type;
+        this.entityId = entityId;
     }
 }
