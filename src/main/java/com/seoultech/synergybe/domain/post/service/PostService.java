@@ -251,7 +251,7 @@ public class PostService {
             List<Long> result = postIds.subList(startIdx, endIdx);
             log.info(">> postIds result {} ", result);
 
-            List<Post> posts = postRepository.findAllById(result);
+            List<Post> posts = postRepository.findAllByIdInOrderByListOrder(result);
 
             return ListPostResponse.from(PostResponse.from(posts));
         } catch (Exception e) {
