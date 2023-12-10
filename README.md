@@ -5,7 +5,7 @@
 ## Table of Contents
 
 - [개요](#개요)
-- [Commit Convention](#Commit Convention)
+- [Commit Convention](#Commit-Convention)
 - [Skils](#skils)
 - [Installation](#Installation)
 - [Directory](#Directory)
@@ -20,10 +20,13 @@
 
 ## 개요
 
+<img src="./public/main.jpg" alt="logo" width="80%" />
+
 본 서비스는 사용자들이 팀 프로젝트를 모집, 진행, 관리하는데 도움을 주며 SNS 기능을 가진 애플리케이션입니다. 이 앱은 진행중인 팀 프로젝트를 모니터링하고 
 사용자들에게 프로젝트, 게시글, 팀원을 추천하여 프로젝트를 쉽고 편하게 진행하고자 하는 목표 달성에 도움이 됩니다.
 
 **(프로젝트, 게시글, 팀원을 추천하는 기능을 통해 원활한 프로젝트 진행을 지원합니다)**
+
 
 
 ## Commit Convention
@@ -43,29 +46,64 @@ Rename :   파일 혹은 폴더명 수정하거나 옮기는 경우
 Remove :   파일을 삭제하는 작업만 수행하는 경우
 ```
 
-## Skils
+## Skills
 
 <div align="center">
 
-언어 및 프레임워크 <br/> ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![SPRING](https://img.shields.io/badge/spring-6DA55F?style=for-the-badge&logo=spring&logoColor=white) ![JAVA](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=Java&logoColor=white)
-<br/>
-데이터 베이스 <br/>![Mysql](https://img.shields.io/badge/mysql-%23316192.svg?style=for-the-badge&logo=mysql&logoColor=white)<br/>
+
+
+<img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=OpenJDK&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Spring-6DB33F?style=flat-square&logo=spring&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=gradle&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=springsecurity&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white">
+<br>
+
+[//]: # (<img src="https://img.shields.io/badge/nGrinder-DA742F?style=flat-square&logo=&logoColor=white">&nbsp;)
+[//]: # (<img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white">&nbsp;)
+<img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat-square&logo=amazonaws&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat-square&logo=amazons3&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat-square&logo=amazonec2&logoColor=white">&nbsp;
+
+[//]: # (<img src="https://img.shields.io/badge/Amazon CodeDeploy-569A31?style=flat-square&logo=&logoColor=white">&nbsp;)
+<img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat-square&logo=amazonrds&logoColor=white">&nbsp;
+
+[//]: # (<img src="https://img.shields.io/badge/Amazon CloudWatch-FF4F8B?style=flat-square&logo=amazoncloudwatch&logoColor=white">&nbsp;)
+[//]: # (<img src="https://img.shields.io/badge/Amazon ELB-005571?style=flat-square&logo=&logoColor=white">&nbsp;)
+<br>
+
+
+
+<img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=flat-square&logo=IntelliJ IDEA&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Github-181717?style=flat-square&logo=github&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/git-F05032?style=flat-square&logo=git&logoColor=white">&nbsp;
+
+<br>
+
 
 </div>
 
-## Installation
+
+## 서비스 최종 성능 정리
+
+**기능 API**
+- Oauth 로그인 기능, JWT 토큰 인증, 인가
+- 게시글, 프로젝트, 유저 추천
+- 게시글, 프로젝트, 유저 조회
+- 프로젝트 업무 티켓 관리 (칸반보드 형식)
+- 프로젝트 신청, 수락, 거절
+- 프로젝트 평가
+
+**대용량 트래픽 처리**
+- 가상 사용자 1만명, 초당 처리
 
 
-```bash
-  # 설치
-  git clone .git
-  
-  # 실행
-  ./gradlew build -x test
-  
-  # 파일위치로 이동 후
-  javac SynergyBeApplication.java
-```
+
+#### 기술도입 배경
+
+
 
 
 ## Directory
@@ -183,33 +221,25 @@ src
 
 ## API Reference
 
-Swagger : https://synergyy.link/swagger-ui/index.html#/
-
-<details>
-<summary>Get all - click</summary>
-<img src="./public/full.png" alt="logo" width="80%" />
-</details>
+### [Swagger-API](https://synergyy.link/swagger-ui/index.html#/)
 
 <br/>
 
-## 프로젝트 진행 및 이슈 관리
+[//]: # (## 프로젝트 진행 및 이슈 관리)
 
-[//]: # ([![Notion]&#40;https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white&#41;]&#40;https://www.notion.so/Team-Careerly-8d62334735154f7f9b9cbba91da21df5&#41;)
-
-[//]: # ([프로젝트 관리 페이지]&#40;https://www.notion.so/Team-Careerly-8d62334735154f7f9b9cbba91da21df5&#41;)
-
-<img src="./public/timeline.png" alt="logo" width="80%" />
+[//]: # ()
+[//]: # ([//]: # &#40;[![Notion]&#40;https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white&#41;]&#40;https://www.notion.so/Team-Careerly-8d62334735154f7f9b9cbba91da21df5&#41;&#41;)
+[//]: # ()
+[//]: # ([//]: # &#40;[프로젝트 관리 페이지]&#40;https://www.notion.so/Team-Careerly-8d62334735154f7f9b9cbba91da21df5&#41;&#41;)
+[//]: # ()
+[//]: # (<img src="./public/timeline.png" alt="logo" width="80%" />)
 
 <br/>
 
 
-## 구현과정(설계 및 의도)
-
-ERD
+## ERD
 
 <img src="./public/synergy_db_erd.png" alt="logo" width="80%" />
-
-[budget_management_erd](https://lucid.app/lucidchart/7e0d6cd7-f045-4cf3-a526-aa78cac905e9/edit?invitationId=inv_ad8e0887-5199-422a-9883-4de20341c21e&page=0_0#)
 
 <details>
 <summary>entity 설계 시 고려사항- click</summary>
@@ -232,13 +262,11 @@ ERD
 <br/>
 
 
-## 코드리뷰 및 에러 해결
 
-### 로그인 회원가입
+## 주요 PR
 
-### 맛집 평가
-- [맛집평가](https://github.com/Wanted-Internship-Team-Careerly/Location-Based-Foodie-Service/pull/15)
-- [맛집상세목록](https://github.com/Wanted-Internship-Team-Careerly/Location-Based-Foodie-Service/pull/35)
+- [티켓 위치 수정](https://github.com/TeamSynergyy/synergy_be/pull/36)
+- [동료평가 반영](https://github.com/TeamSynergyy/synergy_be/pull/25)
 
 <br/>
 
