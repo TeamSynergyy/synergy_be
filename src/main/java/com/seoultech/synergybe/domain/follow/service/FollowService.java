@@ -30,6 +30,13 @@ public class FollowService {
         return followRepository.findFollowingIdsByFollowerId(userId);
     }
 
+    /**
+     *
+     * @param user 신청한 유저
+     * @param followingId 신청 받은 유저
+     * @param type
+     * @return
+     */
     @Transactional
     public FollowResponse updateFollow(User user, String followingId, FollowType type) {
         FollowStatus status;
@@ -57,7 +64,7 @@ public class FollowService {
         if (followOptional.isPresent()) {
             followOptional.get().updateStatus(status);
             User following = userService.getUser(followingId);
-            notificationService.send(following, NotificationType.FOLLOW, "팔로우 신청이 완료되었습니다.", Long.valueOf(followingId));
+//            notificationService.send(following, NotificationType.FOLLOW, "팔로우 신청이 완료되었습니다.", Long.valueOf(followingId));
 
             return followOptional.get();
         } else {
@@ -66,7 +73,7 @@ public class FollowService {
                     .follower(user)
                     .following(following)
                     .build();
-            notificationService.send(following, NotificationType.FOLLOW, "팔로우 신청이 완료되었습니다.", Long.valueOf(followingId));
+//            notificationService.send(following, NotificationType.FOLLOW, "팔로우 신청이 완료되었습니다.", Long.valueOf(followingId));
 
             return followRepository.saveAndFlush(follow);
         }

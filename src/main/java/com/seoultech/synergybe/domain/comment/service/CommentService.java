@@ -31,7 +31,7 @@ public class CommentService {
         Comment savedComment = commentRepository.save(request.toEntity(user, post, request.getComment()));
         savedComment.addPost(post);
         User postUser = post.getUser();
-        notificationService.send(postUser, NotificationType.COMMENT, "댓글이 생성되었습니다", post.getId());
+//        notificationService.send(postUser, NotificationType.COMMENT, "댓글이 생성되었습니다", post.getId());
 
         return CommentResponse.from(savedComment);
     }
