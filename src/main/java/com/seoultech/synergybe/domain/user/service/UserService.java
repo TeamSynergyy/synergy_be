@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -70,6 +72,8 @@ public class UserService {
                 try {
                     return cb.or(
                             cb.like(userRoot.get("username"), "%" + keyword + "%"),
+                            cb.like(userRoot.get("organization"), "%" + keyword + "%"),
+                            cb.like(userRoot.get("skills"), "%" + keyword + "%"),
                             cb.like(userRoot.get("email"), "%" + keyword + "%")
                     );
                 } catch (Exception e) {

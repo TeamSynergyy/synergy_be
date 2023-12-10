@@ -24,11 +24,12 @@ public class UserResponse {
     private String bio;
     private String interestAreas;
     private String skills;
+    private String organization;
 
     public static UserResponse from(User user) {
         return new UserResponse(user.getUserId(), user.getUsername(), user.getEmail(), user.getProfileImageUrl(),
                 "", user.getMajor(), user.getMinor(), user.getTemperature(), user.getBio(), user.getInterestAreas(),
-                user.getSkills());
+                user.getSkills(), user.getOrganization());
     }
 
     public static Page<UserResponse> from(Page<User> users) {
@@ -42,6 +43,7 @@ public class UserResponse {
                 .minor(user.getMinor())
                 .interestAreas(user.getInterestAreas())
                 .skills(user.getSkills())
+                .organization(user.getOrganization())
                 .build()
         );
     }
@@ -59,6 +61,7 @@ public class UserResponse {
                         .minor(user.getMinor())
                         .interestAreas(user.getInterestAreas())
                         .skills(user.getSkills())
+                        .organization(user.getOrganization())
                         .build()
                 ).collect(Collectors.toList());
     }

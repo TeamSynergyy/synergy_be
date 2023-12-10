@@ -38,7 +38,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE p.create_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) AND p.is_deleted = 0 " +
             "GROUP BY p.post_id " +
             "ORDER BY like_count DESC " +
-            "LIMIT 5;"
+            "LIMIT 5"
             , nativeQuery = true)
     List<Post> findAllByLikeAndDate();
+
+    @Query(value = "SELECT * FROM post e WHERE post_id IN :ids ORDER BY FIELD(post_id, :ids)", nativeQuery = true)
+    List<Post> findAllByIdInOrderByListOrder(@Param("ids") List<Long> ids);
 }
