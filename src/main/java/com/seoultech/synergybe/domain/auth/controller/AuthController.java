@@ -12,6 +12,8 @@ import com.seoultech.synergybe.system.config.properties.AppProperties;
 import com.seoultech.synergybe.system.utils.CookieUtil;
 import com.seoultech.synergybe.system.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +29,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "로그인 api")
 public class AuthController {
 
     private final AppProperties appProperties;
@@ -37,6 +40,7 @@ public class AuthController {
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
 
+    @Operation(summary = "로그인", description = "사용자가 로그인을 진행, 토큰을 생성, 만료 체크를 합니다.")
     @PostMapping("/login")
     public ApiResponse login(
             HttpServletRequest request,
@@ -88,6 +92,7 @@ public class AuthController {
         return ApiResponse.success("token", accessToken.getToken());
     }
 
+    @Operation(summary = "refresh token 재발급", description = "access token, refresh token을 통해 사용자식별, 만료시간을 체크한 후 refresh 토큰을 재발급합니다.")
     @GetMapping("/refresh")
     public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
         // access token 확인
