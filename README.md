@@ -46,6 +46,10 @@ Rename :   파일 혹은 폴더명 수정하거나 옮기는 경우
 Remove :   파일을 삭제하는 작업만 수행하는 경우
 ```
 
+## Infra Architecture
+
+<img src="./public/infra_architecture.png" alt="logo" width="80%" />
+
 ## Skills
 
 <div align="center">
@@ -95,15 +99,6 @@ Remove :   파일을 삭제하는 작업만 수행하는 경우
 - 프로젝트 업무 티켓 관리 (칸반보드 형식)
 - 프로젝트 신청, 수락, 거절
 - 프로젝트 평가
-
-**대용량 트래픽 처리**
-- 가상 사용자 1만명, 초당 처리
-
-
-
-#### 기술도입 배경
-
-
 
 
 ## Directory
@@ -221,7 +216,7 @@ src
 
 ## API Reference
 
-### [Swagger-API](https://synergyy.link/swagger-ui/index.html#/)
+### [Swagger-API](https://synergyy.link/api/api-docs/swagger-ui/index.html)
 
 <br/>
 
@@ -253,10 +248,10 @@ src
 - Project 와 Category 관계
     - Category를 하나의 Entity로 만들것인가 ?
     - 혹은 Enum으로만 관리할 것 인가 ?
-        - Entity로 만들어 관리하자
-            - 이유는
-            - Project를 카테고리로 나눌 때 테이블로써 관리하면 장점이 많음
-                - Project는 주요 도메인이므로 자주 사용되므로 테이블로 관리하면 그만큼 생산성 증가 
+      - Enum으로 관리한다(Field로 이름 변경)
+        - Enum 만으로도 분류가 가능하기 때문
+        - 추가적으로 분류에 대한 성능개선이 필요하거나 수요 증가가 예상될 경우 Entity로 구현을 고려
+         
 </details>
 
 <br/>
@@ -267,6 +262,23 @@ src
 
 - [티켓 위치 수정](https://github.com/TeamSynergyy/synergy_be/pull/36)
 - [동료평가 반영](https://github.com/TeamSynergyy/synergy_be/pull/25)
+- [알림 기능](https://github.com/TeamSynergyy/synergy_be/pull/39)
+
+## 발표 PPT
+
+### [시너지_발표](https://docs.google.com/presentation/d/1ZZ_jbi9zRloYs5IJkX9ezwv8QXJWYjZMm2bKW8nblM0/edit#slide=id.g2640e909904_1_91)
+
+
+## 앞으로 진행할 내용들
+
+**대용량 트래픽 처리**
+- 가상 사용자 1천명 -> Jmeter로 진행 예정
+
+**github ci-cd**
+- 빌드 및 배포 자동화
+
+### 기술도입 배경
+내용 작성
 
 <br/>
 

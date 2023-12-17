@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.notification.controller;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController
 @RequestMapping(value = "/api/v1")
 @RequiredArgsConstructor
+@Tag(name = "알림 api")
 public class NotificationController {
     private final NotificationService notificationService;
 
