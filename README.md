@@ -46,6 +46,10 @@ Rename :   파일 혹은 폴더명 수정하거나 옮기는 경우
 Remove :   파일을 삭제하는 작업만 수행하는 경우
 ```
 
+## Infra Architecture
+
+<img src="./public/infra_architecture.png" alt="logo" width="80%" />
+
 ## Skills
 
 <div align="center">
@@ -95,15 +99,6 @@ Remove :   파일을 삭제하는 작업만 수행하는 경우
 - 프로젝트 업무 티켓 관리 (칸반보드 형식)
 - 프로젝트 신청, 수락, 거절
 - 프로젝트 평가
-
-**대용량 트래픽 처리**
-- 가상 사용자 1만명, 초당 처리
-
-
-
-#### 기술도입 배경
-
-
 
 
 ## Directory
@@ -221,7 +216,7 @@ src
 
 ## API Reference
 
-### [Swagger-API](https://synergyy.link/swagger-ui/index.html#/)
+### [Swagger-API](https://synergyy.link/api/api-docs/swagger-ui/index.html)
 
 <br/>
 
@@ -267,6 +262,22 @@ src
 
 - [티켓 위치 수정](https://github.com/TeamSynergyy/synergy_be/pull/36)
 - [동료평가 반영](https://github.com/TeamSynergyy/synergy_be/pull/25)
+
+## 발표 PPT
+
+### [시너지_발표](https://docs.google.com/presentation/d/1ZZ_jbi9zRloYs5IJkX9ezwv8QXJWYjZMm2bKW8nblM0/edit#slide=id.g2640e909904_1_91)
+
+
+## 앞으로 진행할 내용들
+
+**대용량 트래픽 처리**
+- 가상 사용자 1천명 -> Jmeter로 진행 예정
+
+**github ci-cd**
+- 빌드 및 배포 자동화
+
+### 기술도입 배경
+내용 작성
 
 <br/>
 
