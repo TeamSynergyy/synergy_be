@@ -5,7 +5,6 @@
 ## Table of Contents
 
 - [개요](#개요)
-- [Commit Convention](#Commit-Convention)
 - [Skils](#skils)
 - [Installation](#Installation)
 - [Directory](#Directory)
@@ -27,24 +26,6 @@
 
 **(프로젝트, 게시글, 팀원을 추천하는 기능을 통해 원활한 프로젝트 진행을 지원합니다)**
 
-
-
-## Commit Convention
-
-```
-Feat :	   새로운 기능 추가
-Fix : 	   버그 수정
-Docs : 	   문서 수정
-Style :    코드 포맷팅, 세미콜론 누락, 코드 변경이 없는 경우
-Refactor : 코드 리펙토링
-Test : 	   테스트(테스트 코드 추가, 수정, 삭제, 비즈니스 로직에 변경이 없는 경우)
-Chore :    위에 걸리지 않는 기타 변경사항 (빌드 스크립트 수정, assets image, 패키지 매니저 등)
-Design :   CSS 등 사용자 UI 디자인 변경
-Comment :  필요한 주석 추가 및 변경
-Init :     프로젝트 초기 생성
-Rename :   파일 혹은 폴더명 수정하거나 옮기는 경우
-Remove :   파일을 삭제하는 작업만 수행하는 경우
-```
 
 ## Infra Architecture
 
@@ -253,6 +234,85 @@ src
         - 추가적으로 분류에 대한 성능개선이 필요하거나 수요 증가가 예상될 경우 Entity로 구현을 고려
          
 </details>
+
+## Main Service Architecture
+
+
+
+
+## Membership Service
+
+고객의 회원 가입, 로그인, 회원 정보 변경, 회원 정보 조회 등의 기능을 제공하는 서비스입니다.
+- OAuth와 JWT를 활용하여 회원의 인증과 인가 처리를 수행하며, 이를 통해 소셜 로그인 시 Access Token과 Refresh Token을 이용하여 인증 과정을 완료합니다.
+
+기능
+- 로그인(첫 소셜로그인시 자동 회원가입)
+- 회원 정보 변경
+
+### API Lists
+- login
+- updateMyInfo
+
+#### Using stack
+- Spring Boot, Java 11, Spring Data JPA, Mysql, Lombok, Gradle, JWT
+
+### Sequence Diagram Example (회원 가입, JWT 토큰 인증 프로세스)
+
+<img src="./public/socialLogin.jpg" alt="logo" width="80%" />
+
+## Recommend Service
+
+사용자가 가진 활동들을 바탕으로 사용자에게 알맞는 컨텐츠(게시글, 프로젝트, 유저)를 추천해주는 기능을 제공하는 서비스입니다.
+- 추천 알고리즘으로 채택한 LightFM 모델은 콘텐츠 기반 방식과 협업 필터링을 결합한 하이브리드 행렬 분해 모델
+  - 채택한 이유는 사용자와 아이템을 그들의 콘텐츠 특성의 잠재 요인들로 표현하며, 상호작용 데이터가 부족한 콜드 스타트 상황에서도 효과적이므로
+    - 추천 기능이 동작하는 FastAPI 서버를 docker Image화 하여 docker 컨테이너 위에서 실행 (메인서버 또한 Image화 하여 컨테이너위에서 실행)
+    - DB와 메인 서버로부터 데이터와 API 요청을 받아 모델학습 및 추천을 수행
+
+### API List
+
+- getRecommendProjects
+- getRecommendPosts
+- getSimilarUsers
+
+### Sequence Diagram Example (컨텐츠 추천 프로세스)
+
+<img src="./public/recommendProject.png" alt="logo" width="80%" />
+
+## Project Service
+
+사용자가 팀원을 구성하며 팀 프로젝트를 진행하며 공지시항, 일정, 티켓 관리, 평가 등의
+기능을 제공하는 서비스입니다.
+
+- 티켓 관리 기능의 경우 티켓을 칸반보드로 관리하는 기능으로 각 Status별로 나누어 티켓들을 올바른 위치로 이동하게끔 구현
+
+### API List
+- createTicket
+- getTicketList
+- updateTicket
+- changePositionTicket
+- deleteTicket
+
+### Sequence Diagram Example (티켓 위치 변경 프로세스)
+
+<img src="./public/ticketPositionUpdate.png" alt="logo" width="80%" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <br/>
 
