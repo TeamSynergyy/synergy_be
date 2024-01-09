@@ -71,6 +71,7 @@ public class SecurityConfig {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().permitAll()
 //                .antMatchers("/swagger-ui/**").permitAll()
+//                .antMatchers("/refresh/**").permitAll() // '/refresh/{userId}' 경로에 대한 접근 허용(tokenAuthenticationFilter 회피)
 //                .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
 //                .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
 //                .anyRequest().authenticated()
