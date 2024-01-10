@@ -218,20 +218,21 @@ src
 <img src="./public/synergy_db_erd.png" alt="logo" width="80%" />
 
 <details>
-<summary>entity 설계 시 고려사항- click</summary>
+<summary>테이블 관계 - click</summary>
 
 - 주요 도메인으로 user, post, project, notification 으로 나눈다
+- Project 와 Category 관계
+    - Category를 하나의 테이블로 만들것인가 ? (정규화 고려)
+    - 혹은 Enum으로만 관리할 것 인가 ?
+        - Enum으로 관리한다(Field로 이름 변경)
+            - Enum 만으로도 분류가 가능하기 때문
+            - 추가적으로 분류에 대한 성능개선이 필요하거나 수요 증가가 예상될 경우 Entity로 구현을 고려하여 정규화를 진행한다
 - Project 와 User 관계
     - Project 와 User는 N 대 N 관계로 설정한다. 이유는 Project(프로젝트)는 User(사용자) 를 여러명 가질 수 있고 반대로 User는 여러 Project를 수행할 수 있으므로
         - 추가로 고려할 사항
             - Project의 요구사항이 늘어남에 따라 User의 정보를 Project 내에서도 양방향 관계로 관리하는게 맞을까 ?
             - 현재는 Project가 여러 User를 가진다는 개념이므로 양방향으로 매핑을 해주자
-- Project 와 Category 관계
-    - Category를 하나의 Entity로 만들것인가 ?
-    - 혹은 Enum으로만 관리할 것 인가 ?
-      - Enum으로 관리한다(Field로 이름 변경)
-        - Enum 만으로도 분류가 가능하기 때문
-        - 추가적으로 분류에 대한 성능개선이 필요하거나 수요 증가가 예상될 경우 Entity로 구현을 고려
+
          
 </details>
 
@@ -240,7 +241,7 @@ src
 
 
 
-## Membership Service
+## User Service
 
 고객의 회원 가입, 로그인, 회원 정보 변경, 회원 정보 조회 등의 기능을 제공하는 서비스입니다.
 - OAuth와 JWT를 활용하여 회원의 인증과 인가 처리를 수행하며, 이를 통해 소셜 로그인 시 Access Token과 Refresh Token을 이용하여 인증 과정을 완료합니다.
@@ -250,8 +251,10 @@ src
 - 회원 정보 변경
 
 ### API Lists
-- login
-- updateMyInfo
+- login (users/auth/login)
+  - 로그인, 회원가입을 수행합니다. 로그인 성공시 token을 발급하며 이후 요청에 대해서 해당 토큰으로 인증을 진행합니다.
+- updateMyInfo (users/me/info)
+  - 회원 정보를 변경합니다.
 
 #### Using stack
 - Spring Boot, Java 11, Spring Data JPA, Mysql, Lombok, Gradle, JWT
@@ -270,13 +273,16 @@ src
 
 ### API List
 
-- getRecommendProjects
-- getRecommendPosts
-- getSimilarUsers
+- getRecommendProjects (projects/recommend)
+  - 유저 활동을 바탕으로 적합한 프로젝트를 추천합니다.
+- getRecommendPosts (posts/recommend)
+  - 유저 활동을 바탕으로 적합한 게시글을 추천합니다.
+- getSimilarUsers (users/recommend)
+  - 유저 활동을 바탕으로 적합한 유저를 추천합니다.
 
 ### Sequence Diagram Example (컨텐츠 추천 프로세스)
 
-<img src="./public/recommendProject.png" alt="logo" width="80%" />
+<img src="./public/recommend.png" alt="logo" width="80%" />
 
 ## Project Service
 
@@ -286,36 +292,49 @@ src
 - 티켓 관리 기능의 경우 티켓을 칸반보드로 관리하는 기능으로 각 Status별로 나누어 티켓들을 올바른 위치로 이동하게끔 구현
 
 ### API List
-- createTicket
-- getTicketList
-- updateTicket
-- changePositionTicket
-- deleteTicket
+- changePositionTicket (tickets/change/{ticketId})
+  - 티켓 위치 변경 기능을 제공합니다.
+
+### Sequence Diagram Example (프로젝트 팀원 참가 신청 프로세스)
+
+<img src="./public/apply.png" alt="logo" width="80%" />
 
 ### Sequence Diagram Example (티켓 위치 변경 프로세스)
 
-<img src="./public/ticketPositionUpdate.png" alt="logo" width="80%" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<img src="./public/ticket.png" alt="logo" width="80%" />
 
 
 <br/>
 
+## 영상시연
+
+### 소셜로그인, 팔로우
+
+[![Video Label](https://img.youtube.com/vi/ne0khow7KBA/0.jpg)](https://youtu.be/ne0khow7KBA)
+
+### 무한스크롤
+
+[![Video Label](https://img.youtube.com/vi/Tb8-YXE3J3s/0.jpg)](https://youtu.be/Tb8-YXE3J3s)
+
+### 컨텐츠 추천
+
+[![Video Label](https://img.youtube.com/vi/k3OdyvLg4tA/0.jpg)](https://youtu.be/k3OdyvLg4tA)
+
+### 프로젝트 수락, 일정
+
+[![Video Label](https://img.youtube.com/vi/mh83y4dR-GI/0.jpg)](https://youtu.be/mh83y4dR-GI)
+
+### 프로젝트 공지 알림
+
+[![Video Label](https://img.youtube.com/vi/CZYQZoSnvqY/0.jpg)](https://youtu.be/CZYQZoSnvqY)
+
+### 프로젝트 티켓 칸반보드 관리
+
+[![Video Label](https://img.youtube.com/vi/orqXubqKGBU/0.jpg)](https://youtu.be/orqXubqKGBU)
+
+### 프로젝트 상호 평가
+
+[![Video Label](https://img.youtube.com/vi/KgL8eeUBme0/0.jpg)](https://youtu.be/KgL8eeUBme0)
 
 
 ## 주요 PR
