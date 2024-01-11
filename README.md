@@ -310,7 +310,7 @@ src
 
 ### 소셜로그인, 팔로우
 
-[![Video Label](https://img.youtube.com/vi/ne0khow7KBA/0.jpg)](https://youtu.be/ne0khow7KBA)
+https://github.com/TeamSynergyy/synergy_be/assets/109144975/dfcc215b-6b67-4628-99d4-973980cf1e89
 
 ### 무한스크롤
 
