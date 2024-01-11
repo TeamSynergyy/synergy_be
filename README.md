@@ -310,31 +310,32 @@ src
 
 ### 소셜로그인, 팔로우
 
-[![Video Label](https://img.youtube.com/vi/ne0khow7KBA/0.jpg)](https://youtu.be/ne0khow7KBA)
+https://github.com/TeamSynergyy/synergy_be/assets/109144975/dfcc215b-6b67-4628-99d4-973980cf1e89
 
-### 무한스크롤
-
-[![Video Label](https://img.youtube.com/vi/Tb8-YXE3J3s/0.jpg)](https://youtu.be/Tb8-YXE3J3s)
 
 ### 컨텐츠 추천
 
-[![Video Label](https://img.youtube.com/vi/k3OdyvLg4tA/0.jpg)](https://youtu.be/k3OdyvLg4tA)
+https://github.com/TeamSynergyy/synergy_be/assets/109144975/fde3dacb-d7eb-419f-a25d-51939800b42b
+
+### 무한스크롤
+
+https://github.com/TeamSynergyy/synergy_be/assets/109144975/1435556a-91c6-49d0-b048-ac5cc50601af
 
 ### 프로젝트 수락, 일정
 
-[![Video Label](https://img.youtube.com/vi/mh83y4dR-GI/0.jpg)](https://youtu.be/mh83y4dR-GI)
+https://github.com/TeamSynergyy/synergy_be/assets/109144975/71b9b231-5586-4f74-8923-dc11a4fde233
 
 ### 프로젝트 공지 알림
 
-[![Video Label](https://img.youtube.com/vi/CZYQZoSnvqY/0.jpg)](https://youtu.be/CZYQZoSnvqY)
+https://github.com/TeamSynergyy/synergy_be/assets/109144975/59b41722-22f5-4613-903f-27b32031e304
 
 ### 프로젝트 티켓 칸반보드 관리
 
-[![Video Label](https://img.youtube.com/vi/orqXubqKGBU/0.jpg)](https://youtu.be/orqXubqKGBU)
+https://github.com/TeamSynergyy/synergy_be/assets/109144975/46ca7bdf-9372-49b0-9527-c44c0f796fd7
 
 ### 프로젝트 상호 평가
 
-[![Video Label](https://img.youtube.com/vi/KgL8eeUBme0/0.jpg)](https://youtu.be/KgL8eeUBme0)
+https://github.com/TeamSynergyy/synergy_be/assets/109144975/ada92a51-bc5e-41a8-b0aa-cfef4a11d66b
 
 
 ## 주요 PR
