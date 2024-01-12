@@ -7,6 +7,7 @@ import com.seoultech.synergybe.domain.auth.token.AuthToken;
 import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
 import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenRepository;
 import com.seoultech.synergybe.domain.user.UserRefreshToken;
+import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.common.ApiResponse;
 import com.seoultech.synergybe.system.config.properties.AppProperties;
 import com.seoultech.synergybe.system.utils.CookieUtil;
@@ -110,6 +111,67 @@ public class AuthController {
 
         String userId = claims.getSubject();
         RoleType roleType = RoleType.of(claims.get("role", String.class));
+
+        // refresh token
+        String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN)
+                .map(Cookie::getValue)
+                .orElse((null));
+        AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
+
+        if (authRefreshToken.validate()) {
+            return ApiResponse.invalidRefreshToken();
+        }
+
+        // userId refresh token 으로 DB 확인
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserIdAndRefreshToken(userId, refreshToken);
+        if (userRefreshToken == null) {
+            return ApiResponse.invalidRefreshToken();
+        }
+
+        Date now = new Date();
+        AuthToken newAccessToken = tokenProvider.createAuthToken(
+                userId,
+                roleType.getCode(),
+                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+        );
+
+        long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
+
+        // refresh 토큰 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
+        if (validTime <= THREE_DAYS_MSEC) {
+            // refresh 토큰 설정
+            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+
+            authRefreshToken = tokenProvider.createAuthToken(
+                    appProperties.getAuth().getTokenSecret(),
+                    new Date(now.getTime() + refreshTokenExpiry)
+            );
+
+            // DB에 refresh 토큰 업데이트
+            userRefreshToken.setRefreshToken(authRefreshToken.getToken());
+
+            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
+        }
+
+        return ApiResponse.success("token", newAccessToken.getToken());
+    }
+
+    @Operation(summary = "refresh tokens without access token", description = "userId, refresh token을 통해 사용자식별, 만료시간을 체크한 후 access/refresh 토큰을 재발급합니다.")
+    @GetMapping("/refresh/{userId}")
+    public ApiResponse refreshTokenWithUserId(
+        @PathVariable("userId") String userId,
+        HttpServletRequest request, 
+        HttpServletResponse response) {
+
+        User user = UserService.getUser(userId);
+        // User 객체가 null인 경우 혹은 roleType이 null인 경우의 처리
+        if (user == null || user.getRoleType() == null) {
+            return ApiResponse.fail(); 
+        }
+
+        RoleType roleType = user.getRoleType();
 
         // refresh token
         String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN)
