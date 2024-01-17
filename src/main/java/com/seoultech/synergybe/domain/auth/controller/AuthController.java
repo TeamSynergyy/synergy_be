@@ -92,7 +92,7 @@ public class AuthController {
         return ApiResponse.success("token", accessToken.getToken());
     }
 
-    @Operation(summary = "refresh token 재발급", description = "access token, refresh token을 통해 사용자식별, 만료시간을 체크한 후 refresh 토큰을 재발급합니다.")
+    @Operation(summary = "access token 재발급", description = "access token, refresh token을 통해 사용자식별, 만료시간을 체크한 후 access token을 재발급합니다.")
     @GetMapping("/refresh")
     public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
         // access token 확인
@@ -127,6 +127,7 @@ public class AuthController {
             return ApiResponse.invalidRefreshToken();
         }
 
+        // access token 재발급
         Date now = new Date();
         AuthToken newAccessToken = tokenProvider.createAuthToken(
                 userId,
