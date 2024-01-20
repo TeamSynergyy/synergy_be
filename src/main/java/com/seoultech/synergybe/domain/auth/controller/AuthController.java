@@ -22,14 +22,14 @@ public class AuthController {
     private final AuthService authService;
 
     @Operation(summary = "access token 재발급", description = "access token, refresh token을 통해 사용자식별, 만료시간을 체크한 후 access token을 재발급합니다.")
-    @GetMapping("/refreshwithaccesstoken")
+    @GetMapping("/reissue-with-accesstoken")
     public ApiResponse reissueAccessTokenWithExpiredAccessToken (HttpServletRequest request, HttpServletResponse response) {
 
         return authService.reissueAccessTokenWithExpiredAccessToken(request, response);
     }
 
     @Operation(summary = "access token 재발급", description = "access token, refresh token을 통해 사용자식별, 만료시간을 체크한 후 access token을 재발급합니다.")
-    @GetMapping("/refreshwithrefreshtoken")
+    @GetMapping("/reissue-with-refreshtoken")
     public ApiResponse reissueAccessTokenWithRefreshToken (HttpServletRequest request, HttpServletResponse response, @LoginUser String userId) {
 
         return authService.reissueAccessTokenWithRefreshToken(userId, request, response);
