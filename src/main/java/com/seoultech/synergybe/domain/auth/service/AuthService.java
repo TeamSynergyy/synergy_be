@@ -43,40 +43,6 @@ public class AuthService {
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
 
-//    public ApiResponse login(AuthReqModel authReqModel, HttpServletRequest request,
-//                             HttpServletResponse response) {
-//
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        authReqModel.getId(),
-//                        authReqModel.getPassword()
-//                )
-//        );
-//
-//        String userId = authReqModel.getId();
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        RoleType roleType = ((UserPrincipal) authentication.getPrincipal()).getRoleType();
-//
-//        Date now = new Date();
-//
-//        // access token 생성
-//        AuthToken accessToken = createAccessToken(userId, roleType, now);
-//
-//        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-//
-//        // refresh token 생성
-//        AuthToken refreshToken = createRefreshToken(now);
-//
-//        // userId refresh token 으로 DB 확인
-//        checkRefreshToken(userId, refreshToken);
-//
-//        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-//        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-//
-//        return ApiResponse.success("token", accessToken.getToken());
-//    }
-
     public ApiResponse reissueAccessTokenWithExpiredAccessToken(HttpServletRequest request, HttpServletResponse response) {
         // access token 확인
         String accessToken = HeaderUtil.getAccessToken(request);
