@@ -46,6 +46,7 @@ public class AuthToken {
     }
 
     public boolean validate() {
+        log.info("validate >>" + this.token);
         return this.getTokenClaims() != null;
     }
 
