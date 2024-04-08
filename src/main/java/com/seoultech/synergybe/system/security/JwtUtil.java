@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.Duration;
 import java.util.Base64;
@@ -21,7 +22,7 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer "; // Token 식별자
     private static final long TOKEN_TIME = Duration.ofMinutes(30).toMillis(); // 토큰 만료시간 30분
 
-    @Value("${jwt.secret.key}") // Base 64 decode시 사용하는 Key
+    @Value("${jwt.secret}") // Base 64 decode시 사용하는 Key
     private String secretKey;
     private Key key;
     private static final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -36,6 +37,7 @@ public class JwtUtil {
 
     public String createToken(String email) {
         Date date = new Date();
+//        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256); //or HS384 or HS512
 
         return BEARER_PREFIX +
                 Jwts.builder()
