@@ -1,8 +1,6 @@
 package com.seoultech.synergybe.domain.auth.service;
 
-import com.seoultech.synergybe.domain.auth.entity.AuthReqModel;
 import com.seoultech.synergybe.domain.auth.entity.RoleType;
-import com.seoultech.synergybe.domain.auth.entity.UserPrincipal;
 import com.seoultech.synergybe.domain.auth.token.AuthToken;
 import com.seoultech.synergybe.domain.auth.token.AuthTokenProvider;
 import com.seoultech.synergybe.domain.user.User;
