@@ -1,9 +1,10 @@
 package com.seoultech.synergybe.domain.follow;
 
 import com.seoultech.synergybe.domain.user.User;
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
+
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

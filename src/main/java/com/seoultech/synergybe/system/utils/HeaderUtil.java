@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.system.utils;
 
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class HeaderUtil {
 
