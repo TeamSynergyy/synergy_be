@@ -1,12 +1,11 @@
 package com.seoultech.synergybe.domain.image;
 
-import com.seoultech.synergybe.domain.post.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 @Entity

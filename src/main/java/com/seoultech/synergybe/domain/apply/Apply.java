@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.apply;
 
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.user.User;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity

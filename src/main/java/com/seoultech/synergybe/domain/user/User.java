@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seoultech.synergybe.domain.auth.entity.ProviderType;
 import com.seoultech.synergybe.domain.auth.entity.RoleType;
 import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
-import com.sun.istack.NotNull;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
