@@ -14,21 +14,18 @@ import com.seoultech.synergybe.system.config.properties.AppProperties;
 import com.seoultech.synergybe.system.utils.CookieUtil;
 import com.seoultech.synergybe.system.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
+
 import java.util.Date;
 
-@Transactional
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
