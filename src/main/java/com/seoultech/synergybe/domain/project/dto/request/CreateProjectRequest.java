@@ -6,8 +6,7 @@ import com.seoultech.synergybe.domain.project.ProjectField;
 import com.seoultech.synergybe.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
+
 import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
