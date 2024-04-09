@@ -33,7 +33,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // 좌표 저장
-    implementation group: 'org.hibernate', name: 'hibernate-spatial'
+//    implementation 'org.hibernate', name: 'hibernate-spatial'
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 

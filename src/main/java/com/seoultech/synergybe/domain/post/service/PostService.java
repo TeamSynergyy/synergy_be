@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.image.Image;
-import com.seoultech.synergybe.domain.image.service.ImageService;
+//import com.seoultech.synergybe.domain.image.service.ImageService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
@@ -16,6 +16,10 @@ import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistPostException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,7 +48,7 @@ public class PostService {
 
     private final UserService userService;
 
-    private final ImageService imageService;
+//    private final ImageService imageService;
 
     public PostResponse createPost(User user, CreatePostRequest request) {
         if (request.getFiles() == null) {
@@ -57,22 +60,25 @@ public class PostService {
         } else {
             log.info(">> getfiles is NOT NULL");
             List<MultipartFile> files = request.getFiles();
-            List<Image> images = imageService.storeImageList(files);
+//            List<Image> images = imageService.storeImageList(files);
 
-            Post post = request.toEntity(user, images);
+//            Post post = request.toEntity(user, images);
+            Post post = request.toEntity(user);
             Post savedPost = postRepository.save(post);
-            List<String> imagesUrl = imageService.getImageUrlByPostId(savedPost.getId());
+//            List<String> imagesUrl = imageService.getImageUrlByPostId(savedPost.getId());
 
-            return PostResponse.from(savedPost, imagesUrl);
+//            return PostResponse.from(savedPost, imagesUrl);
+            return PostResponse.from(savedPost);
         }
     }
 
     public PostResponse updatePost(UpdatePostRequest request) {
         Post post = this.findPostById(request.getPostId());
         Post updatedPost = postRepository.save(post.updatePost(request));
-        List<String> imagesUrl = imageService.getImageUrlByPostId(request.getPostId());
+//        List<String> imagesUrl = imageService.getImageUrlByPostId(request.getPostId());
 
-        return PostResponse.from(updatedPost, imagesUrl);
+//        return PostResponse.from(updatedPost, imagesUrl);
+        return PostResponse.from(updatedPost);
     }
 
     public DeletePostResponse deletePost(Long postId) {
@@ -94,13 +100,14 @@ public class PostService {
 
     public PostResponse getPost(User user, Long postId) {
         Post post = this.findPostById(postId);
-        List<String> imagesUrl = imageService.getImageUrlByPostId(postId);
+//        List<String> imagesUrl = imageService.getImageUrlByPostId(postId);
 
-        if (imagesUrl.isEmpty()) {
-            return PostResponse.from(post);
-        }
+//        if (imagesUrl.isEmpty()) {
+//            return PostResponse.from(post);
+//        }
 
-        return PostResponse.from(post, imagesUrl);
+//        return PostResponse.from(post, imagesUrl);
+        return PostResponse.from(post);
     }
 
 

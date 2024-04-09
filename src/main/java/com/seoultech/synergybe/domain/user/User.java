@@ -1,8 +1,6 @@
 package com.seoultech.synergybe.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.seoultech.synergybe.domain.auth.entity.ProviderType;
-import com.seoultech.synergybe.domain.auth.entity.RoleType;
 import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 
 import jakarta.persistence.*;
@@ -48,14 +46,6 @@ public class User implements Serializable {
     @Column(name = "profile_image_url", length = 512)
     private String profileImageUrl;
 
-    @Column(name = "provider_type", length = 20)
-    @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
-
-    @Column(name = "role_type", length = 20)
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
-
     @Column(name = "create_at")
     @NotNull
     private LocalDateTime createdAt;
@@ -79,8 +69,6 @@ public class User implements Serializable {
             String email,
             String emailVerifiedYn,
             String profileImageUrl,
-            ProviderType providerType,
-            RoleType roleType,
             LocalDateTime createdAt,
             LocalDateTime modifiedAt
     ) {
@@ -90,8 +78,6 @@ public class User implements Serializable {
         this.email = email != null ? email : "NO_EMAIL";
         this.emailVerifiedYn = emailVerifiedYn;
         this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
-        this.providerType = providerType;
-        this.roleType = roleType;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
         this.temperature = 36.5;
