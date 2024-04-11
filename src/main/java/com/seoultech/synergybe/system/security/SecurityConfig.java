@@ -15,6 +15,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -47,41 +52,42 @@ public class SecurityConfig {
         return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity httpSecurity,
+            CorsFilter corsFilter
 
-        httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequest ->
-                        authorizeRequest
-                                .requestMatchers(
-                                        AntPathRequestMatcher.antMatcher("/auth/**")
-                                ).authenticated()
-                )
-                .headers(httpSecurityHeadersConfigurer ->
-                        httpSecurityHeadersConfigurer
-                                .frameOptions(
-                                        HeadersConfigurer.FrameOptionsConfig::sameOrigin
-                                ));
-
-        // Session 사용 X
-        httpSecurity.sessionManagement(sessionManagement ->
-                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        httpSecurity.authorizeHttpRequests(authorizeHttpRequests ->
-                authorizeHttpRequests
-                        .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/users/**")).permitAll()  // '/api/users'로 시작하는 요청 중 모든 POST 접근 허가
-                        .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/verifications")).permitAll()// 가입승인 API 요청 허가
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/swagger-ui/**")).permitAll()  // swagger-ui 와 관련된 모든 요청 접근 허가
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/v3/**")).permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll() // h2 console 허용
-                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
-        );
-
-        httpSecurity.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        httpSecurity.addFilterBefore(jwtAuthenticationFilter(),
-                UsernamePasswordAuthenticationFilter.class);
+    ) throws Exception {
+        httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                    .httpBasic(AbstractHttpConfigurer::disable)
+                    .formLogin(AbstractHttpConfigurer::disable)
+                    .logout(AbstractHttpConfigurer::disable)
+                    .rememberMe(AbstractHttpConfigurer::disable)
+                    .anonymous(AbstractHttpConfigurer::disable)
+                    .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .addFilter(corsFilter)
+                    .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
+                    .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                    .headers(AbstractHttpConfigurer::disable)
+                    .cors(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
     }
 
+
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(
+                List.of("http://localhost:5173", "http://localhost:5174"));
+        config.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowCredentials(true);
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 }
