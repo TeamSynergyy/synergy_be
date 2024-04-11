@@ -20,14 +20,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 public class User implements Serializable {
-    @JsonIgnore
-    @Id
-    @Column(name = "user_seq")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userSeq;
 
-    @Column(name = "user_id", length = 64, unique = true)
-    private String userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
 
     @Column(name = "username", length = 100)
     private String username;
@@ -64,7 +60,6 @@ public class User implements Serializable {
     private String organization;
 
     public User(
-            String userId,
             String username,
             String email,
             String emailVerifiedYn,
@@ -72,7 +67,6 @@ public class User implements Serializable {
             LocalDateTime createdAt,
             LocalDateTime modifiedAt
     ) {
-        this.userId = userId;
         this.username = username;
         this.password = "NO_PASS";
         this.email = email != null ? email : "NO_EMAIL";
