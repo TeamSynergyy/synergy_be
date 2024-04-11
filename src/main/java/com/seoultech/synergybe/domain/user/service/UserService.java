@@ -5,9 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
 import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
-import com.seoultech.synergybe.domain.user.dto.response.ListUserResponse;
-import com.seoultech.synergybe.domain.user.dto.response.UserIdsResponse;
-import com.seoultech.synergybe.domain.user.dto.response.UserResponse;
+import com.seoultech.synergybe.domain.user.dto.response.*;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.exception.NotExistUserException;
@@ -24,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +33,24 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+
+    public CheckDuplicateVolunteerEmailResponse checkDuplicateVolunteerEmailResponse(String email) {
+        boolean isDuplicated = userRepository.existsByEmail(email);
+        return CheckDuplicateVolunteerEmailResponse.from(isDuplicated);
+    }
+
+    public CreateUserResponse createUser(
+            String email,
+            String password,
+            String name
+    ) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        User user = new User(email, "Y", password, name,localDateTime, localDateTime);
+        userRepository.save(user);
+
+        return CreateUserResponse.from(user);
+    }
 
     public User getUser(String userId) {
         return userRepository.findByUserId(userId);
