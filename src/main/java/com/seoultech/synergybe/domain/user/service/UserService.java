@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
 import com.seoultech.synergybe.domain.user.dto.response.*;
+import com.seoultech.synergybe.domain.user.exception.UserNotFoundException;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.oldexception.NotExistUserException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -90,7 +90,7 @@ public class UserService {
                     );
                 } catch (Exception e) {
                     log.error("search toPredicate Error {}", e.getMessage());
-                    throw new NotExistUserException();
+                    throw new UserNotFoundException("존재하지 않는 유저입니다.");
                 }
             }
         };
@@ -138,7 +138,7 @@ public class UserService {
             return ListUserResponse.from(UserResponse.from(users));
         } catch (Exception e) {
             log.error(">> 추천 유저 가져오기 실패 {}", e.getMessage());
-            throw new NotExistUserException();
+            throw new UserNotFoundException("존재하지 않는 유저입니다.");
         }
     }
 

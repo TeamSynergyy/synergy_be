@@ -52,10 +52,10 @@ public class UserController {
 
     @Operation(summary = "내 정보 수정", description = "요청된 내용에 따라 내 정보가 수정됩니다.")
     @PutMapping(value = "/me/info")
-    public ResponseEntity<UserResponse> updateMyInfo(@RequestBody UpdateUserRequest request, @LoginUser String userId) {
+    public ResponseEntity<Void> updateMyInfo(@RequestBody UpdateUserRequest request, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateMyInfo(user, request));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "유저 추천", description = "나의 활동을 바탕으로 유저가 추천됩니다.")
