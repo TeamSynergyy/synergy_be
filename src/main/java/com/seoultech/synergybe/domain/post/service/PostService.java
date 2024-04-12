@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
-import com.seoultech.synergybe.domain.image.Image;
 //import com.seoultech.synergybe.domain.image.service.ImageService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
@@ -12,17 +11,17 @@ import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.response.DeletePostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
+import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.NotExistPostException;
+import com.seoultech.synergybe.system.exception.oldexception.NotExistPostException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -91,7 +90,7 @@ public class PostService {
 
     public Post findPostById(Long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(NotExistPostException::new);
+                .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시글입니다."));
     }
 
     public List<Post> findAllByFollowingIdAndEndId(String userId, Long end) {
@@ -224,7 +223,7 @@ public class PostService {
                     );
                 } catch (Exception e) {
                     log.error("search toPredicate Error {}", e.getMessage());
-                    throw new NotExistPostException();
+                    throw new PostNotFoundException("존재하지 않는 게시글입니다.");
                 }
             }
         };
@@ -263,7 +262,7 @@ public class PostService {
             return ListPostResponse.from(PostResponse.from(posts));
         } catch (Exception e) {
             log.error(">> 추천 게시글 가져오기 실패 {}", e.getMessage());
-            throw new NotExistPostException();
+            throw new PostNotFoundException("존재하지 않는 게시글입니다.");
         }
     }
 

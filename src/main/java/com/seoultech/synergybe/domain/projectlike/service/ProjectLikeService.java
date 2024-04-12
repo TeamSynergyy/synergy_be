@@ -2,15 +2,14 @@ package com.seoultech.synergybe.domain.projectlike.service;
 
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
-import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.projectlike.LikeStatus;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectlike.ProjectLikeType;
 import com.seoultech.synergybe.domain.projectlike.dto.response.ProjectLikeResponse;
+import com.seoultech.synergybe.domain.projectlike.exception.ProjectLikeNotFoundException;
 import com.seoultech.synergybe.domain.projectlike.repository.ProjectLikeRepository;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.NotExistProjectException;
-import com.seoultech.synergybe.system.exception.NotExistProjectLikeException;
+import com.seoultech.synergybe.system.exception.oldexception.NotExistProjectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +38,7 @@ public class ProjectLikeService {
 
             return ProjectLikeResponse.from(updatedProjectLike);
         } catch (Exception e) {
-            throw new NotExistProjectLikeException();
+            throw new ProjectLikeNotFoundException("존재하지 않는 프로젝트 좋아요입니다.");
         }
     }
 
