@@ -15,7 +15,6 @@ import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.oldexception.NotExistPostException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;

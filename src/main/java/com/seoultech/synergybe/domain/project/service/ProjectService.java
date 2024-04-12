@@ -15,7 +15,6 @@ import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
 import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.exception.oldexception.NotExistProjectException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -176,7 +175,7 @@ public class ProjectService {
             return ListProjectResponse.from(ProjectResponse.from(projects));
         } catch (Exception e) {
             log.error(">> 추천 프르젝트 가져오기 실패 {}", e.getMessage());
-            throw new NotExistProjectException();
+            throw new ProjectNotFoundException("존재하지 않는 프로젝트입니다.");
         }
     }
 

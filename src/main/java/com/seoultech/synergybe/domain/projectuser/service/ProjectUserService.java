@@ -6,7 +6,6 @@ import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.projectuser.exception.ProjectUserNotFoundException;
 import com.seoultech.synergybe.domain.projectuser.repository.ProjectUserRepository;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.oldexception.NotExistProjectUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

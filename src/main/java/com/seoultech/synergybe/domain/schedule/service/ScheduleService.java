@@ -7,7 +7,6 @@ import com.seoultech.synergybe.domain.schedule.dto.request.ScheduleRequest;
 import com.seoultech.synergybe.domain.schedule.dto.response.ScheduleResponse;
 import com.seoultech.synergybe.domain.schedule.exception.ScheduleNotFoundException;
 import com.seoultech.synergybe.domain.schedule.repository.ScheduleRepository;
-import com.seoultech.synergybe.system.exception.oldexception.NotExistScheduleException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
