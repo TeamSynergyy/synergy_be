@@ -3,13 +3,13 @@ package com.seoultech.synergybe.domain.comment.service;
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.comment.dto.request.CommentRequest;
 import com.seoultech.synergybe.domain.comment.dto.response.CommentResponse;
+import com.seoultech.synergybe.domain.comment.exception.CommentNotFoundException;
 import com.seoultech.synergybe.domain.comment.repository.CommentRepository;
-import com.seoultech.synergybe.domain.notification.NotificationType;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.NotExistCommentException;
+import com.seoultech.synergybe.system.exception.oldexception.NotExistCommentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +45,7 @@ public class CommentService {
 
     public Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId)
-                .orElseThrow(NotExistCommentException::new);
+                .orElseThrow(() -> new CommentNotFoundException("존재하지 않는 댓글입니다."));
     }
 
     public CommentResponse deleteComment(CommentRequest request) {
