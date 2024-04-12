@@ -10,7 +10,6 @@ import com.seoultech.synergybe.domain.rate.dto.response.UserRateResponse;
 import com.seoultech.synergybe.domain.rate.repository.RateRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.exception.oldexception.NotProjectLeaderException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

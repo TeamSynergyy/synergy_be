@@ -9,7 +9,6 @@ import com.seoultech.synergybe.domain.projectlike.dto.response.ProjectLikeRespon
 import com.seoultech.synergybe.domain.projectlike.exception.ProjectLikeNotFoundException;
 import com.seoultech.synergybe.domain.projectlike.repository.ProjectLikeRepository;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.oldexception.NotExistProjectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
