@@ -3,12 +3,12 @@ package com.seoultech.synergybe.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
-import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.response.*;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.NotExistUserException;
+import com.seoultech.synergybe.system.exception.oldexception.NotExistUserException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final CustomPasswordEncoder passwordEncoder;
 
     public CheckDuplicateVolunteerEmailResponse checkDuplicateVolunteerEmailResponse(String email) {
         boolean isDuplicated = userRepository.existsByEmail(email);
@@ -42,11 +42,10 @@ public class UserService {
     public CreateUserResponse createUser(
             String email,
             String password,
-            String name
+            String name,
+            String major
     ) {
-        LocalDateTime localDateTime = LocalDateTime.now();
-
-        User user = new User(email, "Y", password, name,localDateTime, localDateTime);
+        User user = new User(email, password, name, passwordEncoder, major);
         userRepository.save(user);
 
         return CreateUserResponse.from(user);
@@ -61,11 +60,7 @@ public class UserService {
     }
 
     public UserResponse getUserInfo(String userId) {
-        return UserResponse.from(this.findUserById(userId));
-    }
-
-    public User findUserById(String userId) {
-        return userRepository.findByUserId(userId);
+        return UserResponse.from(this.getUser(userId));
     }
 
     public List<User> getUsers(List<String> userIds) {
@@ -101,10 +96,13 @@ public class UserService {
         };
     }
 
-    public UserResponse updateMyInfo(User user, UpdateUserRequest request) {
-        User updatedUser = userRepository.save(user.update(request));
-
-        return UserResponse.from(updatedUser);
+    public void updateMyInfo(
+            String userId,
+            String name,
+            String major
+    ) {
+        User user = getUser(userId);
+        user.updateUserInfo(name, major);
     }
 
     public ListUserResponse getSimilarUserListByUser(String userId, Long end) {
