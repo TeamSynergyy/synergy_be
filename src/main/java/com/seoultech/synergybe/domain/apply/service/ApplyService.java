@@ -5,6 +5,7 @@ import com.seoultech.synergybe.domain.apply.dto.response.AcceptApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ListApplyUserResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
+import com.seoultech.synergybe.domain.apply.exception.ApplyNotFoundException;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
 import com.seoultech.synergybe.domain.notification.NotificationType;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
@@ -14,7 +15,6 @@ import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.projectuser.repository.ProjectUserRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.exception.NotExistApplyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -58,13 +57,13 @@ public class ApplyService {
 
             return ApplyResponse.from(applyOptional.get());
         } else {
-            throw new NotExistApplyException();
+            throw new ApplyNotFoundException("존재하지 않는 신청내역입니다.");
         }
     }
 
     public AcceptApplyResponse acceptApply(String userId, Long projectId) {
         Apply apply = applyRepository.findByUserIdAndProjectId(userId, projectId)
-                .orElseThrow(NotExistApplyException::new);
+                .orElseThrow(() -> new ApplyNotFoundException("존재하지 않는 신청내역입니다."));
 
         apply.accepted();
         Project project = projectService.findProjectById(projectId);
@@ -88,7 +87,7 @@ public class ApplyService {
 
     public RejectApplyResponse rejectApply(String userId, Long projectId) {
         Apply apply = applyRepository.findByUserIdAndProjectId(userId, projectId)
-                .orElseThrow(NotExistApplyException::new);
+                .orElseThrow(() -> new ApplyNotFoundException("존재하지 않는 신청내역입니다."));
         apply.rejected();
 
         // apply 삭제

@@ -4,12 +4,12 @@ import com.seoultech.synergybe.domain.follow.Follow;
 import com.seoultech.synergybe.domain.follow.FollowStatus;
 import com.seoultech.synergybe.domain.follow.dto.request.FollowType;
 import com.seoultech.synergybe.domain.follow.dto.response.FollowResponse;
+import com.seoultech.synergybe.domain.follow.exception.FollowNotFoundException;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
-import com.seoultech.synergybe.domain.notification.NotificationType;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.exception.NotExistFollowException;
+import com.seoultech.synergybe.system.exception.oldexception.NotExistFollowException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +51,7 @@ public class FollowService {
 
             return FollowResponse.from(updatedFollow);
         } catch (Exception e) {
-            throw new NotExistFollowException();
+            throw new FollowNotFoundException("존재하지 않는 팔로우입니다.");
         }
 
 

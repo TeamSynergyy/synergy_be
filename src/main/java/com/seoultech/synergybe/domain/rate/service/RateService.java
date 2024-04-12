@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.rate.service;
 
 import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.project.exception.ProjectLeaderBadRequest;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.rate.Rate;
 import com.seoultech.synergybe.domain.rate.dto.request.RateRequest;
@@ -9,7 +10,7 @@ import com.seoultech.synergybe.domain.rate.dto.response.UserRateResponse;
 import com.seoultech.synergybe.domain.rate.repository.RateRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.exception.NotProjectLeaderException;
+import com.seoultech.synergybe.system.exception.oldexception.NotProjectLeaderException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class RateService {
 
     public RateResponse createRate(RateRequest request, User giveUser) {
         Project project = projectService.findProjectById(request.getProjectId());
-        User receiveUser = userService.findUserById(request.getReceiveUserId());
+        User receiveUser = userService.getUser(request.getReceiveUserId());
         Rate savedRate = rateRepository.save(request.toEntity(request, project, giveUser, receiveUser));
 
         return RateResponse.from(savedRate);
@@ -81,7 +82,7 @@ public class RateService {
     private void checkLeader(Long projectId, User leader) {
         Project project = projectService.findProjectById(projectId);
         if (!Objects.equals(project.getLeaderId(), leader.getUserId())) {
-            throw new NotProjectLeaderException();
+            throw new ProjectLeaderBadRequest("프로젝트 리더가 잘못되었습니다.");
         }
     }
 

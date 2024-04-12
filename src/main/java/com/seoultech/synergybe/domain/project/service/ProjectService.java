@@ -9,12 +9,13 @@ import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.response.ListProjectResponse;
 import com.seoultech.synergybe.domain.project.dto.response.ProjectResponse;
+import com.seoultech.synergybe.domain.project.exception.ProjectNotFoundException;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
 import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.exception.NotExistProjectException;
+import com.seoultech.synergybe.system.exception.oldexception.NotExistProjectException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -72,9 +73,8 @@ public class ProjectService {
 
     public Project findProjectById(Long projectId) {
         return projectRepository.findById(projectId)
-                .orElseThrow(NotExistProjectException::new);
+                .orElseThrow(() -> new ProjectNotFoundException("존재하지 않는 프로젝트입니다."));
     }
-
     public ProjectResponse getProject(Long projectId) {
         Project project = this.findProjectById(projectId);
 
@@ -109,7 +109,7 @@ public class ProjectService {
                             cb.like(projectRoot.get("field").as(String.class),"%" + keyword + "%")
                     );
                 } catch (Exception e) {
-                    throw new NotExistProjectException();
+                    throw new ProjectNotFoundException("존재하지 않는 프로젝트입니다.");
                 }
             }
         };
