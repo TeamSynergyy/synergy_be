@@ -15,11 +15,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "user_entity")
 public class User extends BaseTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private String userId;
 
     @Embedded
@@ -38,12 +38,14 @@ public class User extends BaseTime {
     private UserTemperature temperature;
 
     public User(
+            String userId,
             String email,
             String password,
             String name,
             CustomPasswordEncoder passwordEncoder,
             String major
     ) {
+        this.userId = userId;
         this.email = new UserEmail(email);
         this.password = new UserPassword(password, passwordEncoder);
         this.name = new UserName(name);
