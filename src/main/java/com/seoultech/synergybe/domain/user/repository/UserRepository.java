@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, String> {
     User findByUserId(String userId);
 
     Optional<User> findByEmail(String email);
@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByUserId(@Param("userIds") List<String> userIds);
 
     Page<User> findAll(Specification<User> spec, Pageable pageable);
+
+    boolean existsByEmail(String email);
 }
