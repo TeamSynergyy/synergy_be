@@ -50,5 +50,13 @@ public class User extends BaseTime {
         this.major = new UserMajor(major);
         this.temperature = new UserTemperature(36.5);
     }
+
+    public void updateUserInfo(
+            String name,
+            String major
+    ) {
+        this.name = this.name.updateName(name);
+        this.major = this.major.updateMajor(major);
+    }
 }
 
