@@ -3,13 +3,13 @@ package com.seoultech.synergybe.domain.notice.service;
 import com.seoultech.synergybe.domain.notice.Notice;
 import com.seoultech.synergybe.domain.notice.dto.request.NoticeRequest;
 import com.seoultech.synergybe.domain.notice.dto.response.NoticeResponse;
+import com.seoultech.synergybe.domain.notice.exception.NoticeNotFoundException;
 import com.seoultech.synergybe.domain.notice.repository.NoticeRepository;
 import com.seoultech.synergybe.domain.notification.NotificationType;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.NotExistNoticeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +48,7 @@ public class NoticeService {
 
     public Notice findNoticeById(Long noticeId) {
         return this.noticeRepository.findById(noticeId)
-                .orElseThrow(NotExistNoticeException::new);
+                .orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 공지입니다."));
     }
 
     public List<NoticeResponse> getNoticeList(Long projectId) {

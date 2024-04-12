@@ -6,12 +6,13 @@ import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.ticket.TicketStatus;
 import com.seoultech.synergybe.domain.ticket.dto.TicketRequest;
 import com.seoultech.synergybe.domain.ticket.dto.TicketResponse;
+import com.seoultech.synergybe.domain.ticket.exception.TicketNotFoundException;
 import com.seoultech.synergybe.domain.ticket.repository.TicketRepository;
 import com.seoultech.synergybe.domain.ticketUser.service.TicketUserService;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import com.seoultech.synergybe.system.exception.InvalidAccessException;
-import com.seoultech.synergybe.system.exception.NotExistTicketException;
+import com.seoultech.synergybe.system.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -83,7 +84,7 @@ public class TicketService {
         checkUser(authUsers, user);
 
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(NotExistTicketException::new);
+                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
 
         boolean isEqualStatus = false;
 
@@ -184,7 +185,7 @@ public class TicketService {
         }
 
         if (!userFound) {
-            throw new InvalidAccessException();
+            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "잘못된 유저입니다.");
         }
     }
 
@@ -203,7 +204,7 @@ public class TicketService {
 
     public TicketResponse deleteTicket(Long ticketId, User user) {
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(NotExistTicketException::new);
+                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
 
         // check User
         List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getId());
@@ -216,7 +217,7 @@ public class TicketService {
 
     public TicketResponse updateTicket(TicketRequest request, User user, Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(NotExistTicketException::new);
+                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
         // check User
         List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getId());
         checkUser(authUsers, user);

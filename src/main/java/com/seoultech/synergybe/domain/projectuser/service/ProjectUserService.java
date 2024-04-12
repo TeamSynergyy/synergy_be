@@ -3,9 +3,9 @@ package com.seoultech.synergybe.domain.projectuser.service;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
+import com.seoultech.synergybe.domain.projectuser.exception.ProjectUserNotFoundException;
 import com.seoultech.synergybe.domain.projectuser.repository.ProjectUserRepository;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.NotExistProjectUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,9 +45,8 @@ public class ProjectUserService {
         if (projectUserOptional.isPresent()) {
             projectUserRepository.delete(projectUserOptional.get());
         } else {
-            throw new NotExistProjectUserException();
+            throw new ProjectUserNotFoundException("존재하지 않는 프로젝트 유저입니다.");
         }
-
     }
 
     public List<Long> getProjectIdsByUserId(String userId) {

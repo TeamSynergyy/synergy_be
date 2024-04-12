@@ -2,15 +2,13 @@ package com.seoultech.synergybe.domain.postlike.service;
 
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
-import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.postlike.LikeStatus;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
 import com.seoultech.synergybe.domain.postlike.dto.response.PostLikeResponse;
+import com.seoultech.synergybe.domain.postlike.exception.PostLikeNotFoundException;
 import com.seoultech.synergybe.domain.postlike.repository.PostLikeRepository;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.exception.NotExistPostException;
-import com.seoultech.synergybe.system.exception.NotExistPostLikeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +39,7 @@ public class PostLikeService {
             log.info("updatePostLike update after");
             return PostLikeResponse.from(updatedPostLike);
         } catch (Exception e) {
-            throw new NotExistPostLikeException();
+            throw new PostLikeNotFoundException("존재하지 않는 좋아요입니다.");
         }
     }
 
