@@ -7,6 +7,7 @@ import com.seoultech.synergybe.domain.apply.dto.response.ListApplyUserResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
 import com.seoultech.synergybe.domain.apply.exception.ApplyNotFoundException;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
+import com.seoultech.synergybe.domain.apply.repository.ApplyRepositoryCustom;
 import com.seoultech.synergybe.domain.notification.NotificationType;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.project.Project;
@@ -29,11 +30,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ApplyService {
     private final ApplyRepository applyRepository;
-
     private final ProjectService projectService;
     private final ProjectUserRepository projectUserRepository;
     private final UserService userService;
     private final NotificationService notificationService;
+    private final ApplyRepositoryCustom applyRepositoryCustom;
 
     public ApplyResponse createApply(User user, Long projectId) {
         Project project = projectService.findProjectById(projectId);
@@ -50,7 +51,8 @@ public class ApplyService {
     }
 
     public ApplyResponse deleteApply(User user, Long projectId) {
-        Optional<Apply> applyOptional = applyRepository.findByUserIdAndProjectId(user.getUserId(), projectId);
+//        Optional<Apply> applyOptional = applyRepository.findByUserIdAndProjectId(user.getUserId(), projectId);
+        Optional<Apply> applyOptional = applyRepositoryCustom.findByUserIdAndProjectId(user.getUserId(), projectId);
 
         if (applyOptional.isPresent()) {
             applyRepository.delete(applyOptional.get());
