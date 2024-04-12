@@ -25,4 +25,8 @@ public class UserMajor {
 //            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "전공은 필수 항목입니다.");
         }
     }
+
+    public UserMajor updateMajor(String major) {
+        return major != null ? new UserMajor(major) : this;
+    }
 }
