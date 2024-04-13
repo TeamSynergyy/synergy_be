@@ -30,7 +30,10 @@ public class IdGenerator {
         initializeTimeMap();
     }
 
-    public String generateId(Instant createAt, IdPrefix idPrefix) {
+    public String generateId(IdPrefix idPrefix) {
+        // 생성 시간
+        Instant createAt = Instant.now();
+
         // 난수
         String randomString = createRandomStr(4, false);
         Integer pseudo = createPseudo();
