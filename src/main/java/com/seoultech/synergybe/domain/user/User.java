@@ -5,10 +5,7 @@ import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.user.vo.*;
 import com.seoultech.synergybe.system.common.BaseTime;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter
@@ -37,6 +34,7 @@ public class User extends BaseTime {
     @Embedded
     private UserTemperature temperature;
 
+    @Builder
     public User(
             String userId,
             String email,
