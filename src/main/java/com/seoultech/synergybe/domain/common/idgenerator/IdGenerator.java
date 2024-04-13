@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.common.idgenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.random.RandomGenerator;
@@ -29,14 +30,25 @@ public class IdGenerator {
         initializeTimeMap();
     }
 
-    public String generateId(String s, Instant createAt, IdPrefix idPrefix) {
+    public String generateId(Instant createAt, IdPrefix idPrefix) {
+        // 난수
+        String randomString = createRandomStr(4, false);
+        Integer pseudo = createPseudo();
+
+        // hash값
+        String hash = createSecureHash(randomString, pseudo);
+
+        // 시간 bit
+        String timeBit = calculateInstant(createAt);
+
+        String generatedId = timeBit + "-" + idPrefix.getValue() + "-" + hash; // ex) generatedId : 244C85-user-XNc9rQ4i
+        return generatedId;
+    }
+
+    public Integer createPseudo() {
         RandomGenerator generator = RandomGenerator.of("L128X256MixRandom");
         Integer pseudo = generator.nextInt(10000);
-
-        String generatedId = hash(s, pseudo);
-        String timeBit = calculateInstant(createAt);
-        generatedId = timeBit + "-" + idPrefix.getValue() + "-" + generatedId; // ex) generatedId : 244C85-user-XNc9rQ4i
-        return generatedId;
+        return pseudo;
     }
 
     /**
@@ -51,7 +63,6 @@ public class IdGenerator {
     private String calculateInstant(Instant createAt) {
 
         int year = createAt.atZone(java.time.ZoneOffset.UTC).getYear();
-        int yearFirstDigit = year / 100;
         int yearSecondDigit = year % 100;
         int month = createAt.atZone(java.time.ZoneOffset.UTC).getMonthValue();
         int day = createAt.atZone(java.time.ZoneOffset.UTC).getDayOfMonth();
@@ -72,7 +83,24 @@ public class IdGenerator {
     }
 
     /**
-     * hash 함수 동작 원리
+     * 자릿수(length) 만큼 랜덤한 문자열을 대문자/소문자에 따라 반환 받습니다.
+     *
+     * @param length      자릿수
+     * @param isUpperCase 대문자 여부
+     * @return 랜덤한 문자열
+     */
+    public String createRandomStr(int length, boolean isUpperCase) {
+        String alphabet = "abcdefghijklmnopqrstuvwxyz";
+        SecureRandom secureRandom = new SecureRandom();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(alphabet.charAt(secureRandom.nextInt(alphabet.length())));
+        }
+        return isUpperCase ? sb.toString().toUpperCase() : sb.toString().toLowerCase();
+    }
+
+    /**
+     * createSecureHash 함수 동작 원리
      * ---- String -> 2진수 변환 시작 ----
      * 1. name, createAt을 입력
      * 2. 이름의 끝 4자리 + 날짜 끝 4자리를 사용
@@ -96,7 +124,7 @@ public class IdGenerator {
      * @param name
      * @param pseudo
      */
-    private String hash(String name, Integer pseudo) {
+    private String createSecureHash(String name, Integer pseudo) {
         StringBuffer hexSb = new StringBuffer();
         StringBuffer binarySb = new StringBuffer();
 
@@ -204,7 +232,7 @@ public class IdGenerator {
     }
 
     // 1의 보수 계산 함수
-    public static String onesComplement(String binary) {
+    public String onesComplement(String binary) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < binary.length(); i++) {
             char bit = binary.charAt(i);
