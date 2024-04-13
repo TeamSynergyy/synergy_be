@@ -19,9 +19,8 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE apply SET is_deleted = true WHERE apply_id = ?")
 public class Apply {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "apply_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
@@ -38,7 +37,8 @@ public class Apply {
     private boolean isDeleted;
 
     @Builder
-    public Apply(User user, Project project) {
+    public Apply(String id, User user, Project project) {
+        this.id = id;
         this.user = user;
         this.project = project;
         this.status = ApplyStatus.PROCESS;
