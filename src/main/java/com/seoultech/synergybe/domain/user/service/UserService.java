@@ -51,7 +51,7 @@ public class UserService {
     ) {
         Instant time = Instant.now();
         IdPrefix idPrefix = IdPrefix.USER;
-        String userId = idGenerator.generateId(name, time, idPrefix);
+        String userId = idGenerator.generateId(time, idPrefix);
         User user = new User(userId, email, password, name, passwordEncoder, major);
         userRepository.save(user);
 
