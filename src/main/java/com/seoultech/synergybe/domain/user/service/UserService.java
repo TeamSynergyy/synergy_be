@@ -49,10 +49,10 @@ public class UserService {
             String name,
             String major
     ) {
-        Instant time = Instant.now();
-        IdPrefix idPrefix = IdPrefix.USER;
-        String userId = idGenerator.generateId(time, idPrefix);
-        User user = new User(userId, email, password, name, passwordEncoder, major);
+        String userId = idGenerator.generateId(IdPrefix.USER);
+        User user = User.builder()
+                .userId(userId).email(email).password(password).name(name).passwordEncoder(passwordEncoder).major(major)
+                .build();
         userRepository.save(user);
 
         return CreateUserResponse.from(user);
