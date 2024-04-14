@@ -20,9 +20,8 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE schedule_id = ?")
 public class Schedule {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "schedule_id")
-    private Long id;
+    private String id;
 
     private String title;
 
@@ -42,7 +41,8 @@ public class Schedule {
     private Project project;
 
     @Builder
-    public Schedule(Project project, String title, String content, String label, LocalDateTime startAt, LocalDateTime endAt) {
+    public Schedule(String id, Project project, String title, String content, String label, LocalDateTime startAt, LocalDateTime endAt) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.label = label;

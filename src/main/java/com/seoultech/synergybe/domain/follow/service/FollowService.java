@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.follow.service;
 
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.follow.Follow;
 import com.seoultech.synergybe.domain.follow.FollowStatus;
 import com.seoultech.synergybe.domain.follow.dto.request.FollowType;
@@ -24,6 +26,7 @@ public class FollowService {
 
     private final UserService userService;
     private final NotificationService notificationService;
+    private final IdGenerator idGenerator;
 
     public List<String> findFollowingIdsByUserId(String userId) {
         return followRepository.findFollowingIdsByFollowerId(userId);
@@ -68,7 +71,9 @@ public class FollowService {
             return followOptional.get();
         } else {
             User following = userService.getUser(followingId);
+            String followId = idGenerator.generateId(IdPrefix.FOLLOW);
             Follow follow = Follow.builder()
+                    .id(followId)
                     .follower(user)
                     .following(following)
                     .build();

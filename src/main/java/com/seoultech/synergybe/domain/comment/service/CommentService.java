@@ -1,10 +1,13 @@
 package com.seoultech.synergybe.domain.comment.service;
 
+import com.seoultech.synergybe.domain.apply.Apply;
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.comment.dto.request.CommentRequest;
 import com.seoultech.synergybe.domain.comment.dto.response.CommentResponse;
 import com.seoultech.synergybe.domain.comment.exception.CommentNotFoundException;
 import com.seoultech.synergybe.domain.comment.repository.CommentRepository;
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.service.PostService;
@@ -24,10 +27,18 @@ public class CommentService {
     private final PostService postService;
 
     private final NotificationService notificationService;
+    private final IdGenerator idGenerator;
 
     public CommentResponse createComment(User user, CommentRequest request) {
         Post post = postService.findPostById(request.getPostId());
-        Comment savedComment = commentRepository.save(request.toEntity(user, post, request.getComment()));
+        String commentId = idGenerator.generateId(IdPrefix.COMMENT);
+
+        Comment comment = Comment.builder()
+                .id(commentId).comment(request.getComment()).post(post).user(user)
+                .build();
+
+
+        Comment savedComment = commentRepository.save(comment);
         savedComment.addPost(post);
         User postUser = post.getUser();
 //        notificationService.send(postUser, NotificationType.COMMENT, "댓글이 생성되었습니다", post.getId());

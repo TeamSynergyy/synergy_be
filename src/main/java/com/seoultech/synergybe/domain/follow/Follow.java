@@ -12,9 +12,8 @@ import lombok.*;
 @Getter
 public class Follow {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "follow_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id", referencedColumnName = "user_id")
@@ -29,7 +28,8 @@ public class Follow {
     private FollowStatus status;
 
     @Builder
-    public Follow(User follower, User following) {
+    public Follow(String id, User follower, User following) {
+        this.id = id;
         this.follower = follower;
         this.following = following;
         this.status = FollowStatus.FOLLOW;

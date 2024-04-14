@@ -1,7 +1,10 @@
 package com.seoultech.synergybe.domain.projectlike.service;
 
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
+import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.projectlike.LikeStatus;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectlike.ProjectLikeType;
@@ -20,8 +23,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProjectLikeService {
     private final ProjectLikeRepository projectLikeRepository;
-
-    private final ProjectRepository projectRepository;
+    private final ProjectService projectService;
+    private final IdGenerator idGenerator;
 
 
     @Transactional
@@ -49,10 +52,10 @@ public class ProjectLikeService {
 
             return projectLikeOptional.get();
         } else {
-//            Project project = projectService.findProjectById(projectId);
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(NotExistProjectException::new);
+            String projectLikeId = idGenerator.generateId(IdPrefix.PROJECT_LIKE);
+            Project project = projectService.findProjectById(projectId);
             ProjectLike projectLike = ProjectLike.builder()
+                    .id(projectLikeId)
                     .user(user)
                     .project(project)
                     .build();

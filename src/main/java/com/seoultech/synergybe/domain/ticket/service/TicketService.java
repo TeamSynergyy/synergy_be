@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.ticket.service;
 
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.ticket.Ticket;
@@ -30,6 +32,7 @@ public class TicketService {
     private final TicketUserService ticketUserService;
     private final ProjectService projectService;
     private final UserService userService;
+    private final IdGenerator idGenerator;
 
     /**
      * todo
@@ -45,17 +48,21 @@ public class TicketService {
 
         Project project = projectService.findProjectById(request.getProjectId());
         Integer lastOrderNum = ticketRepository.findLastOrderNumber(request.getStatus(), request.getProjectId());
-        Ticket savedTicket = ticketRepository.save(request.toEntity(project, checkStatus(request.getStatus()), lastOrderNum));
+        String ticketId = idGenerator.generateId(IdPrefix.TICKET);
+        Ticket ticket = Ticket.builder()
+                .id(ticketId).project(project).status(checkStatus(request.getStatus())).orderNumber(lastOrderNum)
+                .build();
+        ticketRepository.save(ticket);
 
         if (!request.getAssignedUserIds().isEmpty()) {
             // assignedUser 추가
             List<User> assignedUsers = userService.getUsers(request.getAssignedUserIds());
             for (User assignedUser : assignedUsers) {
-                ticketUserService.createTicketUser(savedTicket, assignedUser);
+                ticketUserService.createTicketUser(ticket, assignedUser);
             }
         }
 
-        return TicketResponse.from(savedTicket);
+        return TicketResponse.from(ticket);
     }
 
     public List<TicketResponse> getTicketList(Long projectId) {

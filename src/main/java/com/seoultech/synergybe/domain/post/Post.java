@@ -24,9 +24,8 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE post_id = ?")
 public class Post extends BaseTime {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
@@ -61,15 +60,13 @@ public class Post extends BaseTime {
     private boolean isDeleted;
 
     @Builder
-    public Post(User user, String title, String content, List<PostLike> likes, List<Comment> comments, List<Image> images, Long thumbnailImageId) {
+    public Post(String id, User user, String title, String content, Long thumbnailImageId) {
+        this.id = id;
         this.user = user;
         this.title = title;
         this.content = content;
         this.thumbnailImageId = thumbnailImageId;
-        this.likes = likes;
-        this.comments = comments;
-        this.images = images;
-        this.authorName = user.getUsername();
+        this.authorName = user.getName();
         this.isDeleted = false;
     }
 

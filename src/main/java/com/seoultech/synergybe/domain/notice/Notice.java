@@ -19,9 +19,8 @@ import jakarta.persistence.*;
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE notice_id = ?")
 public class Notice extends BaseTime {
     @Id
-    @GeneratedValue
     @Column(name = "notice_id")
-    private Long id;
+    private String id;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -35,7 +34,8 @@ public class Notice extends BaseTime {
 
 
     @Builder
-    public Notice(String content, Project project) {
+    public Notice(String id, String content, Project project) {
+        this.id = id;
         this.content = content;
         this.project = project;
         this.isDeleted = false;

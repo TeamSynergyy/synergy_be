@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.notice.service;
 
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.notice.Notice;
 import com.seoultech.synergybe.domain.notice.dto.request.NoticeRequest;
 import com.seoultech.synergybe.domain.notice.dto.response.NoticeResponse;
@@ -24,11 +26,15 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
     private final ProjectService projectService;
     private final NotificationService notificationService;
+    private final IdGenerator idGenerator;
 
 
     public NoticeResponse createNotice(NoticeRequest request) {
         Project project = projectService.findProjectById(request.getProjectId());
-        Notice notice = request.toEntity(request.getContent(), project);
+        String noticeId = idGenerator.generateId(IdPrefix.NOTICE);
+        Notice notice = Notice.builder()
+                .id(noticeId).content(request.getContent()).project(project)
+                .build();
         Notice savedNotice = this.noticeRepository.save(notice);
         List<User> projectUsers = project.getProjectUsers().stream().map(projectUser -> projectUser.getUser()).collect(Collectors.toList());
         for (User user : projectUsers) {

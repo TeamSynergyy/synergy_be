@@ -14,9 +14,8 @@ import jakarta.persistence.*;
 @Getter
 public class ProjectUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_user_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
@@ -27,7 +26,8 @@ public class ProjectUser {
     private User user;
 
     @Builder
-    public ProjectUser(Project project, User user) {
+    public ProjectUser(String id, Project project, User user) {
+        this.id = id;
         this.project = project;
         this.user = user;
     }

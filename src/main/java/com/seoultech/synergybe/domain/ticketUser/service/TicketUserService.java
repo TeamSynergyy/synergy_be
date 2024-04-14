@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.ticketUser.service;
 
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.ticketUser.TicketUser;
 import com.seoultech.synergybe.domain.ticketUser.repository.TicketUserRepository;
@@ -14,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TicketUserService {
     private final TicketUserRepository ticketUserRepository;
+    private final IdGenerator idGenerator;
 
     public void createTicketUser(Ticket ticket, User user) {
         Optional<TicketUser> ticketUserOptional = ticketUserRepository.findByTicketIdAndUserUserId(ticket.getId(), user.getUserId());
@@ -21,7 +24,10 @@ public class TicketUserService {
         if (ticketUserOptional.isPresent()) {
             // 이미 생성됨
         } else {
-            TicketUser ticketUser = new TicketUser(ticket, user);
+            String ticketUserId = idGenerator.generateId(IdPrefix.TICKET_USER);
+            TicketUser ticketUser = TicketUser.builder()
+                    .id(ticketUserId).ticket(ticket).user(user)
+                    .build();
             ticket.getTicketUsers().add(ticketUser);
             ticketUserRepository.save(ticketUser);
         }
