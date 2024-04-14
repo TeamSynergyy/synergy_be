@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.rate.service;
 
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.exception.ProjectLeaderBadRequest;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
@@ -26,14 +28,19 @@ public class RateService {
     private final RateRepository rateRepository;
     private final ProjectService projectService;
     private final UserService userService;
+    private final IdGenerator idGenerator;
 
 
     public RateResponse createRate(RateRequest request, User giveUser) {
         Project project = projectService.findProjectById(request.getProjectId());
         User receiveUser = userService.getUser(request.getReceiveUserId());
-        Rate savedRate = rateRepository.save(request.toEntity(request, project, giveUser, receiveUser));
+        String rateId = idGenerator.generateId(IdPrefix.RATE);
+        Rate rate = Rate.builder()
+                .id(rateId).project(project).giveUser(giveUser).receiveUser(receiveUser).content(request.getContent()).score(request.getScore())
+                .build();
+        rateRepository.save(rate);
 
-        return RateResponse.from(savedRate);
+        return RateResponse.from(rate);
     }
 
     //todo

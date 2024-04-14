@@ -18,9 +18,8 @@ import jakarta.persistence.*;
 @SQLDelete(sql = "UPDATE rate SET is_deleted = true WHERE rate_id = ?")
 public class Rate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rate_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
@@ -41,7 +40,8 @@ public class Rate {
     private String content;
 
     @Builder
-    public Rate(Project project, User giveUser, User receiveUser, Integer score, String content) {
+    public Rate(String id, Project project, User giveUser, User receiveUser, Integer score, String content) {
+        this.id = id;
         this.project = project;
         this.giveUser = giveUser;
         this.receiveUser = receiveUser;

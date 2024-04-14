@@ -23,9 +23,8 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE ticket SET is_deleted = true WHERE ticket_id = ?")
 public class Ticket {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
@@ -52,8 +51,9 @@ public class Ticket {
     private boolean isDeleted;
 
     @Builder
-    public Ticket(String title, String content, Integer orderNumber, String tag, LocalDateTime endAt, Project project, TicketStatus status,
+    public Ticket(String id, String title, String content, Integer orderNumber, String tag, LocalDateTime endAt, Project project, TicketStatus status,
                   String tagColor, Double assignedTime) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.tag = tag;

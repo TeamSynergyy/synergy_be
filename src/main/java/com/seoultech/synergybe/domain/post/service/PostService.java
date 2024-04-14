@@ -3,6 +3,8 @@ package com.seoultech.synergybe.domain.post.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
 //import com.seoultech.synergybe.domain.image.service.ImageService;
 import com.seoultech.synergybe.domain.post.Post;
@@ -43,7 +45,7 @@ public class PostService {
 
     private final FollowService followService;
     private final PostLikeService postLikeService;
-
+    private final IdGenerator idGenerator;
     private final UserService userService;
 
 //    private final ImageService imageService;
@@ -51,7 +53,10 @@ public class PostService {
     public PostResponse createPost(User user, CreatePostRequest request) {
         if (request.getFiles() == null) {
             log.info(">> getfiles is null");
-            Post post = request.toEntity(user);
+            String postId = idGenerator.generateId(IdPrefix.POST);
+            Post post = Post.builder()
+                    .id(postId).title(request.getTitle()).user(user)
+                    .build();
             Post savedPost = postRepository.save(post);
 
             return PostResponse.from(savedPost);

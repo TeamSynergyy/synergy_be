@@ -8,6 +8,8 @@ import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
 import com.seoultech.synergybe.domain.apply.exception.ApplyNotFoundException;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepositoryCustom;
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.notification.NotificationType;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.project.Project;
@@ -35,12 +37,15 @@ public class ApplyService {
     private final UserService userService;
     private final NotificationService notificationService;
     private final ApplyRepositoryCustom applyRepositoryCustom;
+    private final IdGenerator idGenerator;
 
     public ApplyResponse createApply(User user, Long projectId) {
         Project project = projectService.findProjectById(projectId);
+        String applyId = idGenerator.generateId(IdPrefix.APPLY);
 
         Apply apply = Apply.builder()
-                .user(user).project(project).build();
+                .id(applyId).user(user).project(project)
+                .build();
         Apply savedApply = applyRepository.save(apply);
 
         // 리더에게 알림

@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class RejectApplyResponse {
-    private Long applyId;
+    private String applyId;
 
     private ApplyStatus status;
 

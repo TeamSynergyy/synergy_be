@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.postlike.service;
 
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.LikeStatus;
@@ -22,7 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
-
+    private final IdGenerator idGenerator;
     private final PostRepository postRepository;
 
     @Transactional
@@ -60,7 +62,7 @@ public class PostLikeService {
         Optional<PostLike> postLikeOptional = postLikeRepository.findByUserUserIdAndPostId(user.getUserId(), postId);
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(NotExistPostException::new);
+                .orElseThrow(() -> new PostLikeNotFoundException("존재하지 않는 좋아요입니다."));
 
         if (postLikeOptional.isPresent()) {
             postLikeOptional.get().updateStatus(status);
@@ -77,10 +79,12 @@ public class PostLikeService {
             return postLikeRepository.saveAndFlush(postLikeOptional.get());
         } else {
             // 없을 경우 생성
-            // postService 호출시 순환참조 발생
+
+            String postLikeId = idGenerator.generateId(IdPrefix.POST_LIKE);
 
             log.info("updatePostLike builder before");
             PostLike postLike = PostLike.builder()
+                    .id(postLikeId)
                     .user(user)
                     .post(post)
                     .build();

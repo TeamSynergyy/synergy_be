@@ -28,9 +28,8 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE project_id = ?")
 public class Project extends BaseTime {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -75,8 +74,9 @@ public class Project extends BaseTime {
     private List<Schedule> schedules = new ArrayList<>();
 
     @Builder
-    public Project(String name, String content, ProjectField field, Point location, LocalDateTime startAt,
+    public Project(String id, String name, String content, ProjectField field, Point location, LocalDateTime startAt,
                    LocalDateTime endAt, String leaderId) {
+        this.id = id;
         this.name = name;
         this.content = content;
         this.field = field;

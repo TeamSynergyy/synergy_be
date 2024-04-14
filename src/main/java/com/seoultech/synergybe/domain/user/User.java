@@ -5,21 +5,18 @@ import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.user.vo.*;
 import com.seoultech.synergybe.system.common.BaseTime;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "user_entity")
 public class User extends BaseTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private String userId;
 
     @Embedded
@@ -37,13 +34,16 @@ public class User extends BaseTime {
     @Embedded
     private UserTemperature temperature;
 
+    @Builder
     public User(
+            String userId,
             String email,
             String password,
             String name,
             CustomPasswordEncoder passwordEncoder,
             String major
     ) {
+        this.userId = userId;
         this.email = new UserEmail(email);
         this.password = new UserPassword(password, passwordEncoder);
         this.name = new UserName(name);

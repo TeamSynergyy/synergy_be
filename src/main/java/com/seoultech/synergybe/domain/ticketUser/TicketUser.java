@@ -13,8 +13,8 @@ import jakarta.persistence.*;
 @Getter
 public class TicketUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "ticket_user_id")
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
@@ -25,7 +25,8 @@ public class TicketUser {
     private User user;
 
     @Builder
-    public TicketUser(Ticket ticket, User user) {
+    public TicketUser(String id, Ticket ticket, User user) {
+        this.id = id;
         this.ticket = ticket;
         this.user = user;
     }

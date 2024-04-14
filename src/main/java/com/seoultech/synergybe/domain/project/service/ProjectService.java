@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
@@ -15,6 +17,7 @@ import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
 import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import jakarta.persistence.Id;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Point;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,16 +45,32 @@ public class ProjectService {
     private final ProjectUserService projectUserService;
 
     private final ProjectLikeService projectLikeService;
+    private final IdGenerator idGenerator;
 
     private final ApplyRepository applyRepository;
     private final UserService userService;
 
     public ProjectResponse createProject(User user, CreateProjectRequest request) {
-        Project savedProject = projectRepository.save(request.toEntity(user));
-        projectUserService.createProjectUser(savedProject, user);
-
-
-        return ProjectResponse.from(savedProject);
+        String projectId = idGenerator.generateId(IdPrefix.PROJECT);
+        Point point = new Point(request.getLongitude(), request.getLatitude());
+        // try catch 문 수정 / 여기서 Point에 대한 예외처리 하지 않기
+        try {
+            Project project = Project.builder()
+                .id(projectId)
+                .name(request.getName())
+                .content(request.getContent())
+                .field(request.getField())
+                .location(point)
+                .startAt(request.getStartAt())
+                .endAt(request.getEndAt())
+                .leaderId(user.getUserId())
+                .build();
+            Project savedProject = projectRepository.save(project);
+            projectUserService.createProjectUser(savedProject, user);
+            return ProjectResponse.from(savedProject);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("point parse exception");
+        }
     }
 
     public ProjectResponse updateProject(User user, UpdateProjectRequest request) {

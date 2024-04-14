@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.projectuser.service;
 
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class ProjectUserService {
 
     private final ProjectUserRepository projectUserRepository;
+    private final IdGenerator idGenerator;
     private final ProjectRepository projectRepository;
 
     public void createProjectUser(Project project, User user) {
@@ -28,8 +31,10 @@ public class ProjectUserService {
             // 이미 생성됨
         } else {
             project.setLeaderId(user.getUserId());
-
-            ProjectUser projectUser = new ProjectUser(project, user);
+            String projectUserId = idGenerator.generateId(IdPrefix.PROJECT_USER);
+            ProjectUser projectUser = ProjectUser.builder()
+                    .id(projectUserId).project(project).user(user)
+                    .build();
             project.getProjectUsers().add(projectUser);
             projectUserRepository.save(projectUser);
         }

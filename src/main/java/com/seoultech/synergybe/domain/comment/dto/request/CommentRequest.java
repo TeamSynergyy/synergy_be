@@ -11,7 +11,7 @@ import lombok.Getter;
 public class CommentRequest {
     private String userId;
     private Long postId;
-    private Long commentId;
+    private String commentId;
     private String comment;
 
     public Comment toEntity(User user, Post post, String comment) {

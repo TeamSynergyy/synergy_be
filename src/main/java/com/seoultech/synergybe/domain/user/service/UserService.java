@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
 import com.seoultech.synergybe.domain.user.dto.response.*;
 import com.seoultech.synergybe.domain.user.exception.UserNotFoundException;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +36,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final CustomPasswordEncoder passwordEncoder;
+    private final IdGenerator idGenerator;
 
     public CheckDuplicateVolunteerEmailResponse checkDuplicateVolunteerEmailResponse(String email) {
         boolean isDuplicated = userRepository.existsByEmail(email);
@@ -45,7 +49,10 @@ public class UserService {
             String name,
             String major
     ) {
-        User user = new User(email, password, name, passwordEncoder, major);
+        String userId = idGenerator.generateId(IdPrefix.USER);
+        User user = User.builder()
+                .userId(userId).email(email).password(password).name(name).passwordEncoder(passwordEncoder).major(major)
+                .build();
         userRepository.save(user);
 
         return CreateUserResponse.from(user);

@@ -20,10 +20,10 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE comment_id = ?")
 public class Comment extends BaseTime {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private Long id;
+    private String id;
 
+    @Column(name = "comment")
     private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +38,8 @@ public class Comment extends BaseTime {
     private boolean isDeleted;
 
     @Builder
-    public Comment(String comment, User user, Post post) {
+    public Comment(String id, String comment, User user, Post post) {
+        this.id = id;
         this.comment = comment;
         this.user = user;
         this.post = post;

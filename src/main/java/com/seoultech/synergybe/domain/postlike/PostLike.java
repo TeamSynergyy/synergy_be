@@ -14,9 +14,8 @@ import jakarta.persistence.*;
 @Getter
 public class PostLike {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_like_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
@@ -30,7 +29,8 @@ public class PostLike {
     private LikeStatus status;
 
     @Builder
-    public PostLike(User user, Post post) {
+    public PostLike(String id, User user, Post post) {
+        this.id = id;
         this.user = user;
         this.post = post;
         this.status = LikeStatus.LIKE;
