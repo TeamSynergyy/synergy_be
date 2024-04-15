@@ -1,6 +1,8 @@
 package com.seoultech.synergybe.domain.comment;
 
 import com.seoultech.synergybe.domain.comment.dto.request.CommentRequest;
+import com.seoultech.synergybe.domain.comment.vo.CommentContent;
+import com.seoultech.synergybe.domain.comment.vo.CommentInfo;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.common.BaseTime;
@@ -23,8 +25,8 @@ public class Comment extends BaseTime {
     @Column(name = "comment_id")
     private String id;
 
-    @Column(name = "comment")
-    private String comment;
+    @Embedded
+    private CommentContent comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
@@ -34,20 +36,26 @@ public class Comment extends BaseTime {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id")
+    private Comment parentComment;
+
+    @Embedded
+    private CommentInfo commentInfo;
 
     @Builder
-    public Comment(String id, String comment, User user, Post post) {
+    public Comment(String id, String comment, User user, Post post, Comment parentComment, int depth, int orderNumber,
+                   boolean isDeleted, boolean isChildComment) {
         this.id = id;
-        this.comment = comment;
+        this.comment = new CommentContent(comment);
         this.user = user;
         this.post = post;
-        this.isDeleted = false;
+        this.parentComment = parentComment;
+        this.commentInfo = new CommentInfo(isDeleted, isChildComment, depth, orderNumber, parentComment, post);
     }
 
     public Comment updateComment(CommentRequest request) {
-        this.comment = request.getComment();
+        this.comment = this.comment.updateContent(request.getComment());
 
         return this;
     }
