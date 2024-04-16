@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.apply;
 
+import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.user.User;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_DELETED_DEFAULT;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,25 +33,29 @@ public class Apply {
     private Project project;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private ApplyStatus status;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
+    @Embedded
+    private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @Builder
     public Apply(String id, User user, Project project) {
         this.id = id;
         this.user = user;
         this.project = project;
-        this.status = ApplyStatus.PROCESS;
-        this.isDeleted = false;
+        this.status = ApplyStatus.NEW;
     }
 
-    public void accepted() {
-        this.status = ApplyStatus.COMPLETED;
+    public void changeStatusToAccept() {
+        this.status = ApplyStatus.ACCEPT;
     }
 
-    public void rejected() {
+    public void changeStatusToReject() {
         this.status = ApplyStatus.REJECTED;
+    }
+
+    public void changeStatusToCompleted() {
+        this.status = ApplyStatus.COMPLETED;
     }
 }
