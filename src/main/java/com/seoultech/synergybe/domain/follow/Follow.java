@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.follow;
 
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 

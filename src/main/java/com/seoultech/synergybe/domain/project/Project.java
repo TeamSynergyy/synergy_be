@@ -6,7 +6,7 @@ import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.schedule.Schedule;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

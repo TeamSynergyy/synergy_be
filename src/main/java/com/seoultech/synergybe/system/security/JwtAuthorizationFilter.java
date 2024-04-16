@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.system.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seoultech.synergybe.system.common.ApiResponseDto;
+import com.seoultech.synergybe.system.apiresponse.ApiResponseDto;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

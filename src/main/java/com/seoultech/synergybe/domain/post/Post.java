@@ -2,14 +2,13 @@ package com.seoultech.synergybe.domain.post;
 
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.image.Image;
-import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.vo.PostAuthorName;
 import com.seoultech.synergybe.domain.post.vo.PostContent;
 import com.seoultech.synergybe.domain.post.vo.PostInformation;
 import com.seoultech.synergybe.domain.post.vo.PostTitle;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

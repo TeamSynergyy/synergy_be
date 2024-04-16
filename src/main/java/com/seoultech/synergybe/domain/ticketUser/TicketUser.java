@@ -2,7 +2,7 @@ package com.seoultech.synergybe.domain.ticketUser;
 
 import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

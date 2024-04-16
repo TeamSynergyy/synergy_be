@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.ticket;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.ticket.dto.TicketRequest;
 import com.seoultech.synergybe.domain.ticketUser.TicketUser;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

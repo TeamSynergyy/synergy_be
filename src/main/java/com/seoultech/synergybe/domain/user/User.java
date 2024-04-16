@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.user;
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 
 import com.seoultech.synergybe.domain.user.vo.*;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 

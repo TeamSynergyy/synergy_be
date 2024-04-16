@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.projectlike;
 
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

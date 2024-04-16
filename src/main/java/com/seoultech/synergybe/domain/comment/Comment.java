@@ -6,7 +6,7 @@ import com.seoultech.synergybe.domain.comment.vo.CommentInformation;
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
