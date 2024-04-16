@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.schedule;
 
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.schedule.dto.request.ScheduleRequest;
+import com.seoultech.synergybe.system.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 @Where(clause = "is_deleted = false")
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE schedule_id = ?")
-public class Schedule {
+public class Schedule extends BaseTime {
     @Id
     @Column(name = "schedule_id")
     private String id;

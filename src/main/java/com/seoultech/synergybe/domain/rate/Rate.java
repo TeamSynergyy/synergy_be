@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.rate;
 
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.system.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "is_deleted = false")
 @SQLDelete(sql = "UPDATE rate SET is_deleted = true WHERE rate_id = ?")
-public class Rate {
+public class Rate extends BaseTime {
     @Id
     @Column(name = "rate_id")
     private String id;

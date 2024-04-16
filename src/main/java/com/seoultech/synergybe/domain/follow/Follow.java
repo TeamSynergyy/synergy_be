@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.follow;
 
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.system.common.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
-public class Follow {
+public class Follow extends BaseTime {
     @Id
     @Column(name = "follow_id")
     private String id;

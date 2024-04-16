@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.postlike;
 
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.system.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
-public class PostLike {
+public class PostLike extends BaseTime {
     @Id
     @Column(name = "post_like_id")
     private String id;

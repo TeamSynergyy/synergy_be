@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.ticket;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.ticket.dto.TicketRequest;
 import com.seoultech.synergybe.domain.ticketUser.TicketUser;
+import com.seoultech.synergybe.system.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +22,7 @@ import java.util.List;
 @Getter
 @Where(clause = "is_deleted = false")
 @SQLDelete(sql = "UPDATE ticket SET is_deleted = true WHERE ticket_id = ?")
-public class Ticket {
+public class Ticket extends BaseTime {
     @Id
     @Column(name = "ticket_id")
     private String id;
