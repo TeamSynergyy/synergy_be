@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.comment;
 import com.seoultech.synergybe.domain.comment.dto.request.CommentRequest;
 import com.seoultech.synergybe.domain.comment.vo.CommentContent;
 import com.seoultech.synergybe.domain.comment.vo.CommentInfo;
+import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.common.BaseTime;
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_DELETED_DEFAULT;
+
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -21,6 +24,7 @@ import org.hibernate.annotations.Where;
 @Where(clause = "is_deleted = false")
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE comment_id = ?")
 public class Comment extends BaseTime {
+
     @Id
     @Column(name = "comment_id")
     private String id;
@@ -43,15 +47,18 @@ public class Comment extends BaseTime {
     @Embedded
     private CommentInfo commentInfo;
 
+    @Embedded
+    private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
+
     @Builder
     public Comment(String id, String comment, User user, Post post, Comment parentComment, int depth, int orderNumber,
-                   boolean isDeleted, boolean isChildComment) {
+                   boolean isChildComment) {
         this.id = id;
         this.comment = new CommentContent(comment);
         this.user = user;
         this.post = post;
         this.parentComment = parentComment;
-        this.commentInfo = new CommentInfo(isDeleted, isChildComment, depth, orderNumber, parentComment, post);
+        this.commentInfo = new CommentInfo(isChildComment, depth, orderNumber, parentComment, post);
     }
 
     public Comment updateComment(CommentRequest request) {
