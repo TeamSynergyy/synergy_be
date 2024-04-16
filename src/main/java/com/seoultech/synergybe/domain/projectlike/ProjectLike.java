@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.projectlike;
 
 
+import com.seoultech.synergybe.domain.common.constants.LikeStatus;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.common.BaseTime;
@@ -28,16 +29,21 @@ public class ProjectLike extends BaseTime {
     private Project project;
 
     @Enumerated(EnumType.STRING)
-    private LikeStatus status;
+    @Column(name = "like_status", nullable = false)
+    private LikeStatus likeStatus = LikeStatus.LIKE;
+
+
 
     @Builder
     public ProjectLike(String id, User user, Project project) {
         this.id = id;
         this.user = user;
         this.project = project;
+        project.getLikes().add(this);
     }
 
-    public void updateStatus(LikeStatus status) {
-        this.status = status;
+    public void updateStatus(LikeStatus likeStatus) {
+        this.likeStatus = likeStatus;
+
     }
 }
