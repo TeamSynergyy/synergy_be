@@ -78,7 +78,8 @@ public class ApplyService {
 
 
         // projectUser 추가
-        ProjectUser projectUser = new ProjectUser(project, user);
+        String projectUserId = idGenerator.generateId(IdPrefix.PROJECT_USER);
+        ProjectUser projectUser = new ProjectUser(projectUserId, project, user);
         project.getProjectUsers().add(projectUser);
         projectUserRepository.save(projectUser);
         User applyUser = userService.getUser(userId);
