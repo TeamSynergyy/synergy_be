@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.rate;
 
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.rate.vo.RateContent;
 import com.seoultech.synergybe.domain.rate.vo.RateScore;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.common.BaseTime;
@@ -44,7 +45,8 @@ public class Rate extends BaseTime {
     @Embedded
     private RateScore score;
 
-    private String content;
+    @Embedded
+    private RateContent content;
 
     @Builder
     public Rate(String id, Project project, User giveUser, User receiveUser, int score, String content) {
@@ -53,6 +55,6 @@ public class Rate extends BaseTime {
         this.giveUser = giveUser;
         this.receiveUser = receiveUser;
         this.score = new RateScore(score);
-        this.content = content;
+        this.content = new RateContent(content);
     }
 }
