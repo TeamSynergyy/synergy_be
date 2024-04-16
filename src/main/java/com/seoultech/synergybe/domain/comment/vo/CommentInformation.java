@@ -3,7 +3,6 @@ package com.seoultech.synergybe.domain.comment.vo;
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.comment.exception.CommentBadRequestException;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.system.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -15,7 +14,7 @@ import java.util.Objects;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentInfo {
+public class CommentInformation {
 
     @Column(name = "is_child_comment")
     private boolean isChildComment;
@@ -26,7 +25,7 @@ public class CommentInfo {
     @Column(name = "order_number")
     private int orderNumber;
 
-    public CommentInfo(boolean isChildComment, int depth, int orderNumber, Comment parentComment, Post post) {
+    public CommentInformation(boolean isChildComment, int depth, int orderNumber, Comment parentComment, Post post) {
         validateParentComment(parentComment, post);
         this.isChildComment = isChildComment;
         this.depth = depth;
@@ -41,8 +40,8 @@ public class CommentInfo {
             this.orderNumber = post.getComments().size();
         } else {
             this.isChildComment = true;
-            this.depth = parentComment.getCommentInfo().getDepth() + 1;
-            this.orderNumber = parentComment.getCommentInfo().getOrderNumber();
+            this.depth = parentComment.getInformation().getDepth() + 1;
+            this.orderNumber = parentComment.getInformation().getOrderNumber();
         }
     }
 
@@ -56,7 +55,7 @@ public class CommentInfo {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CommentInfo that = (CommentInfo) o;
+        CommentInformation that = (CommentInformation) o;
         return isChildComment == that.isChildComment && depth == that.depth && orderNumber == that.orderNumber;
     }
 

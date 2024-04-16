@@ -2,7 +2,7 @@ package com.seoultech.synergybe.domain.comment;
 
 import com.seoultech.synergybe.domain.comment.dto.request.CommentRequest;
 import com.seoultech.synergybe.domain.comment.vo.CommentContent;
-import com.seoultech.synergybe.domain.comment.vo.CommentInfo;
+import com.seoultech.synergybe.domain.comment.vo.CommentInformation;
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.user.User;
@@ -45,7 +45,7 @@ public class Comment extends BaseTime {
     private Comment parentComment;
 
     @Embedded
-    private CommentInfo commentInfo;
+    private CommentInformation information;
 
     @Embedded
     private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
@@ -58,7 +58,7 @@ public class Comment extends BaseTime {
         this.user = user;
         this.post = post;
         this.parentComment = parentComment;
-        this.commentInfo = new CommentInfo(isChildComment, depth, orderNumber, parentComment, post);
+        this.information = new CommentInformation(isChildComment, depth, orderNumber, parentComment, post);
     }
 
     public Comment updateComment(CommentRequest request) {
