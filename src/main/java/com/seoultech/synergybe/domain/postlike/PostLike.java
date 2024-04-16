@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.postlike;
 
+import com.seoultech.synergybe.domain.common.constants.LikeStatus;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.common.BaseTime;
@@ -27,18 +28,18 @@ public class PostLike extends BaseTime {
     private Post post;
 
     @Enumerated(EnumType.STRING)
-    private LikeStatus status;
+    @Column(name = "like_status", nullable = false)
+    private LikeStatus likeStatus = LikeStatus.LIKE;
 
     @Builder
     public PostLike(String id, User user, Post post) {
         this.id = id;
         this.user = user;
         this.post = post;
-        this.status = LikeStatus.LIKE;
         post.getLikes().add(this);
     }
 
-    public void updateStatus(LikeStatus status) {
-        this.status = status;
+    public void updateStatus(LikeStatus likeStatus) {
+        this.likeStatus = likeStatus;
     }
 }

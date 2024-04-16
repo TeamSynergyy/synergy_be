@@ -1,10 +1,10 @@
 package com.seoultech.synergybe.domain.postlike.service;
 
+import com.seoultech.synergybe.domain.common.constants.LikeStatus;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
-import com.seoultech.synergybe.domain.postlike.LikeStatus;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
 import com.seoultech.synergybe.domain.postlike.dto.response.PostLikeResponse;
@@ -33,7 +33,7 @@ public class PostLikeService {
         if (type.getLikeType().equals("like")) {
             status = LikeStatus.LIKE;
         } else {
-            status = LikeStatus.UNLIKE;
+            status = LikeStatus.UN_LIKE;
         }
         try {
             log.info("updatePostLike update before");
@@ -58,19 +58,19 @@ public class PostLikeService {
      * 3 - status가 like이면 like 로 변경
      * post에서 해당 postlike 추가
      */
-    public synchronized PostLike update(User user, Long postId, LikeStatus status) {
+    public synchronized PostLike update(User user, Long postId, LikeStatus likeStatus) {
         Optional<PostLike> postLikeOptional = postLikeRepository.findByUserUserIdAndPostId(user.getUserId(), postId);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostLikeNotFoundException("존재하지 않는 좋아요입니다."));
 
         if (postLikeOptional.isPresent()) {
-            postLikeOptional.get().updateStatus(status);
+            postLikeOptional.get().updateStatus(likeStatus);
 
             // like 시 like로 변경, postlike +1
-            if (status == LikeStatus.LIKE) {
+            if (likeStatus == LikeStatus.LIKE) {
                 post.getLikes().add(postLikeOptional.get());
-            } else if (status == LikeStatus.UNLIKE) {
+            } else if (likeStatus == LikeStatus.UN_LIKE) {
                 post.deletePostLike(postLikeOptional.get());
             }
 
