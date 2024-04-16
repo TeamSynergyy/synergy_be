@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.user.vo;
 
+import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
+import com.seoultech.synergybe.system.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -25,13 +27,13 @@ public class UserName {
 
     private void validateNotNull(String name) {
         if (Objects.isNull(name) || name.isBlank()) {
-//            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "이름은 필수 항목입니다.");
+            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "이름은 필수 항목입니다.");
         }
     }
 
     private void validateUserNameLength(String name) {
         if (name.length() > MAX_USER_NAME_LENGTH) {
-//            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "이름은 최대 10자입니다.");
+            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "이름은 최대 10자입니다.");
         }
     }
 
