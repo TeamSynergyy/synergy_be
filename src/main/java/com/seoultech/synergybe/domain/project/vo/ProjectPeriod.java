@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectInformation {
+public class ProjectPeriod {
 
     @Column(name = "start_at")
     private LocalDateTime startAt;
@@ -21,14 +21,10 @@ public class ProjectInformation {
     @Column(name = "end_at")
     private LocalDateTime endAt;
 
-    @Column(name = "leader_id")
-    private String leaderId;
-
-    public ProjectInformation(LocalDateTime startAt, LocalDateTime endAt, String leaderId) {
+    public ProjectPeriod(LocalDateTime startAt, LocalDateTime endAt, String leaderId) {
         validateNotNull(startAt, endAt, leaderId);
         this.startAt = startAt;
         this.endAt = endAt;
-        this.leaderId = leaderId;
     }
 
     private void validateNotNull(LocalDateTime startAt, LocalDateTime endAt, String leaderId) {
