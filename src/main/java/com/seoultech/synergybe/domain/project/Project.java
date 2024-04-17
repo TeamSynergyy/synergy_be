@@ -4,7 +4,8 @@ import com.seoultech.synergybe.domain.apply.Apply;
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.notice.Notice;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
-import com.seoultech.synergybe.domain.project.vo.ProjectInformation;
+import com.seoultech.synergybe.domain.project.vo.ProjectLeaderId;
+import com.seoultech.synergybe.domain.project.vo.ProjectPeriod;
 import com.seoultech.synergybe.domain.project.vo.ProjectLocation;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
@@ -47,7 +48,10 @@ public class Project extends BaseTime {
     private ProjectStatus status;
 
     @Embedded
-    private ProjectInformation information;
+    private ProjectLeaderId leaderId;
+
+    @Embedded
+    private ProjectPeriod period;
 
     @Embedded
     private ProjectLocation location;
@@ -85,7 +89,8 @@ public class Project extends BaseTime {
         this.field = field;
         this.location = new ProjectLocation(location);
         this.status = ProjectStatus.READY;
-        this.information = new ProjectInformation(startAt, endAt, leaderId);
+        this.leaderId = new ProjectLeaderId(leaderId);
+        this.period = new ProjectPeriod(startAt, endAt, leaderId);
     }
 
     public Project updateProject(UpdateProjectRequest request) {
@@ -96,7 +101,7 @@ public class Project extends BaseTime {
         return this;
     }
 
-    public void setLeaderId(String leaderId) {
-        this.leaderId = leaderId;
+    public void updateProjectLeaderId(String leaderId) {
+        this.leaderId = new ProjectLeaderId(leaderId);
     }
 }
