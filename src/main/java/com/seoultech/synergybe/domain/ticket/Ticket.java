@@ -1,7 +1,12 @@
 package com.seoultech.synergybe.domain.ticket;
 
+import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.ticket.dto.TicketRequest;
+import com.seoultech.synergybe.domain.ticket.vo.TicketContent;
+import com.seoultech.synergybe.domain.ticket.vo.TicketName;
+import com.seoultech.synergybe.domain.ticket.vo.TicketOrderNumber;
+import com.seoultech.synergybe.domain.ticket.vo.TicketTagInformation;
 import com.seoultech.synergybe.domain.ticketUser.TicketUser;
 import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
@@ -13,9 +18,10 @@ import org.hibernate.annotations.Where;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_DELETED_DEFAULT;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,60 +37,58 @@ public class Ticket extends BaseTime {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    private String title;
+    @Embedded
+    private TicketName name;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
-    private String tag;
-    private String tagColor;
-    private Double assignedTime;
-    private Integer orderNumber;
-    private LocalDateTime endAt;
+    @Embedded
+    private TicketContent content;
+
+    @Embedded
+    private TicketTagInformation information;
+
+    @Embedded
+    private TicketOrderNumber orderNumber;
 
     @OneToMany(mappedBy = "ticket")
     private List<TicketUser> ticketUsers = new ArrayList<>();
 
-    @Column(name = "status")
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private TicketStatus status;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
+    @Embedded
+    private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @Builder
-    public Ticket(String id, String title, String content, Integer orderNumber, String tag, LocalDateTime endAt, Project project, TicketStatus status,
-                  String tagColor, Double assignedTime) {
+    public Ticket(String id, String name, String content, int orderNumber, String tag, Project project,
+                  String tagColor) {
         this.id = id;
-        this.title = title;
-        this.content = content;
-        this.tag = tag;
-        this.endAt = endAt;
-        this.orderNumber = orderNumber;
+        this.name = new TicketName(name);
+        this.content = new TicketContent(content);
+        this.information = new TicketTagInformation(tag, tagColor);
+        this.orderNumber = new TicketOrderNumber(orderNumber);
         this.project = project;
-        this.status = status;
-        this.tagColor = tagColor;
-        this.assignedTime = assignedTime;
-        this.isDeleted = false;
+        this.status = TicketStatus.BACKLOG;
     }
 
     public Ticket update(TicketRequest request, TicketStatus status) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
-        this.tag = request.getTag();
-        this.orderNumber = request.getOrderNumber();
+        this.name = new TicketName(request.getContent());
+        this.content = new TicketContent(request.getContent());
         this.status = status;
 
         return this;
     }
 
     public Ticket increaseOrderNum() {
-        this.orderNumber += 1;
+        int value = this.orderNumber.getOrderNumber() + 1;
+        this.orderNumber = new TicketOrderNumber(value);
 
         return this;
     }
 
     public Ticket decreaseOrderNum() {
-        this.orderNumber -=1;
+        int value = this.orderNumber.getOrderNumber() - 1;
+        this.orderNumber = new TicketOrderNumber(value);
 
         return this;
     }
