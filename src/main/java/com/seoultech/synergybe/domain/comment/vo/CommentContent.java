@@ -13,10 +13,10 @@ import java.text.MessageFormat;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentContent {
-    private static final int CONTENT_MIN_LENGTH = 10;
-    private static final int CONTENT_MAX_LENGTH = 200;
+    private static final int MIN_CONTENT_LENGTH = 10;
+    private static final int MAX_CONTENT_LENGTH = 200;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
 
     public CommentContent(String value) {
@@ -25,11 +25,11 @@ public class CommentContent {
     }
 
     private void validateLength(String value) {
-        if (CONTENT_MIN_LENGTH > value.length() || value.length() > CONTENT_MAX_LENGTH) {
+        if (MIN_CONTENT_LENGTH > value.length() || value.length() > MAX_CONTENT_LENGTH) {
             throw new CommentBadRequestException(
                     MessageFormat.format(
                             "댓글은 {0} 자 이상 {1}자 이하로 작성해야합니다.",
-                            CONTENT_MIN_LENGTH, CONTENT_MAX_LENGTH
+                            MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH
                     )
             );
         }
