@@ -4,6 +4,7 @@ import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.schedule.dto.request.ScheduleRequest;
 import com.seoultech.synergybe.domain.common.BaseTime;
+import com.seoultech.synergybe.domain.schedule.vo.ScheduleContent;
 import com.seoultech.synergybe.domain.schedule.vo.SchedulePeriod;
 import com.seoultech.synergybe.domain.schedule.vo.ScheduleTitle;
 import lombok.AccessLevel;
@@ -36,7 +37,8 @@ public class Schedule extends BaseTime {
     @Embedded
     private ScheduleTitle title;
 
-    private String content;
+    @Embedded
+    private ScheduleContent content;
 
     private String label;
 
@@ -50,7 +52,7 @@ public class Schedule extends BaseTime {
     public Schedule(String id, Project project, String title, String content, String label, LocalDateTime startAt, LocalDateTime endAt) {
         this.id = id;
         this.title = new ScheduleTitle(title);
-        this.content = content;
+        this.content = new ScheduleContent(content);
         this.label = label;
         this.project = project;
         this.period = new SchedulePeriod(startAt, endAt);
@@ -59,14 +61,5 @@ public class Schedule extends BaseTime {
     public void addProject(Project project) {
         this.project = project;
         project.getSchedules().add(this);
-    }
-
-    public Schedule updateSchedule(ScheduleRequest request) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
-        this.startAt = request.getStartAt();
-        this.endAt = request.getEndAt();
-
-        return this;
     }
 }
