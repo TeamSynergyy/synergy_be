@@ -1,7 +1,11 @@
 package com.seoultech.synergybe.domain.rate;
 
+import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.rate.vo.RateContent;
+import com.seoultech.synergybe.domain.rate.vo.RateScore;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,12 +15,14 @@ import org.hibernate.annotations.Where;
 
 import jakarta.persistence.*;
 
+import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_DELETED_DEFAULT;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "is_deleted = false")
 @SQLDelete(sql = "UPDATE rate SET is_deleted = true WHERE rate_id = ?")
-public class Rate {
+public class Rate extends BaseTime {
     @Id
     @Column(name = "rate_id")
     private String id;
@@ -33,20 +39,22 @@ public class Rate {
     @JoinColumn(name = "receive_user_id", referencedColumnName = "user_id")
     private User receiveUser;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
+    @Embedded
+    private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
-    private Integer score;
-    private String content;
+    @Embedded
+    private RateScore score;
+
+    @Embedded
+    private RateContent content;
 
     @Builder
-    public Rate(String id, Project project, User giveUser, User receiveUser, Integer score, String content) {
+    public Rate(String id, Project project, User giveUser, User receiveUser, int score, String content) {
         this.id = id;
         this.project = project;
         this.giveUser = giveUser;
         this.receiveUser = receiveUser;
-        this.score = score;
-        this.content = content;
-        this.isDeleted = false;
+        this.score = new RateScore(score);
+        this.content = new RateContent(content);
     }
 }

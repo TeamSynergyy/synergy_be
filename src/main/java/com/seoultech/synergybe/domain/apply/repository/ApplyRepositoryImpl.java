@@ -30,7 +30,7 @@ public class ApplyRepositoryImpl implements ApplyRepositoryCustom{
         return queryFactory
                 .select(apply)
                 .from(apply)
-                .where(apply.user.userId.eq(userId).and(apply.status.eq(ApplyStatus.PROCESS)))
+                .where(apply.user.userId.eq(userId).and(apply.status.eq(ApplyStatus.NEW)))
                 .fetch();
     }
 
@@ -39,7 +39,7 @@ public class ApplyRepositoryImpl implements ApplyRepositoryCustom{
         return queryFactory
                 .select(apply.user.userId)
                 .from(apply)
-                .where(apply.project.id.eq(projectId).and(apply.status.eq(ApplyStatus.PROCESS)))
+                .where(apply.project.id.eq(projectId).and(apply.status.eq(ApplyStatus.NEW)))
                 .fetch();
     }
 

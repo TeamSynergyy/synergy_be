@@ -30,7 +30,6 @@ public class ProjectUserService {
         if (projectUserOptional.isPresent()) {
             // 이미 생성됨
         } else {
-            project.setLeaderId(user.getUserId());
             String projectUserId = idGenerator.generateId(IdPrefix.PROJECT_USER);
             ProjectUser projectUser = ProjectUser.builder()
                     .id(projectUserId).project(project).user(user)

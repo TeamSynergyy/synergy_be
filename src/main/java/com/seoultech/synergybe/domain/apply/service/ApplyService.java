@@ -72,13 +72,14 @@ public class ApplyService {
         Apply apply = applyRepository.findByUserIdAndProjectId(userId, projectId)
                 .orElseThrow(() -> new ApplyNotFoundException("존재하지 않는 신청내역입니다."));
 
-        apply.accepted();
+        apply.changeStatusToAccept();
         Project project = projectService.findProjectById(projectId);
         User user = userService.getUser(userId);
 
 
         // projectUser 추가
-        ProjectUser projectUser = new ProjectUser(project, user);
+        String projectUserId = idGenerator.generateId(IdPrefix.PROJECT_USER);
+        ProjectUser projectUser = new ProjectUser(projectUserId, project, user);
         project.getProjectUsers().add(projectUser);
         projectUserRepository.save(projectUser);
         User applyUser = userService.getUser(userId);
@@ -95,7 +96,7 @@ public class ApplyService {
     public RejectApplyResponse rejectApply(String userId, Long projectId) {
         Apply apply = applyRepository.findByUserIdAndProjectId(userId, projectId)
                 .orElseThrow(() -> new ApplyNotFoundException("존재하지 않는 신청내역입니다."));
-        apply.rejected();
+        apply.changeStatusToReject();
 
         // apply 삭제
         applyRepository.delete(apply);

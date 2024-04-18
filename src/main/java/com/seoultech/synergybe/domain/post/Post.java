@@ -2,10 +2,13 @@ package com.seoultech.synergybe.domain.post;
 
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.image.Image;
-import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
+import com.seoultech.synergybe.domain.post.vo.PostAuthorName;
+import com.seoultech.synergybe.domain.post.vo.PostContent;
+import com.seoultech.synergybe.domain.post.vo.PostInformation;
+import com.seoultech.synergybe.domain.post.vo.PostTitle;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,14 +34,17 @@ public class Post extends BaseTime {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
-    private String title;
+    @Embedded
+    private PostTitle title;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    @Embedded
+    private PostContent content;
 
-    private String authorName;
+    @Embedded
+    private PostAuthorName authorName;
 
-    private Long thumbnailImageId;
+    @Embedded
+    private PostInformation information;
 
     @OneToMany
     @JoinColumn(name = "post_id")
@@ -55,26 +61,14 @@ public class Post extends BaseTime {
     )
     private List<Comment> comments = new ArrayList<>();
 
-
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
-
     @Builder
-    public Post(String id, User user, String title, String content, Long thumbnailImageId) {
+    public Post(String id, User user, String title, String content, String thumbnailImageId) {
         this.id = id;
         this.user = user;
-        this.title = title;
-        this.content = content;
-        this.thumbnailImageId = thumbnailImageId;
-        this.authorName = user.getName();
-        this.isDeleted = false;
-    }
-
-    public Post updatePost(UpdatePostRequest request) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
-
-        return this;
+        this.title = new PostTitle(title);
+        this.content = new PostContent(content);
+        this.information = new PostInformation(thumbnailImageId);
+        this.authorName = new PostAuthorName(user.getName().getName());
     }
 
     public void deletePostLike(PostLike postLike) {

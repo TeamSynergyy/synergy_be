@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.system.common;
+package com.seoultech.synergybe.system.apiresponse;
 
 
 import lombok.Getter;

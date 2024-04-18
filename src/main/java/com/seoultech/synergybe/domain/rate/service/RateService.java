@@ -3,7 +3,7 @@ package com.seoultech.synergybe.domain.rate.service;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.exception.ProjectLeaderBadRequest;
+import com.seoultech.synergybe.domain.project.exception.ProjectLeaderBadRequestException;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.rate.Rate;
 import com.seoultech.synergybe.domain.rate.dto.request.RateRequest;
@@ -88,7 +88,7 @@ public class RateService {
     private void checkLeader(Long projectId, User leader) {
         Project project = projectService.findProjectById(projectId);
         if (!Objects.equals(project.getLeaderId(), leader.getUserId())) {
-            throw new ProjectLeaderBadRequest("프로젝트 리더가 잘못되었습니다.");
+            throw new ProjectLeaderBadRequestException("프로젝트 리더가 잘못되었습니다.");
         }
     }
 

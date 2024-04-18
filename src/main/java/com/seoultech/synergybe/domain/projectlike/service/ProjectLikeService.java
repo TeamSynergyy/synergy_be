@@ -1,11 +1,10 @@
 package com.seoultech.synergybe.domain.projectlike.service;
 
+import com.seoultech.synergybe.domain.common.constants.LikeStatus;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
-import com.seoultech.synergybe.domain.projectlike.LikeStatus;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectlike.ProjectLikeType;
 import com.seoultech.synergybe.domain.projectlike.dto.response.ProjectLikeResponse;
@@ -33,7 +32,7 @@ public class ProjectLikeService {
         if (type.getLikeType().equals("like")) {
             status = LikeStatus.LIKE;
         } else {
-            status = LikeStatus.UNLIKE;
+            status = LikeStatus.UN_LIKE;
         }
         try {
             ProjectLike updatedProjectLike = this.update(user, projectId, status);

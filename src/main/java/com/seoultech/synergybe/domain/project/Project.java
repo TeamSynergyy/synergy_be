@@ -1,12 +1,14 @@
 package com.seoultech.synergybe.domain.project;
 
 import com.seoultech.synergybe.domain.apply.Apply;
+import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.notice.Notice;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.vo.*;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.schedule.Schedule;
-import com.seoultech.synergybe.system.common.BaseTime;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +23,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_DELETED_DEFAULT;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
@@ -31,29 +35,34 @@ public class Project extends BaseTime {
     @Column(name = "project_id")
     private String id;
 
-    private String name;
+    @Embedded
+    private ProjectName name;
 
-    private String content;
+    @Embedded
+    private ProjectContent content;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "field")
     private ProjectField field;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private ProjectStatus status;
 
-    private LocalDateTime startAt;
+    @Embedded
+    private ProjectLeaderId leaderId;
 
-    private LocalDateTime endAt;
+    @Embedded
+    private ProjectPeriod period;
 
-    private String leaderId;
-
-    private Point location;
+    @Embedded
+    private ProjectLocation location;
 
     @OneToMany(mappedBy = "project")
     private List<Notice> notices = new ArrayList<>();
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
+    @Embedded
+    private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @OneToMany(
             mappedBy = "project"
@@ -77,29 +86,41 @@ public class Project extends BaseTime {
     public Project(String id, String name, String content, ProjectField field, Point location, LocalDateTime startAt,
                    LocalDateTime endAt, String leaderId) {
         this.id = id;
-        this.name = name;
-        this.content = content;
+        this.name = new ProjectName(name);
+        this.content = new ProjectContent(content);
         this.field = field;
-        this.location = location;
-        this.status = ProjectStatus.READY;
-        this.startAt = startAt;
-        this.endAt = endAt;
-        this.leaderId = leaderId;
-        this.isDeleted = false;
+        this.location = new ProjectLocation(location);
+        this.status = ProjectStatus.NEW;
+        this.leaderId = new ProjectLeaderId(leaderId);
+        this.period = new ProjectPeriod(startAt, endAt, leaderId);
     }
 
     public Project updateProject(UpdateProjectRequest request) {
         this.name = request.getName();
         this.content = request.getContent();
         this.field = request.getField();
-        this.location = request.getLocation();
-        this.startAt = request.getStartAt();
-        this.endAt = request.getEndAt();
 
         return this;
     }
 
-    public void setLeaderId(String leaderId) {
-        this.leaderId = leaderId;
+    public void updateProjectLeaderId(String leaderId) {
+        this.leaderId = new ProjectLeaderId(leaderId);
     }
+
+    public void changeStatusToNew() {
+        this.status = ProjectStatus.NEW;
+    }
+
+    public void changeStatusToRecruitment() {
+        this.status = ProjectStatus.RECRUITMENT;
+    }
+
+    public void changeStatusToInProgress() {
+        this.status = ProjectStatus.IN_PROGRESS;
+    }
+
+    public void changeStatusToCompleted() {
+        this.status = ProjectStatus.COMPLETED;
+    }
+
 }

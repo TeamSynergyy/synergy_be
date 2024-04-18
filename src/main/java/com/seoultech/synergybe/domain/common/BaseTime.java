@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.system.common;
+package com.seoultech.synergybe.domain.common;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

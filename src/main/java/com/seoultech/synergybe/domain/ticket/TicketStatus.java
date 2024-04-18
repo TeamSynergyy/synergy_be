@@ -1,5 +1,16 @@
 package com.seoultech.synergybe.domain.ticket;
 
-public enum TicketStatus {
-    BACKLOG, IN_PROGRESS, REVIEW, DONE
+import com.seoultech.synergybe.domain.common.EnumType;
+
+public enum TicketStatus implements EnumType {
+    BACKLOG,
+    IN_PROGRESS,
+    REVIEW,
+    DONE
+    ;
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
 }

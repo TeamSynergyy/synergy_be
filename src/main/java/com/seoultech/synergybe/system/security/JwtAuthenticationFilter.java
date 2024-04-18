@@ -2,7 +2,7 @@ package com.seoultech.synergybe.system.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.user.dto.request.LoginRequest;
-import com.seoultech.synergybe.system.common.ApiResponseDto;
+import com.seoultech.synergybe.system.apiresponse.ApiResponseDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

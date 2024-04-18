@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.ticketUser;
 
 import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import jakarta.persistence.*;
 @Entity
 @NoArgsConstructor
 @Getter
-public class TicketUser {
+public class TicketUser extends BaseTime {
     @Id
     @Column(name = "ticket_user_id")
     private String id;
