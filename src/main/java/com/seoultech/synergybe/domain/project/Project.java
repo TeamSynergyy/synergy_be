@@ -4,9 +4,7 @@ import com.seoultech.synergybe.domain.apply.Apply;
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.notice.Notice;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
-import com.seoultech.synergybe.domain.project.vo.ProjectLeaderId;
-import com.seoultech.synergybe.domain.project.vo.ProjectPeriod;
-import com.seoultech.synergybe.domain.project.vo.ProjectLocation;
+import com.seoultech.synergybe.domain.project.vo.*;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.schedule.Schedule;
@@ -37,14 +35,18 @@ public class Project extends BaseTime {
     @Column(name = "project_id")
     private String id;
 
-    private String name;
+    @Embedded
+    private ProjectName name;
 
-    private String content;
+    @Embedded
+    private ProjectContent content;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "field")
     private ProjectField field;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private ProjectStatus status;
 
     @Embedded
@@ -84,11 +86,11 @@ public class Project extends BaseTime {
     public Project(String id, String name, String content, ProjectField field, Point location, LocalDateTime startAt,
                    LocalDateTime endAt, String leaderId) {
         this.id = id;
-        this.name = name;
-        this.content = content;
+        this.name = new ProjectName(name);
+        this.content = new ProjectContent(content);
         this.field = field;
         this.location = new ProjectLocation(location);
-        this.status = ProjectStatus.READY;
+        this.status = ProjectStatus.NEW;
         this.leaderId = new ProjectLeaderId(leaderId);
         this.period = new ProjectPeriod(startAt, endAt, leaderId);
     }
@@ -104,4 +106,21 @@ public class Project extends BaseTime {
     public void updateProjectLeaderId(String leaderId) {
         this.leaderId = new ProjectLeaderId(leaderId);
     }
+
+    public void changeStatusToNew() {
+        this.status = ProjectStatus.NEW;
+    }
+
+    public void changeStatusToRecruitment() {
+        this.status = ProjectStatus.RECRUITMENT;
+    }
+
+    public void changeStatusToInProgress() {
+        this.status = ProjectStatus.IN_PROGRESS;
+    }
+
+    public void changeStatusToCompleted() {
+        this.status = ProjectStatus.COMPLETED;
+    }
+
 }
