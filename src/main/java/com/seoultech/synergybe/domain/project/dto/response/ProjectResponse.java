@@ -14,70 +14,61 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
-@Getter
 @Builder
-public class ProjectResponse {
-    private Long projectId;
+public record ProjectResponse(
+        String projectId,
+        String name,
+        String content,
+        ProjectField field,
+        ProjectStatus status,
+        LocalDateTime startAt,
+        LocalDateTime endAt,
+        String leaderId,
 
-    private String name;
-
-    private String content;
-
-    private ProjectField field;
-
-    private ProjectStatus status;
-
-    private LocalDateTime startAt;
-
-    private LocalDateTime endAt;
-
-    private String leaderId;
-
-    private Point location;
-
-    private List<String> teamUserIds;
+        Point location,
+        List<String> teamUserIds
+) {
 
 
-    public static ProjectResponse from(Project project) {
-        return new ProjectResponse(project.getId(), project.getName(), project.getContent(), project.getField(),
-                project.getStatus(), project.getStartAt(), project.getEndAt(), project.getLeaderId(), project.getLocation(),
-                project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()));
-    }
-
-    public static Page<ProjectResponse> from(Page<Project> projects) {
-        return projects.map(project -> ProjectResponse.builder()
-                .projectId(project.getId())
-                .name(project.getName())
-                .content(project.getContent())
-                .field(project.getField())
-                .status(project.getStatus())
-                .startAt(project.getStartAt())
-                .endAt(project.getEndAt())
-                .leaderId(project.getLeaderId())
-                .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()))
-                .build()
-        );
-    }
-
-    public static List<ProjectResponse> from(List<Project> projects) {
-        return projects.stream()
-                .map(project -> ProjectResponse.builder()
-                        .projectId(project.getId())
-                        .name(project.getName())
-                        .content(project.getContent())
-                        .field(project.getField())
-                        .status(project.getStatus())
-                        .startAt(project.getStartAt())
-                        .endAt(project.getEndAt())
-                        .leaderId(project.getLeaderId())
-                        .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()))
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    public static List<ProjectResponse> fromEmpty(List<Project> projects) {
-        return projects.stream()
-                .map(project -> ProjectResponse.builder().build()).collect(Collectors.toList());
-    }
+//    public static ProjectResponse from(Project project) {
+//        return new ProjectResponse(project.getId(), project.getName(), project.getContent(), project.getField(),
+//                project.getStatus(), project.getStartAt(), project.getEndAt(), project.getLeaderId(), project.getLocation(),
+//                project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()));
+//    }
+//
+//    public static Page<ProjectResponse> from(Page<Project> projects) {
+//        return projects.map(project -> ProjectResponse.builder()
+//                .projectId(project.getId())
+//                .name(project.getName())
+//                .content(project.getContent())
+//                .field(project.getField())
+//                .status(project.getStatus())
+//                .startAt(project.getStartAt())
+//                .endAt(project.getEndAt())
+//                .leaderId(project.getLeaderId())
+//                .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()))
+//                .build()
+//        );
+//    }
+//
+//    public static List<ProjectResponse> from(List<Project> projects) {
+//        return projects.stream()
+//                .map(project -> ProjectResponse.builder()
+//                        .projectId(project.getId())
+//                        .name(project.getName())
+//                        .content(project.getContent())
+//                        .field(project.getField())
+//                        .status(project.getStatus())
+//                        .startAt(project.getStartAt())
+//                        .endAt(project.getEndAt())
+//                        .leaderId(project.getLeaderId())
+//                        .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserId()).collect(Collectors.toList()))
+//                        .build())
+//                .collect(Collectors.toList());
+//    }
+//
+//    public static List<ProjectResponse> fromEmpty(List<Project> projects) {
+//        return projects.stream()
+//                .map(project -> ProjectResponse.builder().build()).collect(Collectors.toList());
+//    }
 }

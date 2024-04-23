@@ -2,14 +2,16 @@ package com.seoultech.synergybe.domain.follow.service;
 
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.follow.Follow;
 import com.seoultech.synergybe.domain.follow.FollowStatus;
-import com.seoultech.synergybe.domain.follow.dto.request.FollowType;
-import com.seoultech.synergybe.domain.follow.dto.response.FollowResponse;
+import com.seoultech.synergybe.domain.follow.dto.request.CreateFollowRequest;
+import com.seoultech.synergybe.domain.follow.dto.response.GetFollowResponse;
 import com.seoultech.synergybe.domain.follow.exception.FollowNotFoundException;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.user.dto.response.GetUserId;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +42,7 @@ public class FollowService {
      * @return
      */
     @Transactional
-    public FollowResponse updateFollow(User user, String followingId, FollowType type) {
+    public GetFollowResponse updateFollow(User user, String followingId, CreateFollowRequest type) {
         FollowStatus status;
         if (type.getFollowType().equals("follow")) {
             status = FollowStatus.FOLLOW;
@@ -51,7 +53,7 @@ public class FollowService {
         try {
             Follow updatedFollow = update(user, followingId, status);
 
-            return FollowResponse.from(updatedFollow);
+            return GetFollowResponse.from(updatedFollow);
         } catch (Exception e) {
             throw new FollowNotFoundException("존재하지 않는 팔로우입니다.");
         }
@@ -81,5 +83,13 @@ public class FollowService {
 
             return followRepository.saveAndFlush(follow);
         }
+    }
+
+    public ListResponse<GetUserId> getFollowerIdList(String userId) {
+        return followRepository.findFollowerIdsByFollowingId(userId);
+    }
+
+    public List<GetUserId> getFollowingIdList(String userId) {
+        return followRepository.findFollowingIdsByFollowerId(userId);
     }
 }

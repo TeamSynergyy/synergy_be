@@ -6,8 +6,8 @@ import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.exception.ProjectLeaderBadRequestException;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.rate.Rate;
-import com.seoultech.synergybe.domain.rate.dto.request.RateRequest;
-import com.seoultech.synergybe.domain.rate.dto.response.RateResponse;
+import com.seoultech.synergybe.domain.rate.dto.request.CreateRateRequest;
+import com.seoultech.synergybe.domain.rate.dto.response.GetRateResponse;
 import com.seoultech.synergybe.domain.rate.dto.response.UserRateResponse;
 import com.seoultech.synergybe.domain.rate.repository.RateRepository;
 import com.seoultech.synergybe.domain.user.User;
@@ -31,7 +31,7 @@ public class RateService {
     private final IdGenerator idGenerator;
 
 
-    public RateResponse createRate(RateRequest request, User giveUser) {
+    public GetRateResponse createRate(CreateRateRequest request, User giveUser) {
         Project project = projectService.findProjectById(request.getProjectId());
         User receiveUser = userService.getUser(request.getReceiveUserId());
         String rateId = idGenerator.generateId(IdPrefix.RATE);
@@ -40,7 +40,7 @@ public class RateService {
                 .build();
         rateRepository.save(rate);
 
-        return RateResponse.from(rate);
+        return GetRateResponse.from(rate);
     }
 
     //todo
@@ -92,9 +92,9 @@ public class RateService {
         }
     }
 
-    public List<RateResponse> getRateListByProject(Long projectId) {
+    public List<GetRateResponse> getRateListByProject(Long projectId) {
         List<Rate> rates = rateRepository.findAllByProjectId(projectId);
 
-        return RateResponse.from(rates);
+        return GetRateResponse.from(rates);
     }
 }

@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
+import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.user.dto.response.*;
 import com.seoultech.synergybe.domain.user.exception.UserNotFoundException;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
@@ -34,7 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final FollowRepository followRepository;
+    private final FollowService followService;
     private final CustomPasswordEncoder passwordEncoder;
     private final IdGenerator idGenerator;
 
@@ -51,7 +53,11 @@ public class UserService {
     ) {
         String userId = idGenerator.generateId(IdPrefix.USER);
         User user = User.builder()
-                .userId(userId).email(email).password(password).name(name).passwordEncoder(passwordEncoder).major(major)
+                .userId(userId)
+                .email(email)
+                .password(password)
+                .name(name)
+                .passwordEncoder(passwordEncoder).major(major)
                 .build();
         userRepository.save(user);
 
@@ -62,8 +68,8 @@ public class UserService {
         return userRepository.findByUserId(userId);
     }
 
-    public UserResponse getMyInfo(User user) {
-        return UserResponse.from(user);
+    public GetUserAccountResponse getUserAccount(String email) {
+        return userRepository.findUserAccountByEmail(email);
     }
 
     public UserResponse getUserInfo(String userId) {
@@ -105,11 +111,12 @@ public class UserService {
 
     public void updateMyInfo(
             String userId,
+            String email,
             String name,
             String major
     ) {
         User user = getUser(userId);
-        user.updateUserInfo(name, major);
+        user.updateUserInfo(email, name, major);
     }
 
     public ListUserResponse getSimilarUserListByUser(String userId, Long end) {
@@ -162,14 +169,16 @@ public class UserService {
         }
     }
 
-    public UserIdsResponse getFollowerIds(User user) {
+    public ListResponse<GetUserId> getFollowerIds(String userId) {
+        ListResponse<GetUserId> getFollowerIdList = followService.getFollowerIdList(userId);
 
-        return UserIdsResponse.from(followRepository.findFollowerIdsByFollowingId(user.getUserId()));
+//        return UserIdsResponse.from(followRepository.findFollowerIdsByFollowingId(user.getUserId()));
     }
 
-    public UserIdsResponse getFollowingIds(User user) {
+    public ListResponse<GetUserId> getFollowingIds(String userId) {
+        List<GetUserId> getFollowingIdList = followService.getFollowingIdList(userId);
 
-        return UserIdsResponse.from(followRepository.findFollowingIdsByFollowerId(user.getUserId()));
+//        return UserIdsResponse.from(followRepository.findFollowingIdsByFollowerId(user.getUserId()));
     }
 }
 

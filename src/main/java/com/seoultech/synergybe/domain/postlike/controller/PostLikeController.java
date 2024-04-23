@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.postlike.controller;
 
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
-import com.seoultech.synergybe.domain.postlike.dto.response.PostLikeResponse;
+import com.seoultech.synergybe.domain.postlike.dto.response.GetPostLikeResponse;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
@@ -24,7 +24,7 @@ public class PostLikeController {
 
     @Operation(summary = "좋아요 신청, 취소", description = "좋아요를 신청 및 취소하며 좋아요 타입에 따라 좋아요 상태가 변화하므로 PUT 메서드 하나로 관리됩니다.")
     @PutMapping(value = "/{postId}/like")
-    public ResponseEntity<PostLikeResponse> updatePostLike(@PathVariable("postId") Long postId, @RequestBody PostLikeType type, @LoginUser String userId) {
+    public ResponseEntity<GetPostLikeResponse> updatePostLike(@PathVariable("postId") Long postId, @RequestBody PostLikeType type, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postLikeService.updatePostLike(user, postId, type));

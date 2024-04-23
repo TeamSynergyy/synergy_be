@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.domain.apply.controller;
 
-import com.seoultech.synergybe.domain.apply.dto.request.ApplyRequest;
+import com.seoultech.synergybe.domain.apply.dto.request.CreateApplyRequest;
 import com.seoultech.synergybe.domain.apply.dto.response.AcceptApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.ListApplyUserResponse;
@@ -45,14 +45,14 @@ public class ApplyController {
 
     @Operation(summary = "프로젝트 지원 수락", description = "프로젝트의 팀장이 지원을 수락합니다.")
     @PostMapping(value = "/accept/{projectId}")
-    public ResponseEntity<AcceptApplyResponse> acceptApply(@PathVariable("projectId") Long projectId, @RequestBody ApplyRequest request) {
+    public ResponseEntity<AcceptApplyResponse> acceptApply(@PathVariable("projectId") Long projectId, @RequestBody CreateApplyRequest request) {
 
         return ResponseEntity.status(HttpStatus.OK).body(applyService.acceptApply(request.getUserId(), projectId));
     }
 
     @Operation(summary = "프로젝트 지원 거절", description = "프로젝트의 팀장이 지원을 거절합니다.")
     @DeleteMapping("/reject/{projectId}")
-    public ResponseEntity<RejectApplyResponse> rejectApply(@PathVariable("projectId") Long projectId, @RequestBody ApplyRequest request) {
+    public ResponseEntity<RejectApplyResponse> rejectApply(@PathVariable("projectId") Long projectId, @RequestBody CreateApplyRequest request) {
 
         return ResponseEntity.status(HttpStatus.OK).body(applyService.rejectApply(request.getUserId(), projectId));
     }

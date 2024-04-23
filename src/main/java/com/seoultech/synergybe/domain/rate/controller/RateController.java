@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.rate.controller;
 
-import com.seoultech.synergybe.domain.rate.dto.request.RateRequest;
-import com.seoultech.synergybe.domain.rate.dto.response.RateResponse;
+import com.seoultech.synergybe.domain.rate.dto.request.CreateRateRequest;
+import com.seoultech.synergybe.domain.rate.dto.response.GetRateResponse;
 import com.seoultech.synergybe.domain.rate.dto.response.UserRateResponse;
 import com.seoultech.synergybe.domain.rate.service.RateService;
 import com.seoultech.synergybe.domain.user.User;
@@ -26,7 +26,7 @@ public class RateController {
 
     @Operation(summary = "평가 생성", description = "프로젝트 팀원에 대해 평가를 생성합니다.")
     @PostMapping
-    public ResponseEntity<RateResponse> createRate(@RequestBody RateRequest request, @LoginUser String userId) {
+    public ResponseEntity<GetRateResponse> createRate(@RequestBody CreateRateRequest request, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(rateService.createRate(request, user));
@@ -42,7 +42,7 @@ public class RateController {
 
     @Operation(summary = "평가 목록", description = "프로젝트 구성원이 평가한 모든 평가들이 반환됩니다.")
     @GetMapping("/{projectId}")
-    public ResponseEntity<List<RateResponse>> getRateList(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<List<GetRateResponse>> getRateList(@PathVariable("projectId") Long projectId) {
 
         return ResponseEntity.ok().body(rateService.getRateListByProject(projectId));
     }

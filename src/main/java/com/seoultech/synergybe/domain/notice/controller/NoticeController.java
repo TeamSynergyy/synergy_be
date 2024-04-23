@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.notice.controller;
 
-import com.seoultech.synergybe.domain.notice.dto.request.NoticeRequest;
-import com.seoultech.synergybe.domain.notice.dto.response.NoticeResponse;
+import com.seoultech.synergybe.domain.notice.dto.request.CreateNoticeRequest;
+import com.seoultech.synergybe.domain.notice.dto.response.GetNoticeResponse;
 import com.seoultech.synergybe.domain.notice.service.NoticeService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +22,7 @@ public class NoticeController {
 
     @Operation(summary = "공지 생성", description = "공지가 생성되며 모든 프로젝트 유저들에게 알림을 전송합니다.")
     @PostMapping
-    public ResponseEntity<NoticeResponse> createNotice(@RequestBody NoticeRequest request, @LoginUser String userId) {
+    public ResponseEntity<GetNoticeResponse> createNotice(@RequestBody CreateNoticeRequest request, @LoginUser String userId) {
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.createNotice(request));
@@ -30,14 +30,14 @@ public class NoticeController {
 
     @Operation(summary = "공지 조회", description = "프로젝트 공지를 단건 조회합니다.")
     @GetMapping(value = "/{projectId}")
-    public ResponseEntity<List<NoticeResponse>> getNotice(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<List<GetNoticeResponse>> getNotice(@PathVariable("projectId") Long projectId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(noticeService.getNoticeList(projectId));
     }
 
     @Operation(summary = "공지 삭제", description = "프로젝트 공지를 삭제합니다.")
     @DeleteMapping("/{noticeId}")
-    public ResponseEntity<NoticeResponse> deleteNotice(@PathVariable("noticeId") Long noticeId, @LoginUser String userId) {
+    public ResponseEntity<GetNoticeResponse> deleteNotice(@PathVariable("noticeId") Long noticeId, @LoginUser String userId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(noticeService.deleteNotice(noticeId));
     }

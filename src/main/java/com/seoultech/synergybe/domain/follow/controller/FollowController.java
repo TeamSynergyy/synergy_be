@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.follow.controller;
 
-import com.seoultech.synergybe.domain.follow.dto.request.FollowType;
-import com.seoultech.synergybe.domain.follow.dto.response.FollowResponse;
+import com.seoultech.synergybe.domain.follow.dto.request.CreateFollowRequest;
+import com.seoultech.synergybe.domain.follow.dto.response.GetFollowResponse;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
@@ -24,7 +24,7 @@ public class FollowController {
 
     @Operation(summary = "follow 신청, 취소", description = "팔로우를 신청 및 취소하며 팔로우 타입에 따라 팔로우 상태가 변화하므로 PUT 메서드 하나로 관리됩니다.")
     @PutMapping(value = "/{followingId}")
-    public ResponseEntity<FollowResponse> updateFollow(@PathVariable("followingId") String followingId, @RequestBody FollowType type, @LoginUser String userId) {
+    public ResponseEntity<GetFollowResponse> updateFollow(@PathVariable("followingId") String followingId, @RequestBody CreateFollowRequest type, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(followService.updateFollow(user, followingId, type));
