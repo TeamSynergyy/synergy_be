@@ -52,9 +52,11 @@ public class User extends BaseTime {
     }
 
     public void updateUserInfo(
+            String email,
             String name,
             String major
     ) {
+        this.email = this.email.updateEmail(email);
         this.name = this.name.updateName(name);
         this.major = this.major.updateMajor(major);
     }
