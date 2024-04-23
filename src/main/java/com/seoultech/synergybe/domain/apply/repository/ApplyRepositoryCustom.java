@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ApplyRepositoryCustom {
-    Optional<Apply> findByUserIdAndProjectId(@Param("userId") String userId, @Param("projectId") Long projectId);
+    Optional<Apply> findApplyByUserIdAndProjectId(String userId, String projectId);
 
-    List<Apply> findAllProcessByUserId(@Param("userId") String userId);
+    List<Apply> findAllProcessByUserId(String userId);
 
-    List<String> findUserIdsByProjectId(@Param("projectId") Long projectId);
+    List<String> findUserIdsByProjectId(String projectId);
 
-    List<Long> findProjectIdsByUserId(@Param("userId") String userId);
+    List<Long> findProjectIdsByUserId(String userId);
 }
