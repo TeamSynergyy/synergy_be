@@ -4,7 +4,7 @@ import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.image.Image;
 import com.seoultech.synergybe.domain.post.vo.PostAuthorName;
 import com.seoultech.synergybe.domain.post.vo.PostContent;
-import com.seoultech.synergybe.domain.post.vo.PostInformation;
+import com.seoultech.synergybe.domain.post.vo.PostThumbnailImageId;
 import com.seoultech.synergybe.domain.post.vo.PostTitle;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.user.User;
@@ -44,7 +44,7 @@ public class Post extends BaseTime {
     private PostAuthorName authorName;
 
     @Embedded
-    private PostInformation information;
+    private PostThumbnailImageId information;
 
     @OneToMany
     @JoinColumn(name = "post_id")
@@ -67,7 +67,7 @@ public class Post extends BaseTime {
         this.user = user;
         this.title = new PostTitle(title);
         this.content = new PostContent(content);
-        this.information = new PostInformation(thumbnailImageId);
+        this.information = new PostThumbnailImageId(thumbnailImageId);
         this.authorName = new PostAuthorName(user.getName().getName());
     }
 
