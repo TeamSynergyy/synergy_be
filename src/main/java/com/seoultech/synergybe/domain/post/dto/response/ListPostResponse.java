@@ -13,20 +13,20 @@ import java.util.List;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ListPostResponse {
-    private List<PostResponse> content;
+    private List<GetPostResponse> content;
 
     @JsonProperty("hasNext")
     private boolean hasNext;
 
-    public static ListPostResponse from(List<PostResponse> postResponses, boolean isNext) {
-        return new ListPostResponse(postResponses, isNext);
+    public static ListPostResponse from(List<GetPostResponse> getPostRespons, boolean isNext) {
+        return new ListPostResponse(getPostRespons, isNext);
     }
 
-    public static ListPostResponse from(List<PostResponse> postResponses) {
-        return new ListPostResponse(postResponses);
+    public static ListPostResponse from(List<GetPostResponse> getPostRespons) {
+        return new ListPostResponse(getPostRespons);
     }
 
-    public ListPostResponse(List<PostResponse> postResponses) {
-        this.content = postResponses;
+    public ListPostResponse(List<GetPostResponse> getPostRespons) {
+        this.content = getPostRespons;
     }
 }

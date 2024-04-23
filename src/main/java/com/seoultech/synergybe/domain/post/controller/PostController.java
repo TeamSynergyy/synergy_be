@@ -4,7 +4,7 @@ import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.response.DeletePostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
-import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
+import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
 import com.seoultech.synergybe.domain.post.service.PostService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
@@ -34,7 +34,7 @@ public class PostController {
 
     @Operation(summary = "post 생성", description = "PostResponse가 반환되며 이미지가 함께 저장됩니다.")
     @PostMapping
-    public ResponseEntity<PostResponse> createPost(@ModelAttribute CreatePostRequest request, @LoginUser String userId) {
+    public ResponseEntity<GetPostResponse> createPost(@ModelAttribute CreatePostRequest request, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(user, request));
@@ -42,7 +42,7 @@ public class PostController {
 
     @Operation(summary = "post 수정", description = "PostResponse가 반환되며 UpdatePostRequest에 담긴 내용으로 수정됩니다.")
     @PutMapping
-    public ResponseEntity<PostResponse> updatePost(@RequestBody UpdatePostRequest request, @LoginUser String userId) {
+    public ResponseEntity<GetPostResponse> updatePost(@RequestBody UpdatePostRequest request, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.updatePost(request));
@@ -58,7 +58,7 @@ public class PostController {
 
     @Operation(summary = "단건 Post Get", description = "요청된 1개의 Post가 반환됩니다")
     @GetMapping(value = "/{postId}")
-    public ResponseEntity<PostResponse> getPost(@PathVariable("postId") Long postId, @LoginUser String userId) {
+    public ResponseEntity<GetPostResponse> getPost(@PathVariable("postId") Long postId, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(user, postId));
@@ -81,7 +81,7 @@ public class PostController {
 
     @Operation(summary = "검색어를 포함하는 Post", description = "검색어를 포함하는 Post가 반환됩니다")
     @GetMapping
-    public ResponseEntity<Page<PostResponse>> searchAllPosts(@Parameter(description = "검색어") @RequestParam("search") String search, @PageableDefault(size = 15) Pageable pageable) {
+    public ResponseEntity<Page<GetPostResponse>> searchAllPosts(@Parameter(description = "검색어") @RequestParam("search") String search, @PageableDefault(size = 15) Pageable pageable) {
         log.info(">> keyword : {}", search);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.searchAllPosts(search, pageable));

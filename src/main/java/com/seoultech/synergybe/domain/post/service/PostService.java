@@ -12,7 +12,7 @@ import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.response.DeletePostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
-import com.seoultech.synergybe.domain.post.dto.response.PostResponse;
+import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
 import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
@@ -50,7 +50,7 @@ public class PostService {
 
 //    private final ImageService imageService;
 
-    public PostResponse createPost(User user, CreatePostRequest request) {
+    public GetPostResponse createPost(User user, CreatePostRequest request) {
         if (request.getFiles() == null) {
             log.info(">> getfiles is null");
             String postId = idGenerator.generateId(IdPrefix.POST);
@@ -59,7 +59,7 @@ public class PostService {
                     .build();
             Post savedPost = postRepository.save(post);
 
-            return PostResponse.from(savedPost);
+            return GetPostResponse.from(savedPost);
         } else {
             log.info(">> getfiles is NOT NULL");
             List<MultipartFile> files = request.getFiles();
@@ -71,17 +71,17 @@ public class PostService {
 //            List<String> imagesUrl = imageService.getImageUrlByPostId(savedPost.getId());
 
 //            return PostResponse.from(savedPost, imagesUrl);
-            return PostResponse.from(savedPost);
+            return GetPostResponse.from(savedPost);
         }
     }
 
-    public PostResponse updatePost(UpdatePostRequest request) {
+    public GetPostResponse updatePost(UpdatePostRequest request) {
         Post post = this.findPostById(request.getPostId());
         Post updatedPost = postRepository.save(post.updatePost(request));
 //        List<String> imagesUrl = imageService.getImageUrlByPostId(request.getPostId());
 
 //        return PostResponse.from(updatedPost, imagesUrl);
-        return PostResponse.from(updatedPost);
+        return GetPostResponse.from(updatedPost);
     }
 
     public DeletePostResponse deletePost(Long postId) {
@@ -101,7 +101,7 @@ public class PostService {
         return postRepository.findAllByFollowingIdAndEndId(userId, end);
     }
 
-    public PostResponse getPost(User user, Long postId) {
+    public GetPostResponse getPost(User user, Long postId) {
         Post post = this.findPostById(postId);
 //        List<String> imagesUrl = imageService.getImageUrlByPostId(postId);
 
@@ -110,7 +110,7 @@ public class PostService {
 //        }
 
 //        return PostResponse.from(post, imagesUrl);
-        return PostResponse.from(post);
+        return GetPostResponse.from(post);
     }
 
 
@@ -119,7 +119,7 @@ public class PostService {
 
         List<Post> posts = postRepository.findAllById(postIds);
 
-        return ListPostResponse.from(PostResponse.from(posts));
+        return ListPostResponse.from(GetPostResponse.from(posts));
     }
 
     public ListPostResponse getPostList(Long end) {
@@ -139,7 +139,7 @@ public class PostService {
         // 썸네일이 없을 경우 없는채로 처리가 되어야 함
 
 
-        return ListPostResponse.from(PostResponse.from(posts), isNext);
+        return ListPostResponse.from(GetPostResponse.from(posts), isNext);
     }
 
 
@@ -147,7 +147,7 @@ public class PostService {
     public ListPostResponse getPostListByUser(String userId) {
         List<Post> posts = postRepository.findAllByUserId(userId);
 
-        return ListPostResponse.from(PostResponse.from(posts));
+        return ListPostResponse.from(GetPostResponse.from(posts));
 
     }
 
@@ -158,7 +158,7 @@ public class PostService {
     public ListPostResponse getWeekBestPostList() {
         List<Post> posts = postRepository.findAllByLikeAndDate();
 
-        return ListPostResponse.from(PostResponse.from(posts));
+        return ListPostResponse.from(GetPostResponse.from(posts));
     }
 
     public ListPostResponse getFeed(Long end, User user) {
@@ -195,17 +195,17 @@ public class PostService {
             isNext = false;
         }
 
-        return ListPostResponse.from(PostResponse.from(lastTenPosts), isNext);
+        return ListPostResponse.from(GetPostResponse.from(lastTenPosts), isNext);
     }
 
-    public Page<PostResponse> searchAllPosts(String keyword, Pageable pageable) {
+    public Page<GetPostResponse> searchAllPosts(String keyword, Pageable pageable) {
         // query 생성
         Specification<Post> spec = this.search(keyword);
 
         Page<Post> posts = postRepository.findAll(spec, pageable);
         // 위에서 post를 바로 images url을 넣어서 전달해야함
 
-        return PostResponse.from(posts);
+        return GetPostResponse.from(posts);
     }
 
     public Specification<Post> search(String keyword) {
@@ -251,7 +251,7 @@ public class PostService {
             // 빈 배열일 경우 빈 배열 리턴
             if (postIds.isEmpty()) {
                 List<Post> posts = new ArrayList<>();
-                return ListPostResponse.from(PostResponse.fromEmpty(posts));
+                return ListPostResponse.from(GetPostResponse.fromEmpty(posts));
             }
 
             // end 기준 end ~ end + 10 순서에 있는 게시글 가져오기
@@ -263,7 +263,7 @@ public class PostService {
 
             List<Post> posts = postRepository.findAllByIdInOrderByListOrder(result);
 
-            return ListPostResponse.from(PostResponse.from(posts));
+            return ListPostResponse.from(GetPostResponse.from(posts));
         } catch (Exception e) {
             log.error(">> 추천 게시글 가져오기 실패 {}", e.getMessage());
             throw new PostNotFoundException("존재하지 않는 게시글입니다.");

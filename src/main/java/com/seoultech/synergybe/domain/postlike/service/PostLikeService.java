@@ -7,7 +7,7 @@ import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
-import com.seoultech.synergybe.domain.postlike.dto.response.PostLikeResponse;
+import com.seoultech.synergybe.domain.postlike.dto.response.GetPostLikeResponse;
 import com.seoultech.synergybe.domain.postlike.exception.PostLikeNotFoundException;
 import com.seoultech.synergybe.domain.postlike.repository.PostLikeRepository;
 import com.seoultech.synergybe.domain.user.User;
@@ -28,7 +28,7 @@ public class PostLikeService {
     private final PostRepository postRepository;
 
     @Transactional
-    public PostLikeResponse updatePostLike(User user, Long postId, PostLikeType type) {
+    public GetPostLikeResponse updatePostLike(User user, Long postId, PostLikeType type) {
         LikeStatus status;
         if (type.getLikeType().equals("like")) {
             status = LikeStatus.LIKE;
@@ -39,7 +39,7 @@ public class PostLikeService {
             log.info("updatePostLike update before");
             PostLike updatedPostLike = this.update(user, postId, status);
             log.info("updatePostLike update after");
-            return PostLikeResponse.from(updatedPostLike);
+            return GetPostLikeResponse.from(updatedPostLike);
         } catch (Exception e) {
             throw new PostLikeNotFoundException("존재하지 않는 좋아요입니다.");
         }
