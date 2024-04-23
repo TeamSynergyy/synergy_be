@@ -52,8 +52,8 @@ public class ApplyService {
         return getApplyResponse;
     }
 
-    public void deleteApply(User user, String projectId) {
-        Optional<Apply> applyOptional = applyRepository.findApplyByUserIdAndProjectId(user.getUserId(), projectId);
+    public void deleteApply(String userId, String projectId) {
+        Optional<Apply> applyOptional = applyRepository.findApplyByUserIdAndProjectId(userId, projectId);
 
         if (applyOptional.isPresent()) {
             applyRepository.delete(applyOptional.get());

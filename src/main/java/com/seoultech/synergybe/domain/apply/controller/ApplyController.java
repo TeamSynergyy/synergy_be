@@ -8,6 +8,7 @@ import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,21 +36,21 @@ public class ApplyController {
     @Operation(summary = "프로젝트 지원 삭제", description = "지원이 삭제됩니다.")
     @DeleteMapping(value = "/{projectId}")
     public ResponseEntity<Void> deleteApply(@PathVariable("projectId") String projectId, @LoginUser String userId) {
-        userService.getUser(userId);
+        applyService.deleteApply(userId, projectId);
 
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "프로젝트 지원 수락", description = "프로젝트의 팀장이 지원을 수락합니다.")
     @PostMapping(value = "/accept/{projectId}")
-    public ResponseEntity<AcceptApplyResponse> acceptApply(@PathVariable("projectId") String projectId, @RequestBody CreateApplyRequest request) {
+    public ResponseEntity<AcceptApplyResponse> acceptApply(@PathVariable("projectId") String projectId, @Valid @RequestBody CreateApplyRequest request) {
 
         return ResponseEntity.status(HttpStatus.OK).body(applyService.acceptApply(request.userId(), projectId));
     }
 
     @Operation(summary = "프로젝트 지원 거절", description = "프로젝트의 팀장이 지원을 거절합니다.")
     @DeleteMapping("/reject/{projectId}")
-    public ResponseEntity<RejectApplyResponse> rejectApply(@PathVariable("projectId") String projectId, @RequestBody CreateApplyRequest request) {
+    public ResponseEntity<RejectApplyResponse> rejectApply(@PathVariable("projectId") String projectId, @Valid @RequestBody CreateApplyRequest request) {
 
         return ResponseEntity.status(HttpStatus.OK).body(applyService.rejectApply(request.userId(), projectId));
     }

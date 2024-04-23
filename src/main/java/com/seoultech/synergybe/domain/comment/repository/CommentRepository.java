@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, String> {
     @Query(value = "SELECT comment_id FROM comment WHERE post_id = :postId", nativeQuery = true)
-    List<Long> findCommentIdsByPostId(@Param("postId") Long postId);
+    List<String> findCommentIdsByPostId(@Param("postId") String postId);
 }
