@@ -338,11 +338,18 @@ https://github.com/TeamSynergyy/synergy_be/assets/109144975/46ca7bdf-9372-49b0-9
 https://github.com/TeamSynergyy/synergy_be/assets/109144975/ada92a51-bc5e-41a8-b0aa-cfef4a11d66b
 
 
-## 주요 PR
+## 고민 흔적
 
-- [티켓 위치 수정](https://github.com/TeamSynergyy/synergy_be/pull/36)
-- [동료평가 반영](https://github.com/TeamSynergyy/synergy_be/pull/25)
-- [알림 기능](https://github.com/TeamSynergyy/synergy_be/pull/39)
+- [좋은 객체 ID 만들기 블로그 - click](https://velog.io/@rivkode/ID-%EC%83%9D%EC%84%B1%EA%B8%B0-%EA%B5%AC%ED%98%84%EC%9D%84-%ED%95%B4%EB%B3%B4%EC%95%84%EC%9A%94-2%ED%83%84)
+  - 좋은 객체 ID를 만들기 위해 아래 4가지 사항을 고려하여 만들기 위해 노력하였습니다.
+    - 고유성
+    - 식별 가능성
+    - 보안성
+    - 생성 시간순 정렬
+  - 관련 PR
+    - [ID 생성기 구현](https://github.com/TeamSynergyy/synergy_be/pull/70)
+
+
 
 ## 발표 PPT
 
