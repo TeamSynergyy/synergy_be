@@ -20,24 +20,37 @@ public class RateScore {
     @Column(name = "score", nullable = false)
     private int score;
 
-    public RateScore(int value) {
+    public RateScore(Integer value) {
         validateNotNull(value);
         validateRateScoreLength(value);
         this.score = value;
     }
 
-    private void validateNotNull(int value) {
-        if (Objects.isNull(value)) {
+    private void validateNotNull(Integer value) {
+        if (value == null) {
             throw new RateBadRequestException("Score은 필수 항목입니다.");
         }
     }
 
-    private void validateRateScoreLength(int value) {
+    private void validateRateScoreLength(Integer value) {
         if (value < MIN_SCORE_LENGTH || value > MAX_SCORE_LENGTH) {
             throw new RateBadRequestException(
                     MessageFormat.format("평점은 {0} 이상 {1} 이하여야 합니다.",
                             MIN_SCORE_LENGTH, MAX_SCORE_LENGTH
                     ));
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RateScore rateScore = (RateScore) o;
+        return score == rateScore.score;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(score);
     }
 }
