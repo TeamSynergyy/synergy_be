@@ -46,7 +46,7 @@ public class CommentInformation {
     }
 
     private void validatePost(Post post) {
-        if (Objects.isNull(post)) {
+        if (post == null) {
             throw new CommentBadRequestException("댓글의 게시글은 존재해야합니다.");
         }
     }
