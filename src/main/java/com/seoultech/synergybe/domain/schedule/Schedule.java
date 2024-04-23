@@ -2,7 +2,6 @@ package com.seoultech.synergybe.domain.schedule;
 
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.schedule.dto.request.ScheduleRequest;
 import com.seoultech.synergybe.domain.common.BaseTime;
 import com.seoultech.synergybe.domain.schedule.vo.ScheduleContent;
 import com.seoultech.synergybe.domain.schedule.vo.SchedulePeriod;
