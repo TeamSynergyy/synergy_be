@@ -2,7 +2,7 @@ package com.seoultech.synergybe.domain.ticket;
 
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.ticket.dto.TicketRequest;
+import com.seoultech.synergybe.domain.ticket.dto.request.CreateTicketRequest;
 import com.seoultech.synergybe.domain.ticket.vo.TicketContent;
 import com.seoultech.synergybe.domain.ticket.vo.TicketName;
 import com.seoultech.synergybe.domain.ticket.vo.TicketOrderNumber;
@@ -71,7 +71,7 @@ public class Ticket extends BaseTime {
         this.status = TicketStatus.BACKLOG;
     }
 
-    public Ticket update(TicketRequest request, TicketStatus status) {
+    public Ticket update(CreateTicketRequest request, TicketStatus status) {
         this.name = new TicketName(request.getContent());
         this.content = new TicketContent(request.getContent());
         this.status = status;

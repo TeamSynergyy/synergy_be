@@ -6,8 +6,8 @@ import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.ticket.TicketStatus;
-import com.seoultech.synergybe.domain.ticket.dto.TicketRequest;
-import com.seoultech.synergybe.domain.ticket.dto.TicketResponse;
+import com.seoultech.synergybe.domain.ticket.dto.request.CreateTicketRequest;
+import com.seoultech.synergybe.domain.ticket.dto.response.GetTicketResponse;
 import com.seoultech.synergybe.domain.ticket.exception.TicketNotFoundException;
 import com.seoultech.synergybe.domain.ticket.repository.TicketRepository;
 import com.seoultech.synergybe.domain.ticketUser.service.TicketUserService;
@@ -40,7 +40,7 @@ public class TicketService {
      * @param request
      * @return
      */
-    public TicketResponse createTicket(TicketRequest request, User allocatedUser) {
+    public GetTicketResponse createTicket(CreateTicketRequest request, User allocatedUser) {
         // check User
         List<User> authUsers = projectService.getUserListByProject(request.getProjectId());
 
@@ -62,13 +62,13 @@ public class TicketService {
             }
         }
 
-        return TicketResponse.from(ticket);
+        return GetTicketResponse.from(ticket);
     }
 
-    public List<TicketResponse> getTicketList(Long projectId) {
+    public List<GetTicketResponse> getTicketList(Long projectId) {
         List<Ticket> tickets = ticketRepository.findAllByProjectId(projectId);
 
-        return TicketResponse.from(tickets);
+        return GetTicketResponse.from(tickets);
     }
 
     /** todo
@@ -85,7 +85,7 @@ public class TicketService {
      * 이전 status의 ticket들의 orderNum이 큰 ticket에 대해 -1
      * 수정 할 status의 ticket들 중 orderNum이 큰 ticket들에 대해 +1
      */
-    public List<TicketResponse> changeTickets(TicketRequest request, User user, Long ticketId) {
+    public List<GetTicketResponse> changeTickets(CreateTicketRequest request, User user, Long ticketId) {
         // check User
         List<User> authUsers = projectService.getUserListByProject(request.getProjectId());
         checkUser(authUsers, user);
@@ -125,7 +125,7 @@ public class TicketService {
         }
     }
 
-    private List<TicketResponse> equalStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, TicketRequest request) {
+    private List<GetTicketResponse> equalStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, CreateTicketRequest request) {
         List<Ticket> changeTicketList = new ArrayList<>();
         if (postTicketOrderNum > preTicketOrderNum) {
             List<Ticket> tickets = ticketRepository.findAllLowToBigOrderNumber(request.getProjectId(), request.getStatus(), preTicketOrderNum, postTicketOrderNum);
@@ -140,11 +140,11 @@ public class TicketService {
             changeTicketList.addAll(tickets);
             changeTicketList.add(updatedTicket);
         }
-        return TicketResponse.from(changeTicketList);
+        return GetTicketResponse.from(changeTicketList);
     }
 
-    private List<TicketResponse> notEqualStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, TicketRequest request,
-                                                TicketStatus preStatus, TicketStatus postStatus) {
+    private List<GetTicketResponse> notEqualStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, CreateTicketRequest request,
+                                                   TicketStatus preStatus, TicketStatus postStatus) {
         // status가 다를 경우
         // 이전 ticket들을 가져옴, orderNum이 pre 보다 큰
         List<Ticket> changeTicketList = new ArrayList<>();
@@ -166,7 +166,7 @@ public class TicketService {
         Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
         changeTicketList.add(updatedTicket);
 
-        return TicketResponse.from(changeTicketList);
+        return GetTicketResponse.from(changeTicketList);
     }
 
     private void increaseOrderNum(List<Ticket> tickets) {
@@ -209,7 +209,7 @@ public class TicketService {
         }
     }
 
-    public TicketResponse deleteTicket(Long ticketId, User user) {
+    public GetTicketResponse deleteTicket(Long ticketId, User user) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
 
@@ -219,10 +219,10 @@ public class TicketService {
 
         ticketRepository.delete(ticket);
 
-        return TicketResponse.from(ticket);
+        return GetTicketResponse.from(ticket);
     }
 
-    public TicketResponse updateTicket(TicketRequest request, User user, Long ticketId) {
+    public GetTicketResponse updateTicket(CreateTicketRequest request, User user, Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
         // check User
@@ -243,6 +243,6 @@ public class TicketService {
 
         ticket.update(request, checkStatus(request.getStatus()));
 
-        return TicketResponse.from(ticket);
+        return GetTicketResponse.from(ticket);
     }
 }
