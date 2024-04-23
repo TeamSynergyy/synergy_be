@@ -21,8 +21,21 @@ public class NoticeTitle {
         this.title = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NoticeTitle that = (NoticeTitle) o;
+        return Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title);
+    }
+
     private void validateNotNull(String title) {
-        if (Objects.isNull(title) || title.isBlank()) {
+        if (title == null || title.isBlank()) {
             throw new NoticeBadRequestException("공지사항 제목은 필수 항목입니다.");
         }
     }

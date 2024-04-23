@@ -21,8 +21,21 @@ public class NoticeContent {
         this.content = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NoticeContent that = (NoticeContent) o;
+        return Objects.equals(content, that.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(content);
+    }
+
     private void validateNotNull(String content) {
-        if (Objects.isNull(content) || content.isBlank()) {
+        if (content == null || content.isBlank()) {
             throw new NoticeBadRequestException("공지 내용은 필수 항목입니다.");
         }
     }
