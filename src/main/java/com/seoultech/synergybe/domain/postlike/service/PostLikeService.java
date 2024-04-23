@@ -94,7 +94,7 @@ public class PostLikeService {
     }
 
 
-    public List<Long> findLikedPostIds(User user) {
+    public List<String> findLikedPostIds(User user) {
         return postLikeRepository.findPostIdsByUserId(user.getUserId());
     }
 }

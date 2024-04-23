@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, String> {
 
     @Query(value = "SELECT * FROM post WHERE post_id < :postId AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
-    List<Post> findAllByEndId(@Param("postId") Long postId);
+    List<Post> findAllByEndId(@Param("postId") String postId);
 
     @Query(value = "SELECT * FROM post WHERE user_id = :userId AND is_deleted = 0", nativeQuery = true)
     List<Post> findAllByUserId(@Param("userId") String userId);
@@ -26,7 +26,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByFollowingIdAndEndId(@Param("userId") String userId, @Param("end") Long end);
 
     @Query(value = "SELECT count(*) FROM post WHERE post_id < :end AND is_deleted = 0", nativeQuery = true)
-    int countPostList(@Param("end") Long end);
+    int countPostList(@Param("end") String end);
 
     @Query(value = "SELECT count(*) FROM (SELECT * FROM post WHERE user_id = :userId AND is_deleted = 0) p WHERE post_id < :end AND is_deleted = 0", nativeQuery = true)
     int countFeed(@Param("end") Long end);
@@ -43,5 +43,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByLikeAndDate();
 
     @Query(value = "SELECT * FROM post e WHERE post_id IN :ids ORDER BY FIELD(post_id, :ids)", nativeQuery = true)
-    List<Post> findAllByIdInOrderByListOrder(@Param("ids") List<Long> ids);
+    List<Post> findAllByIdInOrderByListOrder(@Param("ids") List<String> ids);
 }

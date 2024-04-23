@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.post;
 
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.image.Image;
+import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.vo.PostAuthorName;
 import com.seoultech.synergybe.domain.post.vo.PostContent;
 import com.seoultech.synergybe.domain.post.vo.PostThumbnailImageId;
@@ -73,5 +74,11 @@ public class Post extends BaseTime {
 
     public void deletePostLike(PostLike postLike) {
         likes.removeIf(postLike1 -> postLike1.getId().equals(postLike.getId()));
+    }
+
+    public void updatePost(String title, String content) {
+        this.title = new PostTitle(title);
+        this.content = new PostContent(content);
+
     }
 }

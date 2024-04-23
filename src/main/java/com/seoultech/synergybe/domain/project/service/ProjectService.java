@@ -52,22 +52,22 @@ public class ProjectService {
 
     public ProjectResponse createProject(User user, CreateProjectRequest request) {
         String projectId = idGenerator.generateId(IdPrefix.PROJECT);
-        Point point = new Point(request.getLongitude(), request.getLatitude());
+        Point point = new Point(request.longitude(), request.latitude());
         // try catch 문 수정 / 여기서 Point에 대한 예외처리 하지 않기
         try {
             Project project = Project.builder()
                 .id(projectId)
-                .name(request.getName())
-                .content(request.getContent())
-                .field(request.getField())
+                .name(request.name())
+                .content(request.content())
+                .field(request.field())
                 .location(point)
-                .startAt(request.getStartAt())
-                .endAt(request.getEndAt())
+                .startAt(request.startAt())
+                .endAt(request.endAt())
                 .leaderId(user.getUserId())
                 .build();
             Project savedProject = projectRepository.save(project);
             projectUserService.createProjectUser(savedProject, user);
-            return ProjectResponse.from(savedProject);
+            return ProjectResponse;
         } catch (Exception e) {
             throw new IllegalArgumentException("point parse exception");
         }
@@ -90,11 +90,11 @@ public class ProjectService {
         return ProjectResponse.from(project);
     }
 
-    public Project findProjectById(Long projectId) {
+    public Project findProjectById(String projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("존재하지 않는 프로젝트입니다."));
     }
-    public ProjectResponse getProject(Long projectId) {
+    public ProjectResponse getProject(String projectId) {
         Project project = this.findProjectById(projectId);
 
         return ProjectResponse.from(project);

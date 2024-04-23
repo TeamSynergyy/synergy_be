@@ -11,7 +11,9 @@ public record UpdatePostRequest(
         @NotBlank(message = "게시글 제목은 필수항목입니다.")
         String title,
         @NotBlank(message = "게시글 내용은 필수항목입니다.")
-        String content
+        String content,
+        @NotBlank(message = "게시글ID는 필수항목입니다.")
+        String postId
 ) {
 
 //    public Post toEntity(User user) {

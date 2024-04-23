@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.post.controller;
 
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.response.DeletePostResponse;
@@ -50,23 +51,23 @@ public class PostController {
 
     @Operation(summary = "post 삭제", description = "DeletePostResponse가 반환되며, post의 isDelete = true 로 값이 변경됩니다")
     @DeleteMapping(value = "/{postId}")
-    public ResponseEntity<DeletePostResponse> deletePost(@PathVariable("postId") Long postId, @LoginUser String userId) {
+    public ResponseEntity<Void> deletePost(@PathVariable("postId") String postId, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(postId));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "단건 Post Get", description = "요청된 1개의 Post가 반환됩니다")
     @GetMapping(value = "/{postId}")
-    public ResponseEntity<GetPostResponse> getPost(@PathVariable("postId") Long postId, @LoginUser String userId) {
+    public ResponseEntity<GetPostResponse> getPost(@PathVariable("postId") String postId, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(user, postId));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
     }
 
     @Operation(summary = "최근 Post 리스트", description = "ListPostResponse가 반환되며, end값(default로는 long 최대값)으로 마지막 조회된 postId를 전달받으며 이후 10개의 post만 반환합니다")
     @GetMapping(value = "/recent")
-    public ResponseEntity<ListPostResponse> getPosts(@Parameter(description = "마지막 조회 Id") @RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
+    public ResponseEntity<ListResponse<GetPostResponse>> getPosts(@Parameter(description = "마지막 조회 Id") @RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") String end) {
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPostList(end));
     }
@@ -97,7 +98,7 @@ public class PostController {
 
     @Operation(summary = "내가 좋아요한 Post", description = "좋아요한 Post가 반환됩니다")
     @GetMapping(value = "/me/likes")
-    public ResponseEntity<ListPostResponse> getLikedPosts(@LoginUser String userId) {
+    public ResponseEntity<ListResponse<GetPostResponse>> getLikedPosts(@LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getLikedPostList(user));
