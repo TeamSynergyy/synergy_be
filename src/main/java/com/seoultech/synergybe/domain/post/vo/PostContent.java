@@ -27,9 +27,22 @@ public class PostContent {
     }
 
     private void validateNotNull(String content) {
-        if (Objects.isNull(content) || content.isBlank()) {
+        if (content == null || content.isBlank()) {
             throw new PostBadRequestException("내용은 필수 항목입니다.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostContent that = (PostContent) o;
+        return Objects.equals(content, that.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(content);
     }
 
     private void validatePostContentLength(String content) {

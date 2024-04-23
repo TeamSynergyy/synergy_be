@@ -29,7 +29,7 @@ public class UserPassword {
     }
 
     private void validateNotNull(String password) {
-        if (Objects.isNull(password)) {
+        if (password == null) {
             throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "패스워드는 필수값입니다.");
         }
     }

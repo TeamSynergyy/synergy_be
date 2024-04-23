@@ -60,7 +60,7 @@ public class Ticket extends BaseTime {
     private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @Builder
-    public Ticket(String id, String name, String content, int orderNumber, String tag, Project project,
+    public Ticket(String id, String name, String content, Integer orderNumber, String tag, Project project,
                   String tagColor) {
         this.id = id;
         this.name = new TicketName(name);

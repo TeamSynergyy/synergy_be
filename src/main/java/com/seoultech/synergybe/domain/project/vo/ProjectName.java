@@ -22,8 +22,21 @@ public class ProjectName {
     }
 
     private void validateNotNull(String name) {
-        if (Objects.isNull(name) || name.isBlank()) {
+        if (name == null || name.isBlank()) {
             throw new ProjectBadRequestException("프로젝트 제목은 필수 항목입니다.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProjectName that = (ProjectName) o;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

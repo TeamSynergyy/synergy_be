@@ -23,4 +23,17 @@ public class TicketTagInformation {
         this.tag = tag;
         this.tagColor = tagColor;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TicketTagInformation that = (TicketTagInformation) o;
+        return Objects.equals(tag, that.tag) && Objects.equals(tagColor, that.tagColor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tag, tagColor);
+    }
 }

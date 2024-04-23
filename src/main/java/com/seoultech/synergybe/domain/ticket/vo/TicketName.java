@@ -22,8 +22,21 @@ public class TicketName {
     }
 
     private void validateNotNull(String title) {
-        if (Objects.isNull(title) || title.isBlank()) {
+        if (title == null || title.isBlank()) {
             throw new TicketBadRequestException("티켓 타이틀은 필수 항목입니다.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TicketName that = (TicketName) o;
+        return Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title);
     }
 }

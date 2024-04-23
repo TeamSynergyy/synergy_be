@@ -28,8 +28,21 @@ public class ProjectPeriod {
     }
 
     private void validateNotNull(LocalDateTime startAt, LocalDateTime endAt, String leaderId) {
-        if (Objects.isNull(startAt) || Objects.isNull(endAt) || Objects.isNull(leaderId)) {
+        if (startAt == null || endAt == null || leaderId == null) {
             throw new ProjectBadRequestException("시작일자 종료일자 리더는 필수 항목 입니다.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProjectPeriod that = (ProjectPeriod) o;
+        return Objects.equals(startAt, that.startAt) && Objects.equals(endAt, that.endAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startAt, endAt);
     }
 }

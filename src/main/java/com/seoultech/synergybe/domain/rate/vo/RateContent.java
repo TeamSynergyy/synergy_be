@@ -26,7 +26,7 @@ public class RateContent {
     }
 
     private void validateNotNull(String content) {
-        if (Objects.isNull(content) || content.isBlank()) {
+        if (content == null || content.isBlank()) {
             throw new RateBadRequestException("후기는 필수 항목입니다.");
         }
     }
@@ -37,5 +37,18 @@ public class RateContent {
                     "내용은 {0} 자 이하여야 합니다.", MAX_CONTENT_LENGTH
             ));
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RateContent that = (RateContent) o;
+        return Objects.equals(content, that.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(content);
     }
 }

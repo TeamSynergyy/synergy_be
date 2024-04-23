@@ -26,7 +26,7 @@ public class UserName {
     }
 
     private void validateNotNull(String name) {
-        if (Objects.isNull(name) || name.isBlank()) {
+        if (name == null || name.isBlank()) {
             throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "이름은 필수 항목입니다.");
         }
     }
@@ -39,5 +39,18 @@ public class UserName {
 
     public UserName updateName(String name) {
         return name != null ? new UserName(name) : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserName userName = (UserName) o;
+        return Objects.equals(name, userName.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

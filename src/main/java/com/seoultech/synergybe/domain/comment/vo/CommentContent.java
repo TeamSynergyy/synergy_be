@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.text.MessageFormat;
+import java.util.Objects;
 
 @Getter
 @Embeddable
@@ -37,5 +38,18 @@ public class CommentContent {
 
     public CommentContent updateContent(String value) {
         return value != null ? new CommentContent(value) : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommentContent that = (CommentContent) o;
+        return Objects.equals(content, that.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(content);
     }
 }
