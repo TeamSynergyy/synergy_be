@@ -170,15 +170,19 @@ public class UserService {
     }
 
     public ListResponse<GetUserId> getFollowerIds(String userId) {
-        ListResponse<GetUserId> getFollowerIdList = followService.getFollowerIdList(userId);
+        List<String> getFollowerIdList = followService.getFollowerIdList(userId);
 
-//        return UserIdsResponse.from(followRepository.findFollowerIdsByFollowingId(user.getUserId()));
+        ListResponse<GetUserId> getUserIdListResponses = new ListResponse(getFollowerIdList);
+
+        return getUserIdListResponses;
     }
 
     public ListResponse<GetUserId> getFollowingIds(String userId) {
-        List<GetUserId> getFollowingIdList = followService.getFollowingIdList(userId);
+        List<String> getFollowingIdList = followService.getFollowingIdList(userId);
 
-//        return UserIdsResponse.from(followRepository.findFollowingIdsByFollowerId(user.getUserId()));
+        ListResponse<GetUserId> getUserIdListResponses = new ListResponse(getFollowingIdList);
+
+        return getUserIdListResponses;
     }
 }
 

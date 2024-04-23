@@ -44,7 +44,7 @@ public class FollowService {
     @Transactional
     public GetFollowResponse updateFollow(User user, String followingId, CreateFollowRequest type) {
         FollowStatus status;
-        if (type.getFollowType().equals("follow")) {
+        if (type.followType().equals("follow")) {
             status = FollowStatus.FOLLOW;
         } else {
             status = FollowStatus.UNFOLLOW;
@@ -52,8 +52,9 @@ public class FollowService {
 
         try {
             Follow updatedFollow = update(user, followingId, status);
+            GetFollowResponse getFollowResponse = GetFollowResponse.builder().build();
 
-            return GetFollowResponse.from(updatedFollow);
+            return getFollowResponse;
         } catch (Exception e) {
             throw new FollowNotFoundException("존재하지 않는 팔로우입니다.");
         }
@@ -85,11 +86,11 @@ public class FollowService {
         }
     }
 
-    public ListResponse<GetUserId> getFollowerIdList(String userId) {
+    public List<String> getFollowerIdList(String userId) {
         return followRepository.findFollowerIdsByFollowingId(userId);
     }
 
-    public List<GetUserId> getFollowingIdList(String userId) {
+    public List<String> getFollowingIdList(String userId) {
         return followRepository.findFollowingIdsByFollowerId(userId);
     }
 }
