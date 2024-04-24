@@ -13,7 +13,7 @@ public class NotificationResponse {
     private String content;
     private boolean isRead;
     private NotificationType type;
-    private Long entityId;
+    private String entityId;
 
     public static NotificationResponse from(Notification notification) {
         return NotificationResponse.builder()

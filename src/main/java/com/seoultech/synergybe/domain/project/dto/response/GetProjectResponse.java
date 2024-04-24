@@ -1,21 +1,15 @@
 package com.seoultech.synergybe.domain.project.dto.response;
 
-import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.ProjectField;
 import com.seoultech.synergybe.domain.project.ProjectStatus;
-import com.seoultech.synergybe.domain.projectuser.ProjectUser;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import org.springframework.data.domain.Page;
 import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
-public record ProjectResponse(
+public record GetProjectResponse(
         String projectId,
         String name,
         String content,
