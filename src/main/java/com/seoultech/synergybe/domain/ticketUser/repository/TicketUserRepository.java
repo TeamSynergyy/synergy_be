@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TicketUserRepository extends JpaRepository<TicketUser, Long> {
-    Optional<TicketUser> findByTicketIdAndUserUserId(Long id, String userId);
+public interface TicketUserRepository extends JpaRepository<TicketUser, String> {
+    Optional<TicketUser> findByTicketIdAndUserUserId(String id, String userId);
 
     @Query(value = "SELECT user_id FROM ticket_user WHERE ticket_id = :ticketId", nativeQuery = true)
-    List<String> findTicketUserIdsByTicketId(@Param("ticketId") Long ticketId);
+    List<String> findTicketUserIdsByTicketId(@Param("ticketId") String ticketId);
 
     void deleteAllByTicket(Ticket ticket);
 }

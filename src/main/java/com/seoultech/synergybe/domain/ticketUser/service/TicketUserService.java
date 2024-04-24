@@ -33,7 +33,7 @@ public class TicketUserService {
         }
     }
 
-    public List<String> getTicketUserIds(Long ticketId) {
+    public List<String> getTicketUserIds(String ticketId) {
         return ticketUserRepository.findTicketUserIdsByTicketId(ticketId);
     }
 
