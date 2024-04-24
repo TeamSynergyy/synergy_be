@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ApplyRepository extends JpaRepository<Apply, Long>, ApplyRepositoryCustom {
+public interface ApplyRepository extends JpaRepository<Apply, String>, ApplyRepositoryCustom {
 
 //    @Query(value = "SELECT * FROM apply WHERE user_id = :userId AND project_id = :projectId", nativeQuery = true)
 //    Optional<Apply> findByUserIdAndProjectId(@Param("userId") String userId, @Param("projectId") Long projectId);
