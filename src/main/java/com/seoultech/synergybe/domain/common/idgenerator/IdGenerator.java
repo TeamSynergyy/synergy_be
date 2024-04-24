@@ -255,7 +255,7 @@ public class IdGenerator {
         char v = '0';
         for (int i = TIME_NUMBER_START; i < 10; i++) {
             timeMap.put(i, v);
-            log.info("v : " + v);
+//            log.info("v : " + v);
             v++;
 
         }
@@ -264,7 +264,7 @@ public class IdGenerator {
 
         for (int i = TIME_UPPER_CASE_START; i < 36; i++) {
             timeMap.put(i, v);
-            log.info("v : " + v);
+//            log.info("v : " + v);
             v++;
 
         }
@@ -273,7 +273,7 @@ public class IdGenerator {
 
         for (int i = TIME_LOWER_CASE_START; i < 62; i++) {
             timeMap.put(i, v);
-            log.info("v : " + v);
+//            log.info("v : " + v);
             v++;
         }
     }
