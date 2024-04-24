@@ -39,7 +39,7 @@ public class ProjectUserService {
         }
     }
 
-    public List<String> getProjectUserIds(Long projectId) {
+    public List<String> getProjectUserIds(String projectId) {
         return projectUserRepository.findProjectUserIdsByProjectId(projectId);
     }
 
@@ -53,7 +53,7 @@ public class ProjectUserService {
         }
     }
 
-    public List<Long> getProjectIdsByUserId(String userId) {
+    public List<String> getProjectIdsByUserId(String userId) {
         return projectUserRepository.findProjectIdsByUserId(userId);
     }
 }
