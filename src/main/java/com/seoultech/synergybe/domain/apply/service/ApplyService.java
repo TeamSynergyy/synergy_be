@@ -63,7 +63,7 @@ public class ApplyService {
         }
     }
 
-    public AcceptApplyResponse acceptApply(String userId, String projectId) {
+    public void acceptApply(String userId, String projectId) {
         Apply apply = applyRepository.findApplyByUserIdAndProjectId(userId, projectId)
                 .orElseThrow(() -> new ApplyNotFoundException("존재하지 않는 신청내역입니다."));
 
@@ -83,12 +83,10 @@ public class ApplyService {
 //        applyRepository.delete(apply);
 
         // 알림 발송
-        notificationService.send(applyUser, NotificationType.PROJECT_ACCEPT, "신청이 수락되었습니다.", projectId);
-
-        return AcceptApplyResponse.from(apply);
+//        notificationService.send(applyUser, NotificationType.PROJECT_ACCEPT, "신청이 수락되었습니다.", projectId);
     }
 
-    public RejectApplyResponse rejectApply(String userId, String projectId) {
+    public void rejectApply(String userId, String projectId) {
         Apply apply = applyRepository.findApplyByUserIdAndProjectId(userId, projectId)
                 .orElseThrow(() -> new ApplyNotFoundException("존재하지 않는 신청내역입니다."));
         apply.changeStatusToReject();
@@ -99,8 +97,8 @@ public class ApplyService {
         // 알림 발송
         User applyUser = userService.getUser(userId);
         notificationService.send(applyUser, NotificationType.PROJECT_REJECT, "신청이 거절되었습니다.", projectId);
-
-        return RejectApplyResponse.from(apply);
+//
+//        return RejectApplyResponse.from(apply);
     }
 
     public GetListApplyResponse getMyApplyList(User user) {

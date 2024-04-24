@@ -43,16 +43,16 @@ public class ApplyController {
 
     @Operation(summary = "프로젝트 지원 수락", description = "프로젝트의 팀장이 지원을 수락합니다.")
     @PostMapping(value = "/accept/{projectId}")
-    public ResponseEntity<AcceptApplyResponse> acceptApply(@PathVariable("projectId") String projectId, @Valid @RequestBody CreateApplyRequest request) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(applyService.acceptApply(request.userId(), projectId));
+    public ResponseEntity<Void> acceptApply(@PathVariable("projectId") String projectId, @Valid @RequestBody CreateApplyRequest request) {
+        applyService.acceptApply(request.userId(), projectId);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "프로젝트 지원 거절", description = "프로젝트의 팀장이 지원을 거절합니다.")
     @DeleteMapping("/reject/{projectId}")
-    public ResponseEntity<RejectApplyResponse> rejectApply(@PathVariable("projectId") String projectId, @Valid @RequestBody CreateApplyRequest request) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(applyService.rejectApply(request.userId(), projectId));
+    public ResponseEntity<Void> rejectApply(@PathVariable("projectId") String projectId, @Valid @RequestBody CreateApplyRequest request) {
+        applyService.rejectApply(request.userId(), projectId);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "내 프로젝트 지원 내역", description = "나의 프로젝트 지원 내역을 확인합니다.")
