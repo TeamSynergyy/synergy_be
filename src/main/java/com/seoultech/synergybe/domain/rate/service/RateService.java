@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.rate.service;
 
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.exception.ProjectLeaderBadRequestException;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
@@ -32,15 +33,15 @@ public class RateService {
 
 
     public GetRateResponse createRate(CreateRateRequest request, User giveUser) {
-        Project project = projectService.findProjectById(request.getProjectId());
-        User receiveUser = userService.getUser(request.getReceiveUserId());
+        Project project = projectService.findProjectById(request.projectId());
+        User receiveUser = userService.getUser(request.receiveUserId());
         String rateId = idGenerator.generateId(IdPrefix.RATE);
         Rate rate = Rate.builder()
-                .id(rateId).project(project).giveUser(giveUser).receiveUser(receiveUser).content(request.getContent()).score(request.getScore())
+                .id(rateId).project(project).giveUser(giveUser).receiveUser(receiveUser).content(request.content()).score(request.score())
                 .build();
         rateRepository.save(rate);
 
-        return GetRateResponse.from(rate);
+        return GetRateResponse.builder().build();
     }
 
     //todo
@@ -54,7 +55,7 @@ public class RateService {
     // 3. 평점을 계산하고 온도에 반영한다
     // 4. 온도 반영 비율은 + 평점 / 10 이다
     // 5. ex 평점 3점시 기존온도 + 0.3
-    public List<UserRateResponse> updateTemperature(Long projectId, User leader) {
+    public List<UserRateResponse> updateTemperature(String projectId, User leader) {
         // check leader
         checkLeader(projectId, leader);
 
@@ -69,32 +70,32 @@ public class RateService {
         return userRateResponseList;
     }
 
-    private UserRateResponse CalculateUserRate(Long projectId, User user) {
+    private UserRateResponse CalculateUserRate(String projectId, User user) {
         List<Rate> rates = rateRepository.findAllByProjectIdAndReceiverId(projectId, user.getUserId());
         int total = 0;
 
         for (Rate rate : rates) {
-            total += rate.getScore();
+            total += rate.getScore().getScore();
         }
 
-        double updatedTemp = ((double) total / 10) + user.getTemperature();
+        double updatedTemp = ((double) total / 10) + user.getTemperature().getTemperature();
         DecimalFormat df = new DecimalFormat("#.####");
         double roundedTemp = Double.parseDouble(df.format(updatedTemp));
-        User updatedUser = user.updateTemperature(roundedTemp);
+//        User updatedUser = user.updateTemperature(roundedTemp);
 
-        return UserRateResponse.from(updatedUser, ((double) total / 10), roundedTemp);
+        return UserRateResponse.builder().build();
     }
 
-    private void checkLeader(Long projectId, User leader) {
+    private void checkLeader(String projectId, User leader) {
         Project project = projectService.findProjectById(projectId);
         if (!Objects.equals(project.getLeaderId(), leader.getUserId())) {
             throw new ProjectLeaderBadRequestException("프로젝트 리더가 잘못되었습니다.");
         }
     }
 
-    public List<GetRateResponse> getRateListByProject(Long projectId) {
+    public ListResponse<GetRateResponse> getRateListByProject(String projectId) {
         List<Rate> rates = rateRepository.findAllByProjectId(projectId);
 
-        return GetRateResponse.from(rates);
+        return new ListResponse(rates);
     }
 }
