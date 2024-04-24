@@ -7,12 +7,9 @@ import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
-//import com.seoultech.synergybe.domain.image.service.ImageService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
-import com.seoultech.synergybe.domain.post.dto.response.DeletePostResponse;
-import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
 import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
@@ -75,6 +72,7 @@ public class PostService {
 ////            return PostResponse.from(savedPost, imagesUrl);
 //            return GetPostResponse.from(savedPost);
         }
+        return GetPostResponse.builder().build();
     }
 
     @Transactional
@@ -134,24 +132,24 @@ public class PostService {
 
 
 
-    public ListPostResponse getPostListByUser(String userId) {
+    public ListResponse<GetPostResponse> getPostListByUser(String userId) {
         List<Post> posts = postRepository.findAllByUserId(userId);
+        ListResponse<GetPostResponse> getPostResponseListResponse = new ListResponse(posts);
 
-        return ListPostResponse.from(GetPostResponse.from(posts));
-
+        return getPostResponseListResponse;
     }
 
 
 
-    @Transactional(readOnly = true)
-//    @Cacheable(value = "posts", key = "'weekBestPostList'", cacheManager = "contentCacheManager")
-    public ListPostResponse getWeekBestPostList() {
-        List<Post> posts = postRepository.findAllByLikeAndDate();
+//    @Transactional(readOnly = true)
+////    @Cacheable(value = "posts", key = "'weekBestPostList'", cacheManager = "contentCacheManager")
+//    public ListPostResponse getWeekBestPostList() {
+//        List<Post> posts = postRepository.findAllByLikeAndDate();
+//
+//        return ListPostResponse.from(GetPostResponse.from(posts));
+//    }
 
-        return ListPostResponse.from(GetPostResponse.from(posts));
-    }
-
-    public ListPostResponse getFeed(Long end, User user) {
+    public ListResponse<GetPostResponse> getFeed(Long end, User user) {
         List<String> followingIds = followService.findFollowingIdsByUserId(user.getUserId());
         log.info("followingIds Size{}",followingIds.size());
         List<Post> allPosts = new ArrayList<>();
@@ -185,17 +183,20 @@ public class PostService {
             isNext = false;
         }
 
-        return ListPostResponse.from(GetPostResponse.from(lastTenPosts), isNext);
+        ListResponse<GetPostResponse> getPostResponseListResponse = new ListResponse(lastTenPosts);
+
+        return getPostResponseListResponse;
     }
 
-    public Page<GetPostResponse> searchAllPosts(String keyword, Pageable pageable) {
+    public Page<Post> searchAllPosts(String keyword, Pageable pageable) {
         // query 생성
         Specification<Post> spec = this.search(keyword);
 
         Page<Post> posts = postRepository.findAll(spec, pageable);
         // 위에서 post를 바로 images url을 넣어서 전달해야함
 
-        return GetPostResponse.from(posts);
+
+        return posts;
     }
 
     public Specification<Post> search(String keyword) {
@@ -223,7 +224,7 @@ public class PostService {
         };
     }
 
-    public ListPostResponse getRecommendPostList(User user, Long end) {
+    public ListResponse<GetPostResponse> getRecommendPostList(User user, Long end) {
         try {
             log.info("get recommend post list start");
             String userId = user.getUserId();
@@ -253,7 +254,9 @@ public class PostService {
 
             List<Post> posts = postRepository.findAllByIdInOrderByListOrder(result);
 
-            return ListPostResponse.from(GetPostResponse.from(posts));
+            ListResponse<GetPostResponse> getPostResponseListResponse = new ListResponse(posts);
+
+            return getPostResponseListResponse;
         } catch (Exception e) {
             log.error(">> 추천 게시글 가져오기 실패 {}", e.getMessage());
             throw new PostNotFoundException("존재하지 않는 게시글입니다.");

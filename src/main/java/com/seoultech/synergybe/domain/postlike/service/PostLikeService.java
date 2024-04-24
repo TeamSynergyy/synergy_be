@@ -28,7 +28,7 @@ public class PostLikeService {
     private final PostRepository postRepository;
 
     @Transactional
-    public GetPostLikeResponse updatePostLike(User user, Long postId, PostLikeType type) {
+    public GetPostLikeResponse updatePostLike(User user, String postId, PostLikeType type) {
         LikeStatus status;
         if (type.getLikeType().equals("like")) {
             status = LikeStatus.LIKE;
@@ -39,7 +39,7 @@ public class PostLikeService {
             log.info("updatePostLike update before");
             PostLike updatedPostLike = this.update(user, postId, status);
             log.info("updatePostLike update after");
-            return GetPostLikeResponse.from(updatedPostLike);
+            return GetPostLikeResponse.builder().build();
         } catch (Exception e) {
             throw new PostLikeNotFoundException("존재하지 않는 좋아요입니다.");
         }
@@ -58,7 +58,7 @@ public class PostLikeService {
      * 3 - status가 like이면 like 로 변경
      * post에서 해당 postlike 추가
      */
-    public synchronized PostLike update(User user, Long postId, LikeStatus likeStatus) {
+    public synchronized PostLike update(User user, String postId, LikeStatus likeStatus) {
         Optional<PostLike> postLikeOptional = postLikeRepository.findByUserUserIdAndPostId(user.getUserId(), postId);
 
         Post post = postRepository.findById(postId)
