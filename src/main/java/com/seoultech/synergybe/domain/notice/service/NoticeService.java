@@ -47,8 +47,8 @@ public class NoticeService {
 
     }
 
-    public GetNoticeResponse getNotice(Long notieId) {
-        Notice notice = this.findNoticeById(notieId);
+    public GetNoticeResponse getNotice(String noticeId) {
+        Notice notice = this.findNoticeById(noticeId);
 
         GetNoticeResponse getNoticeResponse = GetNoticeResponse.builder().build();
 
@@ -56,13 +56,13 @@ public class NoticeService {
 
     }
 
-    public Notice findNoticeById(Long noticeId) {
+    public Notice findNoticeById(String noticeId) {
         return this.noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 공지입니다."));
     }
 
     public ListResponse<GetNoticeResponse> getNoticeList(String projectId) {
-        List<Long> noticeIds = noticeRepository.findNoticeIdsByProjectId(projectId);
+        List<String> noticeIds = noticeRepository.findNoticeIdsByProjectId(projectId);
 
         List<Notice> notices = noticeRepository.findAllById(noticeIds);
 
