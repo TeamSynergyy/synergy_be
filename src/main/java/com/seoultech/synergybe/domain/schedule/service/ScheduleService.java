@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.schedule.service;
 
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.schedule.Schedule;
@@ -13,46 +14,44 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ProjectService projectService;
 
-    public GetScheduleResponse createSchedule(CreateScheduleRequest request) {
-        Project project = projectService.findProjectById(request.getProjectId());
-        Schedule savedSchedule = scheduleRepository.save(request.toEntity(project));
-        savedSchedule.addProject(project);
+    @Transactional
+    public void createSchedule(CreateScheduleRequest request) {
+        Project project = projectService.findProjectById(request.projectId());
+        Schedule savedSchedule = Schedule.builder()
+                .project(project)
+                .build();
 
-        return GetScheduleResponse.from(savedSchedule);
+        scheduleRepository.save(savedSchedule);
+        savedSchedule.addProject(project);
     }
 
 
     @Transactional(readOnly = true)
-    public List<GetScheduleResponse> getScheduleList(Long projectId) {
+    public ListResponse<GetScheduleResponse> getScheduleList(String projectId) {
         Project project = projectService.findProjectById(projectId);
 
-        return GetScheduleResponse.from(project.getSchedules());
+        return new ListResponse(project.getSchedules());
     }
 
-    public GetScheduleResponse updateSchedule(CreateScheduleRequest request, Long scheduleId) {
+    public void updateSchedule(CreateScheduleRequest request, String scheduleId) {
         Schedule schedule = this.findScheduleById(scheduleId);
-        Schedule updatedSchedule = schedule.updateSchedule(request);
-        scheduleRepository.save(updatedSchedule);
-
-        return GetScheduleResponse.from(updatedSchedule);
+//        Schedule updatedSchedule = schedule.updateSchedule(request);
+        scheduleRepository.save(schedule);
     }
 
-    private Schedule findScheduleById(Long scheduleId) {
+    private Schedule findScheduleById(String scheduleId) {
         return scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleNotFoundException("존재하지 않는 일정입니다."));
     }
 
-    public GetScheduleResponse deleteSchedule(Long scheduleId) {
+    public void deleteSchedule(String scheduleId) {
         Schedule schedule = this.findScheduleById(scheduleId);
         scheduleRepository.delete(schedule);
-
-        return GetScheduleResponse.from(schedule);
     }
 }
