@@ -11,7 +11,6 @@ import com.seoultech.synergybe.domain.follow.exception.FollowNotFoundException;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.domain.user.dto.response.GetUserId;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FollowService {
     private final FollowRepository followRepository;
-
     private final UserService userService;
     private final NotificationService notificationService;
     private final IdGenerator idGenerator;
@@ -92,5 +90,21 @@ public class FollowService {
 
     public List<String> getFollowingIdList(String userId) {
         return followRepository.findFollowingIdsByFollowerId(userId);
+    }
+
+    public ListResponse<String> getFollowerIds(String userId) {
+        List<String> getFollowerIdList = getFollowerIdList(userId);
+
+        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowerIdList);
+
+        return getUserIdListResponses;
+    }
+
+    public ListResponse<String> getFollowingIds(String userId) {
+        List<String> getFollowingIdList = getFollowingIdList(userId);
+
+        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowingIdList);
+
+        return getUserIdListResponses;
     }
 }
