@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.user.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.dto.response.GetUserAccountResponse;
 import com.seoultech.synergybe.domain.user.dto.response.QGetUserAccountResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +16,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
     @Override
     public GetUserAccountResponse findUserAccountByEmail(String email) {
-        GetUserAccountResponse getUserAccountResponse = queryFactory
-                .select(new QGetUserAccountResponse(
-                        user.email,
-                        user.name,
-                        user.major,
-                        user.temperature
-                ))
-                .from(user)
-                .where(user.email.eq(email))
-                .fetchOne();
+//        User user1 = queryFactory
+//                .select(user)
+//                .from(user)
+//                .where(user.email.eq)
+//                .fetchOne();
+        GetUserAccountResponse getUserAccountResponse = GetUserAccountResponse.builder().build();
         return getUserAccountResponse;
     }
 }
