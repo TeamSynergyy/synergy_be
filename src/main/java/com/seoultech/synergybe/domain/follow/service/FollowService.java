@@ -11,7 +11,6 @@ import com.seoultech.synergybe.domain.follow.exception.FollowNotFoundException;
 import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.domain.user.dto.response.GetUserId;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FollowService {
     private final FollowRepository followRepository;
-
     private final UserService userService;
     private final NotificationService notificationService;
     private final IdGenerator idGenerator;
@@ -44,7 +42,7 @@ public class FollowService {
     @Transactional
     public GetFollowResponse updateFollow(User user, String followingId, CreateFollowRequest type) {
         FollowStatus status;
-        if (type.getFollowType().equals("follow")) {
+        if (type.followType().equals("follow")) {
             status = FollowStatus.FOLLOW;
         } else {
             status = FollowStatus.UNFOLLOW;
@@ -52,8 +50,9 @@ public class FollowService {
 
         try {
             Follow updatedFollow = update(user, followingId, status);
+            GetFollowResponse getFollowResponse = GetFollowResponse.builder().build();
 
-            return GetFollowResponse.from(updatedFollow);
+            return getFollowResponse;
         } catch (Exception e) {
             throw new FollowNotFoundException("존재하지 않는 팔로우입니다.");
         }
@@ -85,11 +84,27 @@ public class FollowService {
         }
     }
 
-    public ListResponse<GetUserId> getFollowerIdList(String userId) {
+    public List<String> getFollowerIdList(String userId) {
         return followRepository.findFollowerIdsByFollowingId(userId);
     }
 
-    public List<GetUserId> getFollowingIdList(String userId) {
+    public List<String> getFollowingIdList(String userId) {
         return followRepository.findFollowingIdsByFollowerId(userId);
+    }
+
+    public ListResponse<String> getFollowerIds(String userId) {
+        List<String> getFollowerIdList = getFollowerIdList(userId);
+
+        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowerIdList);
+
+        return getUserIdListResponses;
+    }
+
+    public ListResponse<String> getFollowingIds(String userId) {
+        List<String> getFollowingIdList = getFollowingIdList(userId);
+
+        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowingIdList);
+
+        return getUserIdListResponses;
     }
 }

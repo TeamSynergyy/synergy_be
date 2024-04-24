@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.follow.controller;
 
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.follow.dto.request.CreateFollowRequest;
 import com.seoultech.synergybe.domain.follow.dto.response.GetFollowResponse;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
@@ -29,6 +30,20 @@ public class FollowController {
 
         return ResponseEntity.status(HttpStatus.OK).body(followService.updateFollow(user, followingId, type));
 
+    }
+
+    @Operation(summary = "나의 팔로워 목록", description = "나를 팔로우 하고있는 유저의 Id 목록을 반환합니다")
+    @GetMapping(value = "/followers")
+    public ResponseEntity<ListResponse<String>> getFollowerIds(@LoginUser String userId) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(followService.getFollowerIds(userId));
+    }
+
+    @Operation(summary = "나의 팔로잉 목록", description = "내가 팔로우 하고있는 유저의 Id 목록을 반환합니다")
+    @GetMapping(value = "/followings")
+    public ResponseEntity<ListResponse<String>> getFollowingIds(@LoginUser String userId) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(followService.getFollowingIds(userId));
     }
 
 

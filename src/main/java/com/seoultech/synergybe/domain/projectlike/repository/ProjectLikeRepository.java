@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProjectLikeRepository extends JpaRepository<ProjectLike, Long> {
+public interface ProjectLikeRepository extends JpaRepository<ProjectLike, String> {
 
     @Query(value = "SELECT * FROM project_like WHERE user_id = :userId AND project_id = :projectId FOR UPDATE", nativeQuery = true)
-    Optional<ProjectLike> findByUserUserIdAndProjectId(@Param("userId") String userId, @Param("projectId") Long projectId);
+    Optional<ProjectLike> findByUserUserIdAndProjectId(@Param("userId") String userId, @Param("projectId") String projectId);
 
     @Query(value = "SELECT project_id FROM project_like WHERE user_id = :userId", nativeQuery = true)
-    List<Long> findProjectIdsByUserId(@Param("userId") String userId);
+    List<String> findProjectIdsByUserId(@Param("userId") String userId);
 }

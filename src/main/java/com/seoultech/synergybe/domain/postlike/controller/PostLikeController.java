@@ -24,7 +24,7 @@ public class PostLikeController {
 
     @Operation(summary = "좋아요 신청, 취소", description = "좋아요를 신청 및 취소하며 좋아요 타입에 따라 좋아요 상태가 변화하므로 PUT 메서드 하나로 관리됩니다.")
     @PutMapping(value = "/{postId}/like")
-    public ResponseEntity<GetPostLikeResponse> updatePostLike(@PathVariable("postId") Long postId, @RequestBody PostLikeType type, @LoginUser String userId) {
+    public ResponseEntity<GetPostLikeResponse> updatePostLike(@PathVariable("postId") String postId, @RequestBody PostLikeType type, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(postLikeService.updatePostLike(user, postId, type));

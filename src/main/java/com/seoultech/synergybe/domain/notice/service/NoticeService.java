@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.notice.service;
 
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.notice.Notice;
 import com.seoultech.synergybe.domain.notice.dto.request.CreateNoticeRequest;
 import com.seoultech.synergybe.domain.notice.dto.response.GetNoticeResponse;
@@ -30,48 +31,53 @@ public class NoticeService {
 
 
     public GetNoticeResponse createNotice(CreateNoticeRequest request) {
-        Project project = projectService.findProjectById(request.getProjectId());
+        Project project = projectService.findProjectById(request.projectId());
         String noticeId = idGenerator.generateId(IdPrefix.NOTICE);
         Notice notice = Notice.builder()
-                .id(noticeId).content(request.getContent()).project(project)
+                .id(noticeId).content(request.content()).project(project)
                 .build();
         Notice savedNotice = this.noticeRepository.save(notice);
         List<User> projectUsers = project.getProjectUsers().stream().map(projectUser -> projectUser.getUser()).collect(Collectors.toList());
         for (User user : projectUsers) {
             notificationService.send(user, NotificationType.PROJECT_NOTICE, "공지사항이 생성되었습니다.", project.getId());
         }
+        GetNoticeResponse getNoticeResponse = GetNoticeResponse.builder().build();
 
-        return GetNoticeResponse.from(savedNotice);
-
-    }
-
-    public GetNoticeResponse getNotice(Long notieId) {
-        Notice notice = this.findNoticeById(notieId);
-
-        return GetNoticeResponse.from(notice);
+        return getNoticeResponse;
 
     }
 
-    public Notice findNoticeById(Long noticeId) {
+    public GetNoticeResponse getNotice(String noticeId) {
+        Notice notice = this.findNoticeById(noticeId);
+
+        GetNoticeResponse getNoticeResponse = GetNoticeResponse.builder().build();
+
+        return getNoticeResponse;
+
+    }
+
+    public Notice findNoticeById(String noticeId) {
         return this.noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 공지입니다."));
     }
 
-    public List<GetNoticeResponse> getNoticeList(Long projectId) {
-        List<Long> noticeIds = noticeRepository.findNoticeIdsByProjectId(projectId);
+    public ListResponse<GetNoticeResponse> getNoticeList(String projectId) {
+        List<String> noticeIds = noticeRepository.findNoticeIdsByProjectId(projectId);
 
         List<Notice> notices = noticeRepository.findAllById(noticeIds);
 
         // todo
         // update 순으로 정렬
 
-        return GetNoticeResponse.from(notices);
+        ListResponse<GetNoticeResponse> getNoticeResponses = new ListResponse(notices);
+
+
+
+        return getNoticeResponses;
     }
 
-    public GetNoticeResponse deleteNotice(Long noticeId) {
+    public void deleteNotice(String noticeId) {
         Notice notice = findNoticeById(noticeId);
         noticeRepository.delete(notice);
-
-        return GetNoticeResponse.from(notice);
     }
 }

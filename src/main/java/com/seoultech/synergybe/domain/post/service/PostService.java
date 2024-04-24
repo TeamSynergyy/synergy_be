@@ -5,13 +5,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
-//import com.seoultech.synergybe.domain.image.service.ImageService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
-import com.seoultech.synergybe.domain.post.dto.response.DeletePostResponse;
-import com.seoultech.synergybe.domain.post.dto.response.ListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
 import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
@@ -51,48 +49,49 @@ public class PostService {
 //    private final ImageService imageService;
 
     public GetPostResponse createPost(User user, CreatePostRequest request) {
-        if (request.getFiles() == null) {
+        if (request.files() == null) {
             log.info(">> getfiles is null");
             String postId = idGenerator.generateId(IdPrefix.POST);
             Post post = Post.builder()
-                    .id(postId).title(request.getTitle()).user(user)
+                    .id(postId).title(request.title()).user(user)
                     .build();
             Post savedPost = postRepository.save(post);
+            GetPostResponse getPostResponse = GetPostResponse.builder().build();
 
-            return GetPostResponse.from(savedPost);
-        } else {
-            log.info(">> getfiles is NOT NULL");
-            List<MultipartFile> files = request.getFiles();
-//            List<Image> images = imageService.storeImageList(files);
-
-//            Post post = request.toEntity(user, images);
-            Post post = request.toEntity(user);
-            Post savedPost = postRepository.save(post);
-//            List<String> imagesUrl = imageService.getImageUrlByPostId(savedPost.getId());
-
-//            return PostResponse.from(savedPost, imagesUrl);
-            return GetPostResponse.from(savedPost);
+            return getPostResponse;
+//        } else {
+//            log.info(">> getfiles is NOT NULL");
+//            List<MultipartFile> files = request.files();
+////            List<Image> images = imageService.storeImageList(files);
+//
+////            Post post = request.toEntity(user, images);
+//            Post post = request.toEntity(user);
+//            Post savedPost = postRepository.save(post);
+////            List<String> imagesUrl = imageService.getImageUrlByPostId(savedPost.getId());
+//
+////            return PostResponse.from(savedPost, imagesUrl);
+//            return GetPostResponse.from(savedPost);
         }
+        return GetPostResponse.builder().build();
     }
 
+    @Transactional
     public GetPostResponse updatePost(UpdatePostRequest request) {
-        Post post = this.findPostById(request.getPostId());
-        Post updatedPost = postRepository.save(post.updatePost(request));
+        Post post = findPostById(request.postId());
+        post.updatePost(request.title(), request.content());
 //        List<String> imagesUrl = imageService.getImageUrlByPostId(request.getPostId());
 
 //        return PostResponse.from(updatedPost, imagesUrl);
-        return GetPostResponse.from(updatedPost);
+        GetPostResponse getPostResponse = GetPostResponse.builder().build();
+        return getPostResponse;
     }
 
-    public DeletePostResponse deletePost(Long postId) {
+    public void deletePost(String postId) {
         Post post = this.findPostById(postId);
         postRepository.delete(post);
-
-
-        return DeletePostResponse.from(post);
     }
 
-    public Post findPostById(Long postId) {
+    public Post findPostById(String postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시글입니다."));
     }
@@ -101,28 +100,16 @@ public class PostService {
         return postRepository.findAllByFollowingIdAndEndId(userId, end);
     }
 
-    public GetPostResponse getPost(User user, Long postId) {
-        Post post = this.findPostById(postId);
-//        List<String> imagesUrl = imageService.getImageUrlByPostId(postId);
 
-//        if (imagesUrl.isEmpty()) {
-//            return PostResponse.from(post);
-//        }
-
-//        return PostResponse.from(post, imagesUrl);
-        return GetPostResponse.from(post);
-    }
-
-
-    public ListPostResponse getLikedPostList(User user) {
-        List<Long> postIds = postLikeService.findLikedPostIds(user);
+    public ListResponse<GetPostResponse> getLikedPostList(User user) {
+        List<String> postIds = postLikeService.findLikedPostIds(user);
 
         List<Post> posts = postRepository.findAllById(postIds);
 
-        return ListPostResponse.from(GetPostResponse.from(posts));
+        return new ListResponse(posts);
     }
 
-    public ListPostResponse getPostList(Long end) {
+    public ListResponse<GetPostResponse> getPostList(String end) {
         List<Post> posts = postRepository.findAllByEndId(end);
 
         int count = postRepository.countPostList(end);
@@ -139,29 +126,30 @@ public class PostService {
         // 썸네일이 없을 경우 없는채로 처리가 되어야 함
 
 
-        return ListPostResponse.from(GetPostResponse.from(posts), isNext);
+//        return ListPostResponse.from(GetPostResponse.from(posts), isNext);
+        return new ListResponse(posts);
     }
 
 
 
-    public ListPostResponse getPostListByUser(String userId) {
+    public ListResponse<GetPostResponse> getPostListByUser(String userId) {
         List<Post> posts = postRepository.findAllByUserId(userId);
+        ListResponse<GetPostResponse> getPostResponseListResponse = new ListResponse(posts);
 
-        return ListPostResponse.from(GetPostResponse.from(posts));
-
+        return getPostResponseListResponse;
     }
 
 
 
-    @Transactional(readOnly = true)
-//    @Cacheable(value = "posts", key = "'weekBestPostList'", cacheManager = "contentCacheManager")
-    public ListPostResponse getWeekBestPostList() {
-        List<Post> posts = postRepository.findAllByLikeAndDate();
+//    @Transactional(readOnly = true)
+////    @Cacheable(value = "posts", key = "'weekBestPostList'", cacheManager = "contentCacheManager")
+//    public ListPostResponse getWeekBestPostList() {
+//        List<Post> posts = postRepository.findAllByLikeAndDate();
+//
+//        return ListPostResponse.from(GetPostResponse.from(posts));
+//    }
 
-        return ListPostResponse.from(GetPostResponse.from(posts));
-    }
-
-    public ListPostResponse getFeed(Long end, User user) {
+    public ListResponse<GetPostResponse> getFeed(Long end, User user) {
         List<String> followingIds = followService.findFollowingIdsByUserId(user.getUserId());
         log.info("followingIds Size{}",followingIds.size());
         List<Post> allPosts = new ArrayList<>();
@@ -195,17 +183,20 @@ public class PostService {
             isNext = false;
         }
 
-        return ListPostResponse.from(GetPostResponse.from(lastTenPosts), isNext);
+        ListResponse<GetPostResponse> getPostResponseListResponse = new ListResponse(lastTenPosts);
+
+        return getPostResponseListResponse;
     }
 
-    public Page<GetPostResponse> searchAllPosts(String keyword, Pageable pageable) {
+    public Page<Post> searchAllPosts(String keyword, Pageable pageable) {
         // query 생성
         Specification<Post> spec = this.search(keyword);
 
         Page<Post> posts = postRepository.findAll(spec, pageable);
         // 위에서 post를 바로 images url을 넣어서 전달해야함
 
-        return GetPostResponse.from(posts);
+
+        return posts;
     }
 
     public Specification<Post> search(String keyword) {
@@ -233,7 +224,7 @@ public class PostService {
         };
     }
 
-    public ListPostResponse getRecommendPostList(User user, Long end) {
+    public ListResponse<GetPostResponse> getRecommendPostList(User user, Long end) {
         try {
             log.info("get recommend post list start");
             String userId = user.getUserId();
@@ -246,40 +237,47 @@ public class PostService {
 
             log.info("Response from FastAPI: {}", response);
 
-            List<Long> postIds = this.extractIds(response);
+            List<String> postIds = this.extractIds(response);
 
             // 빈 배열일 경우 빈 배열 리턴
-            if (postIds.isEmpty()) {
-                List<Post> posts = new ArrayList<>();
-                return ListPostResponse.from(GetPostResponse.fromEmpty(posts));
-            }
+//            if (postIds.isEmpty()) {
+//                List<Post> posts = new ArrayList<>();
+//                return ListPostResponse.from(GetPostResponse.fromEmpty(posts));
+//            }
 
             // end 기준 end ~ end + 10 순서에 있는 게시글 가져오기
             int startIdx = end.intValue();
             int endIdx = Math.min(startIdx + 10, postIds.size());
 
-            List<Long> result = postIds.subList(startIdx, endIdx);
+            List<String> result = postIds.subList(startIdx, endIdx);
             log.info(">> postIds result {} ", result);
 
             List<Post> posts = postRepository.findAllByIdInOrderByListOrder(result);
 
-            return ListPostResponse.from(GetPostResponse.from(posts));
+            ListResponse<GetPostResponse> getPostResponseListResponse = new ListResponse(posts);
+
+            return getPostResponseListResponse;
         } catch (Exception e) {
             log.error(">> 추천 게시글 가져오기 실패 {}", e.getMessage());
             throw new PostNotFoundException("존재하지 않는 게시글입니다.");
         }
     }
 
-    private List<Long> extractIds(String response) {
+    private List<String> extractIds(String response) {
         try {
             // 받은 JSON 응답을 자바 리스트로 파싱
             ObjectMapper objectMapper = new ObjectMapper();
             log.error(">> http cliend response body {}", response);
 
-            return objectMapper.readValue(response, new TypeReference<List<Long>>() {});
+            return objectMapper.readValue(response, new TypeReference<List<String>>() {});
         } catch (JsonProcessingException e) {
             log.error(">> 객체 변환 실패 {}", e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public GetPostResponse getPost(String postId) {
+        GetPostResponse getPostResponse = GetPostResponse.builder().build();
+        return getPostResponse;
     }
 }

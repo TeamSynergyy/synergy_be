@@ -6,18 +6,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
-import com.seoultech.synergybe.domain.project.dto.response.ListProjectResponse;
-import com.seoultech.synergybe.domain.project.dto.response.ProjectResponse;
+import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
 import com.seoultech.synergybe.domain.project.exception.ProjectNotFoundException;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
 import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
-import jakarta.persistence.Id;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -46,73 +45,72 @@ public class ProjectService {
 
     private final ProjectLikeService projectLikeService;
     private final IdGenerator idGenerator;
-
-    private final ApplyRepository applyRepository;
     private final UserService userService;
 
-    public ProjectResponse createProject(User user, CreateProjectRequest request) {
+    public GetProjectResponse createProject(User user, CreateProjectRequest request) {
         String projectId = idGenerator.generateId(IdPrefix.PROJECT);
-        Point point = new Point(request.getLongitude(), request.getLatitude());
+        Point point = new Point(request.longitude(), request.latitude());
         // try catch 문 수정 / 여기서 Point에 대한 예외처리 하지 않기
         try {
             Project project = Project.builder()
                 .id(projectId)
-                .name(request.getName())
-                .content(request.getContent())
-                .field(request.getField())
+                .name(request.name())
+                .content(request.content())
+                .field(request.field())
                 .location(point)
-                .startAt(request.getStartAt())
-                .endAt(request.getEndAt())
+                .startAt(request.startAt())
+                .endAt(request.endAt())
                 .leaderId(user.getUserId())
                 .build();
             Project savedProject = projectRepository.save(project);
             projectUserService.createProjectUser(savedProject, user);
-            return ProjectResponse.from(savedProject);
+            return GetProjectResponse.builder().build();
         } catch (Exception e) {
             throw new IllegalArgumentException("point parse exception");
         }
     }
 
-    public ProjectResponse updateProject(User user, UpdateProjectRequest request) {
-        Project project = this.findProjectById(request.getProjectId());
+    public GetProjectResponse updateProject(User user, UpdateProjectRequest request) {
+        Project project = this.findProjectById(request.projectId());
         Project updatedProject = project.updateProject(request);
         projectRepository.save(updatedProject);
 
-        return ProjectResponse.from(updatedProject);
+        return GetProjectResponse.builder().build();
     }
 
-    public ProjectResponse deleteProject(Long projectId) {
+    public GetProjectResponse deleteProject(String projectId) {
         Project project = this.findProjectById(projectId);
 
 
         projectRepository.delete(project);
 
-        return ProjectResponse.from(project);
+        return GetProjectResponse.builder().build();
     }
 
-    public Project findProjectById(Long projectId) {
+    public Project findProjectById(String projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("존재하지 않는 프로젝트입니다."));
     }
-    public ProjectResponse getProject(Long projectId) {
+    public GetProjectResponse getProject(String projectId) {
         Project project = this.findProjectById(projectId);
 
-        return ProjectResponse.from(project);
+        return GetProjectResponse.builder().build();
     }
 
-    public ListProjectResponse getProjectList(Long end) {
+    public ListResponse<GetProjectResponse> getProjectList(Long end) {
         List<Project> projects = projectRepository.findAllByEndId(end);
+        ListResponse<GetProjectResponse> getProjectResponseListResponse = new ListResponse(projects);
 
-        return ListProjectResponse.from(ProjectResponse.from(projects));
+        return getProjectResponseListResponse;
     }
 
-    public Page<ProjectResponse> searchAllProjects(String keyword, Pageable pageable) {
+    public Page<Project> searchAllProjects(String keyword, Pageable pageable) {
 
         Specification<Project> spec = this.search(keyword);
 
         Page<Project> projects = projectRepository.findAll(spec, pageable);
 
-        return ProjectResponse.from(projects);
+        return projects;
     }
 
     public Specification<Project> search(String keyword) {
@@ -134,14 +132,14 @@ public class ProjectService {
         };
     }
 
-    public ListProjectResponse getLikedProjectList(User user) {
-        List<Long> projectIds = projectLikeService.findLikedProjectIds(user);
+    public ListResponse<GetProjectResponse> getLikedProjectList(User user) {
+        List<String> projectIds = projectLikeService.findLikedProjectIds(user);
         List<Project> projects = projectRepository.findAllById(projectIds);
 
-        return ListProjectResponse.from(ProjectResponse.from(projects));
+        return new ListResponse(projects);
     }
 
-    public List<User> getUserListByProject(Long projectId) {
+    public List<User> getUserListByProject(String projectId) {
         List<String> userIds = projectUserService.getProjectUserIds(projectId);
         List<User> userList = new ArrayList<>();
         for (String userId : userIds) {
@@ -155,13 +153,13 @@ public class ProjectService {
     // todo
     // 현재 user가 참여하고 있는 projectList가 필요함
     // 현재 진행중인 프로젝트만 찾아야 함
-    public ListProjectResponse getProjectListByUser(String userId) {
-        List<Long> projectIds = projectUserService.getProjectIdsByUserId(userId);
+    public ListResponse<String> getProjectListByUser(String userId) {
+        List<String> projectIds = projectUserService.getProjectIdsByUserId(userId);
 
-        return ListProjectResponse.from(ProjectResponse.from(projectRepository.findAllById(projectIds)));
+        return new ListResponse(projectIds);
     }
 
-    public ListProjectResponse getRecommendListByUser(User user, Long end) {
+    public ListResponse<GetProjectResponse> getRecommendListByUser(User user, Long end) {
 
         try {
             log.info("get recommend project list start");
@@ -175,37 +173,39 @@ public class ProjectService {
 
             log.info("Response from FastAPI: {}", response);
 
-            List<Long> projectIds = this.extractIds(response);
+            List<String> projectIds = this.extractIds(response);
 
             if (projectIds.isEmpty()) {
                 List<Project> projects = new ArrayList<>();
-                return ListProjectResponse.from(ProjectResponse.fromEmpty(projects));
+//                return ListProjectResponse.from(GetProjectResponse.fromEmpty(projects));
+                return new ListResponse(projects);
             }
 
             // end 기준 end ~ end + 10 순서에 있는 게시글 가져오기
             int startIdx = end.intValue();
             int endIdx = Math.min(startIdx + 10, projectIds.size());
 
-            List<Long> result = projectIds.subList(startIdx, endIdx);
+            List<String> result = projectIds.subList(startIdx, endIdx);
 
             List<Project> projects = projectRepository.findAllById(result);
 
 
             log.info("Response from FastAPI: {}", response);
-            return ListProjectResponse.from(ProjectResponse.from(projects));
+//            return ListProjectResponse.from(GetProjectResponse.from(projects));
+            return new ListResponse(projects);
         } catch (Exception e) {
             log.error(">> 추천 프르젝트 가져오기 실패 {}", e.getMessage());
             throw new ProjectNotFoundException("존재하지 않는 프로젝트입니다.");
         }
     }
 
-    private List<Long> extractIds(String response) {
+    private List<String> extractIds(String response) {
         try {
             // 받은 JSON 응답을 자바 리스트로 파싱
             ObjectMapper objectMapper = new ObjectMapper();
             log.error(">> http cliend response body {}", response);
 
-            return objectMapper.readValue(response, new TypeReference<List<Long>>() {});
+            return objectMapper.readValue(response, new TypeReference<List<String>>() {});
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.rate.controller;
 
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.rate.dto.request.CreateRateRequest;
 import com.seoultech.synergybe.domain.rate.dto.response.GetRateResponse;
 import com.seoultech.synergybe.domain.rate.dto.response.UserRateResponse;
@@ -34,7 +35,7 @@ public class RateController {
 
     @Operation(summary = "평가 반영", description = "팀장만이 수행 가능하며, 평가가 진행된 내용에 대해 팀원 및 팀장에게 적용됩니다.")
     @PutMapping("/{projectId}/evaluations")
-    public ResponseEntity<List<UserRateResponse>> updateUserRate(@PathVariable("projectId") Long projectId, @LoginUser String userId) {
+    public ResponseEntity<List<UserRateResponse>> updateUserRate(@PathVariable("projectId") String projectId, @LoginUser String userId) {
         User user = userService.getUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(rateService.updateTemperature(projectId, user));
@@ -42,7 +43,7 @@ public class RateController {
 
     @Operation(summary = "평가 목록", description = "프로젝트 구성원이 평가한 모든 평가들이 반환됩니다.")
     @GetMapping("/{projectId}")
-    public ResponseEntity<List<GetRateResponse>> getRateList(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<ListResponse<GetRateResponse>> getRateList(@PathVariable("projectId") String projectId) {
 
         return ResponseEntity.ok().body(rateService.getRateListByProject(projectId));
     }

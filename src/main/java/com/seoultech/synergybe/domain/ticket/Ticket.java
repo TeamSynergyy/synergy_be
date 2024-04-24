@@ -72,8 +72,8 @@ public class Ticket extends BaseTime {
     }
 
     public Ticket update(CreateTicketRequest request, TicketStatus status) {
-        this.name = new TicketName(request.getContent());
-        this.content = new TicketContent(request.getContent());
+        this.name = new TicketName(request.content());
+        this.content = new TicketContent(request.content());
         this.status = status;
 
         return this;

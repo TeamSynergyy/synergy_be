@@ -19,7 +19,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public String getEmail() {
-        return user.getEmail();
+        return user.getEmail().getEmail();
     }
 
     @Override
@@ -34,12 +34,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user.getPassword().getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getName().getName();
     }
 
     @Override

@@ -36,7 +36,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final FollowService followService;
     private final CustomPasswordEncoder passwordEncoder;
     private final IdGenerator idGenerator;
 
@@ -72,20 +71,21 @@ public class UserService {
         return userRepository.findUserAccountByEmail(email);
     }
 
-    public UserResponse getUserInfo(String userId) {
-        return UserResponse.from(this.getUser(userId));
+    public GetUserAccountResponse getUserInfo(String userId) {
+        return GetUserAccountResponse.builder().build();
+//        return UserResponse.from(this.getUser(userId));
     }
 
     public List<User> getUsers(List<String> userIds) {
         return userRepository.findAllByUserId(userIds);
     }
 
-    public Page<UserResponse> searchAllUsers(String keyword, Pageable pageable) {
+    public Page<User> searchAllUsers(String keyword, Pageable pageable) {
         Specification<User> spec = this.search(keyword);
 
         Page<User> users = userRepository.findAll(spec, pageable);
 
-        return UserResponse.from(users);
+        return users;
     }
 
     public Specification<User> search(String keyword) {
@@ -119,7 +119,7 @@ public class UserService {
         user.updateUserInfo(email, name, major);
     }
 
-    public ListUserResponse getSimilarUserListByUser(String userId, Long end) {
+    public ListResponse<GetUserAccountResponse> getSimilarUserListByUser(String userId, Long end) {
 
         try {
             log.info("user Id {}", userId);
@@ -136,7 +136,8 @@ public class UserService {
             // 빈 배열일 경우 빈 배열 리턴
             if (userIds.isEmpty()) {
                 List<User> users = new ArrayList<>();
-                return ListUserResponse.from(UserResponse.fromEmpty(users));
+                return new ListResponse(users);
+//                return ListUserResponse.from(UserResponse.fromEmpty(users));
             }
 
             // end 기준 end ~ end + 10 순서에 있는 게시글 가져오기
@@ -149,7 +150,8 @@ public class UserService {
 
 
             log.info("Response from FastAPI: {}", response);
-            return ListUserResponse.from(UserResponse.from(users));
+            return new ListResponse(users);
+//            return ListUserResponse.from(UserResponse.from(users));
         } catch (Exception e) {
             log.error(">> 추천 유저 가져오기 실패 {}", e.getMessage());
             throw new UserNotFoundException("존재하지 않는 유저입니다.");
@@ -169,16 +171,20 @@ public class UserService {
         }
     }
 
-    public ListResponse<GetUserId> getFollowerIds(String userId) {
-        ListResponse<GetUserId> getFollowerIdList = followService.getFollowerIdList(userId);
-
-//        return UserIdsResponse.from(followRepository.findFollowerIdsByFollowingId(user.getUserId()));
-    }
-
-    public ListResponse<GetUserId> getFollowingIds(String userId) {
-        List<GetUserId> getFollowingIdList = followService.getFollowingIdList(userId);
-
-//        return UserIdsResponse.from(followRepository.findFollowingIdsByFollowerId(user.getUserId()));
-    }
+//    public ListResponse<String> getFollowerIds(String userId) {
+//        List<String> getFollowerIdList = followService.getFollowerIdList(userId);
+//
+//        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowerIdList);
+//
+//        return getUserIdListResponses;
+//    }
+//
+//    public ListResponse<String> getFollowingIds(String userId) {
+//        List<String> getFollowingIdList = followService.getFollowingIdList(userId);
+//
+//        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowingIdList);
+//
+//        return getUserIdListResponses;
+//    }
 }
 

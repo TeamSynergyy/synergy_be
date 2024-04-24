@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.ticket.service;
 
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.ticket.Ticket;
@@ -42,33 +43,33 @@ public class TicketService {
      */
     public GetTicketResponse createTicket(CreateTicketRequest request, User allocatedUser) {
         // check User
-        List<User> authUsers = projectService.getUserListByProject(request.getProjectId());
+        List<User> authUsers = projectService.getUserListByProject(request.projectId());
 
         checkUser(authUsers, allocatedUser);
 
-        Project project = projectService.findProjectById(request.getProjectId());
-        Integer lastOrderNum = ticketRepository.findLastOrderNumber(request.getStatus(), request.getProjectId());
+        Project project = projectService.findProjectById(request.projectId());
+        Integer lastOrderNum = ticketRepository.findLastOrderNumber(request.status(), request.projectId());
         String ticketId = idGenerator.generateId(IdPrefix.TICKET);
         Ticket ticket = Ticket.builder()
-                .id(ticketId).project(project).status(checkStatus(request.getStatus())).orderNumber(lastOrderNum)
+                .id(ticketId).project(project)
                 .build();
         ticketRepository.save(ticket);
 
-        if (!request.getAssignedUserIds().isEmpty()) {
+        if (!request.assignedUserIds().isEmpty()) {
             // assignedUser 추가
-            List<User> assignedUsers = userService.getUsers(request.getAssignedUserIds());
+            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }
         }
 
-        return GetTicketResponse.from(ticket);
+        return GetTicketResponse.builder().build();
     }
 
-    public List<GetTicketResponse> getTicketList(Long projectId) {
+    public ListResponse<GetTicketResponse> getTicketList(String projectId) {
         List<Ticket> tickets = ticketRepository.findAllByProjectId(projectId);
 
-        return GetTicketResponse.from(tickets);
+        return new ListResponse(tickets);
     }
 
     /** todo
@@ -85,9 +86,9 @@ public class TicketService {
      * 이전 status의 ticket들의 orderNum이 큰 ticket에 대해 -1
      * 수정 할 status의 ticket들 중 orderNum이 큰 ticket들에 대해 +1
      */
-    public List<GetTicketResponse> changeTickets(CreateTicketRequest request, User user, Long ticketId) {
+    public ListResponse<GetTicketResponse> changeTickets(CreateTicketRequest request, User user, String ticketId) {
         // check User
-        List<User> authUsers = projectService.getUserListByProject(request.getProjectId());
+        List<User> authUsers = projectService.getUserListByProject(request.projectId());
         checkUser(authUsers, user);
 
         Ticket ticket = ticketRepository.findById(ticketId)
@@ -97,21 +98,21 @@ public class TicketService {
 
         // 동일 status 인지 check
         TicketStatus preStatus = ticket.getStatus();    // 이전 ticket의 상태
-        TicketStatus postStatus = checkStatus(request.getStatus()); // 이후 ticket의 상태
+        TicketStatus postStatus = checkStatus(request.status()); // 이후 ticket의 상태
 
         if (preStatus.equals(postStatus)) {
             isEqualStatus = true;
         }
 
-        Integer preTicketOrderNum = ticket.getOrderNumber();    // 이전 ticket의 index 번호
-        Integer postTicketOrderNum = request.getOrderNumber();  // 이후 ticket의 index 번호
+        Integer preTicketOrderNum = ticket.getOrderNumber().getOrderNumber();    // 이전 ticket의 index 번호
+        Integer postTicketOrderNum = request.orderNumber();  // 이후 ticket의 index 번호
 
         // assignedUser 추가
-        if (!request.getAssignedUserIds().isEmpty()) {
+        if (!request.assignedUserIds().isEmpty()) {
             // 기존 assignedUser을 삭제 후 추가해야함
             ticket.deleteAssignedUsers();
             ticketUserService.deleteAssignedUser(ticket);
-            List<User> assignedUsers = userService.getUsers(request.getAssignedUserIds());
+            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }
@@ -125,32 +126,33 @@ public class TicketService {
         }
     }
 
-    private List<GetTicketResponse> equalStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, CreateTicketRequest request) {
+    private ListResponse<GetTicketResponse> equalStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, CreateTicketRequest request) {
         List<Ticket> changeTicketList = new ArrayList<>();
         if (postTicketOrderNum > preTicketOrderNum) {
-            List<Ticket> tickets = ticketRepository.findAllLowToBigOrderNumber(request.getProjectId(), request.getStatus(), preTicketOrderNum, postTicketOrderNum);
+            List<Ticket> tickets = ticketRepository.findAllLowToBigOrderNumber(request.projectId(), request.status(), preTicketOrderNum, postTicketOrderNum);
             decreaseOrderNum(tickets);
-            Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+            Ticket updatedTicket = ticket.update(request, checkStatus(request.status()));
             changeTicketList.addAll(tickets);
             changeTicketList.add(updatedTicket);
         } else if (preTicketOrderNum > postTicketOrderNum) {
-            List<Ticket> tickets = ticketRepository.findAllBigToLowOrderNumber(request.getProjectId(), request.getStatus(), postTicketOrderNum, preTicketOrderNum);
+            List<Ticket> tickets = ticketRepository.findAllBigToLowOrderNumber(request.projectId(), request.status(), postTicketOrderNum, preTicketOrderNum);
             increaseOrderNum(tickets);
-            Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+            Ticket updatedTicket = ticket.update(request, checkStatus(request.status()));
             changeTicketList.addAll(tickets);
             changeTicketList.add(updatedTicket);
         }
-        return GetTicketResponse.from(changeTicketList);
+        return new ListResponse(changeTicketList);
+//        return GetTicketResponse.from(changeTicketList);
     }
 
-    private List<GetTicketResponse> notEqualStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, CreateTicketRequest request,
+    private ListResponse<GetTicketResponse> notEqualStatus(int preTicketOrderNum, int postTicketOrderNum, Ticket ticket, CreateTicketRequest request,
                                                    TicketStatus preStatus, TicketStatus postStatus) {
         // status가 다를 경우
         // 이전 ticket들을 가져옴, orderNum이 pre 보다 큰
         List<Ticket> changeTicketList = new ArrayList<>();
 
         // 기존 status의 tickets
-        List<Ticket> preStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.getProjectId(), preStatus.name(), preTicketOrderNum);
+        List<Ticket> preStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.projectId(), preStatus.name(), preTicketOrderNum);
 
         // 요청된 ticket의 orderNum 보다 큰 orderNum을 가진 ticket들에 대해 -1
         decreaseOrderNum(preStatusTickets);
@@ -158,15 +160,16 @@ public class TicketService {
 
 
         // 요청된 status의 tickets
-        List<Ticket> postStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.getProjectId(), postStatus.name(), postTicketOrderNum);
+        List<Ticket> postStatusTickets = ticketRepository.findAllByBiggerOrderNumber(request.projectId(), postStatus.name(), postTicketOrderNum);
 
         // 요청된 ticket의 orderNum 보다 작은 orderNum을 가진 ticket들에 대해 +1
         increaseOrderNum(postStatusTickets);
         changeTicketList.addAll(postStatusTickets);
-        Ticket updatedTicket = ticket.update(request, checkStatus(request.getStatus()));
+        Ticket updatedTicket = ticket.update(request, checkStatus(request.status()));
         changeTicketList.add(updatedTicket);
 
-        return GetTicketResponse.from(changeTicketList);
+        return new ListResponse(changeTicketList);
+//        return GetTicketResponse.from(changeTicketList);
     }
 
     private void increaseOrderNum(List<Ticket> tickets) {
@@ -209,7 +212,7 @@ public class TicketService {
         }
     }
 
-    public GetTicketResponse deleteTicket(Long ticketId, User user) {
+    public GetTicketResponse deleteTicket(String ticketId, User user) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
 
@@ -219,10 +222,11 @@ public class TicketService {
 
         ticketRepository.delete(ticket);
 
-        return GetTicketResponse.from(ticket);
+        return GetTicketResponse.builder().build();
+//        return GetTicketResponse.from(ticket);
     }
 
-    public GetTicketResponse updateTicket(CreateTicketRequest request, User user, Long ticketId) {
+    public void updateTicket(CreateTicketRequest request, User user, String ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
         // check User
@@ -230,19 +234,20 @@ public class TicketService {
         checkUser(authUsers, user);
 
         // assignedUser 수정
-        if (!request.getAssignedUserIds().isEmpty()) {
+        if (!request.assignedUserIds().isEmpty()) {
             // 기존 assignedUser을 삭제 후 추가해야함
             ticket.deleteAssignedUsers();
             ticketUserService.deleteAssignedUser(ticket);
 
-            List<User> assignedUsers = userService.getUsers(request.getAssignedUserIds());
+            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }
         }
 
-        ticket.update(request, checkStatus(request.getStatus()));
+        ticket.update(request, checkStatus(request.status()));
 
-        return GetTicketResponse.from(ticket);
+
+//        return GetTicketResponse.from(ticket);
     }
 }

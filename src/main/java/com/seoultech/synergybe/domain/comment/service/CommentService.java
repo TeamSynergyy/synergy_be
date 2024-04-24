@@ -2,11 +2,13 @@ package com.seoultech.synergybe.domain.comment.service;
 
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.comment.dto.request.CreateCommentRequest;
+import com.seoultech.synergybe.domain.comment.dto.request.UpdateCommentRequest;
 import com.seoultech.synergybe.domain.comment.dto.response.GetCommentResponse;
 import com.seoultech.synergybe.domain.comment.exception.CommentNotFoundException;
 import com.seoultech.synergybe.domain.comment.repository.CommentRepository;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.service.PostService;
@@ -29,11 +31,11 @@ public class CommentService {
     private final IdGenerator idGenerator;
 
     public GetCommentResponse createComment(User user, CreateCommentRequest request) {
-        Post post = postService.findPostById(request.getPostId());
+        Post post = postService.findPostById(request.postId());
         String commentId = idGenerator.generateId(IdPrefix.COMMENT);
 
         Comment comment = Comment.builder()
-                .id(commentId).comment(request.getComment()).post(post).user(user)
+                .id(commentId).comment(request.comment()).post(post).user(user)
                 .build();
 
 
@@ -41,41 +43,36 @@ public class CommentService {
         savedComment.addPost(post);
         User postUser = post.getUser();
 //        notificationService.send(postUser, NotificationType.COMMENT, "댓글이 생성되었습니다", post.getId());
+        GetCommentResponse commentResponse = GetCommentResponse.builder().build();
 
-        return GetCommentResponse.from(savedComment);
+        return commentResponse;
     }
 
-    public GetCommentResponse updateComment(CreateCommentRequest request) {
-        Comment comment = this.findCommentById(request.getCommentId());
+    public GetCommentResponse updateComment(UpdateCommentRequest request) {
+        Comment comment = this.findCommentById(request.commentId());
         Comment updatedComment = commentRepository.save(comment.updateComment(request));
+        GetCommentResponse commentResponse = GetCommentResponse.builder().build();
 
-        return GetCommentResponse.from(updatedComment);
+        return commentResponse;
     }
 
-    public Comment findCommentById(Long commentId) {
+    public Comment findCommentById(String commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("존재하지 않는 댓글입니다."));
     }
 
-    public GetCommentResponse deleteComment(CreateCommentRequest request) {
-        Comment comment = findCommentById(request.getCommentId());
+    public void deleteComment(String commentId) {
+        Comment comment = findCommentById(commentId);
         commentRepository.delete(comment);
-
-        return GetCommentResponse.from(comment);
     }
 
-
-    public GetCommentResponse getComment(Long commentId) {
-        Comment comment = this.findCommentById(commentId);
-
-        return GetCommentResponse.from(comment);
-    }
-
-    public List<GetCommentResponse> getCommentList(Long postId) {
-        List<Long> commentIds = commentRepository.findCommentIdsByPostId(postId);
+    public ListResponse<GetCommentResponse> getCommentList(String postId) {
+        List<String> commentIds = commentRepository.findCommentIdsByPostId(postId);
 
         List<Comment> comments = commentRepository.findAllById(commentIds);
 
-        return GetCommentResponse.from(comments);
+        ListResponse<GetCommentResponse> getCommentResponses = new ListResponse(comments);
+
+        return getCommentResponses;
     }
 }

@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.schedule.controller;
 
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.schedule.dto.request.CreateScheduleRequest;
 import com.seoultech.synergybe.domain.schedule.dto.response.GetScheduleResponse;
 import com.seoultech.synergybe.domain.schedule.service.ScheduleService;
@@ -21,29 +22,30 @@ public class ScheduleController {
 
     @Operation(summary = "일정 생성", description = "프로젝트에 대해 일정이 생성되며, 날짜 및 내용이 포함됩니다.")
     @PostMapping
-    public ResponseEntity<GetScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
+    public ResponseEntity<Void> createSchedule(@RequestBody CreateScheduleRequest request) {
+        scheduleService.createSchedule(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.createSchedule(request));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "일정 목록", description = "해당 프로젝트의 일정들을 반환합니다.")
     @GetMapping("/{projectId}")
-    public ResponseEntity<List<GetScheduleResponse>> getListSchedule(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<ListResponse<GetScheduleResponse>> getListSchedule(@PathVariable("projectId") String projectId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getScheduleList(projectId));
     }
 
     @Operation(summary = "일정 수정", description = "요청된 내용에 따라 일정이 수정됩니다.")
     @PutMapping("/{scheduleId}")
-    public ResponseEntity<GetScheduleResponse> updateSchedule(@PathVariable("scheduleId") Long scheduleId, @RequestBody CreateScheduleRequest request) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(request, scheduleId));
+    public ResponseEntity<GetScheduleResponse> updateSchedule(@PathVariable("scheduleId") String scheduleId, @RequestBody CreateScheduleRequest request) {
+        scheduleService.updateSchedule(request, scheduleId);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "일정 삭제", description = "일정이 삭제됩니다.")
     @DeleteMapping("/{scheduleId}")
-    public ResponseEntity<GetScheduleResponse> deleteSchedule(@PathVariable("scheduleId") Long scheduleId) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.deleteSchedule(scheduleId));
+    public ResponseEntity<GetScheduleResponse> deleteSchedule(@PathVariable("scheduleId") String scheduleId) {
+        scheduleService.deleteSchedule(scheduleId);
+        return ResponseEntity.noContent().build();
     }
 }

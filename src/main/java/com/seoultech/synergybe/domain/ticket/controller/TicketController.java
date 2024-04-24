@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.ticket.controller;
 
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.ticket.dto.request.CreateTicketRequest;
 import com.seoultech.synergybe.domain.ticket.dto.response.GetTicketResponse;
 import com.seoultech.synergybe.domain.ticket.service.TicketService;
@@ -33,34 +34,36 @@ public class TicketController {
 
     @Operation(summary = "작업 조회", description = "프로젝트의 모든 작업 목록을 반환합니다.")
     @GetMapping(value = "/{projectId}")
-    public ResponseEntity<List<GetTicketResponse>> getTicketList(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<ListResponse<GetTicketResponse>> getTicketList(@PathVariable("projectId") String projectId) {
 
         return ResponseEntity.ok().body(ticketService.getTicketList(projectId));
     }
 
     @Operation(summary = "작업 수정", description = "요청된 내용에 따라 작업이 수정됩니다.")
     @PutMapping(value = "/{ticketId}")
-    public ResponseEntity<GetTicketResponse> updateTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId,
+    public ResponseEntity<GetTicketResponse> updateTicket(@PathVariable("ticketId") String ticketId, @LoginUser String userId,
                                                           @RequestBody CreateTicketRequest request) {
-        User user = userService.findUserById(userId);
+        User user = userService.getUser(userId);
+        ticketService.updateTicket(request, user, ticketId);
 
-        return ResponseEntity.ok().body(ticketService.updateTicket(request, user, ticketId));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "작업 상태변경", description = "작업이 진행됨에 따라 작업의 상태를 칸반보드 형식으로 변경이 가능합니다.")
     @PutMapping(value = "/change/{ticketId}")
-    public ResponseEntity<List<GetTicketResponse>> changeTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId,
+    public ResponseEntity<ListResponse<GetTicketResponse>> changeTicket(@PathVariable("ticketId") String ticketId, @LoginUser String userId,
                                                                 @RequestBody CreateTicketRequest request) {
-        User allocatedUser = userService.findUserById(userId);
+        User allocatedUser = userService.getUser(userId);
 
         return ResponseEntity.ok().body(ticketService.changeTickets(request, allocatedUser, ticketId));
     }
 
     @Operation(summary = "작업 삭제", description = "작업을 삭제합니다.")
     @DeleteMapping(value = "/{ticketId}")
-    public ResponseEntity<GetTicketResponse> deleteTicket(@PathVariable("ticketId") Long ticketId, @LoginUser String userId) {
-        User allocatedUser = userService.findUserById(userId);
+    public ResponseEntity<Void> deleteTicket(@PathVariable("ticketId") String ticketId, @LoginUser String userId) {
+        User allocatedUser = userService.getUser(userId);
+        ticketService.deleteTicket(ticketId, allocatedUser);
 
-        return ResponseEntity.ok().body(ticketService.deleteTicket(ticketId, allocatedUser));
+        return ResponseEntity.noContent().build();
     }
 }

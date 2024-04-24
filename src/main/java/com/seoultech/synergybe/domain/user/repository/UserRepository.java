@@ -16,6 +16,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, String>, UserRepositoryCustom {
     User findByUserId(String userId);
 
+    Optional<User> findByEmail(String email);
+
     @Query(value = "SELECT * FROM user WHERE user_id IN :userIds", nativeQuery = true)
     List<User> findAllByUserId(@Param("userIds") List<String> userIds);
 

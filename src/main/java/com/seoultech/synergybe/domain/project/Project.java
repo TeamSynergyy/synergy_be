@@ -96,7 +96,6 @@ public class Project extends BaseTime {
     }
 
     public Project updateProject(UpdateProjectRequest request) {
-        this.field = request.getField();
 
         return this;
     }

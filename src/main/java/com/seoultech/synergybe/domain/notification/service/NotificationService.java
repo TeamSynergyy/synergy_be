@@ -62,7 +62,7 @@ public class NotificationService {
         }
     }
 
-    public void send(User receiver, NotificationType type, String content, Long id) {
+    public void send(User receiver, NotificationType type, String content, String id) {
         Notification notification = createNotification(receiver, type, content, id);
         String userId = receiver.getUserId();
 
@@ -80,7 +80,7 @@ public class NotificationService {
         );
     }
 
-    private Notification createNotification(User receiver, NotificationType type, String content, Long id) {
+    private Notification createNotification(User receiver, NotificationType type, String content, String id) {
         return Notification.builder()
                 .user(receiver)
                 .type(type)

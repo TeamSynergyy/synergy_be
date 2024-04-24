@@ -1,13 +1,9 @@
 package com.seoultech.synergybe.domain.apply.service;
 
 import com.seoultech.synergybe.domain.apply.Apply;
-import com.seoultech.synergybe.domain.apply.dto.response.AcceptApplyResponse;
-import com.seoultech.synergybe.domain.apply.dto.response.ApplyResponse;
-import com.seoultech.synergybe.domain.apply.dto.response.ListApplyUserResponse;
-import com.seoultech.synergybe.domain.apply.dto.response.RejectApplyResponse;
+import com.seoultech.synergybe.domain.apply.dto.response.*;
 import com.seoultech.synergybe.domain.apply.exception.ApplyNotFoundException;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
-import com.seoultech.synergybe.domain.apply.repository.ApplyRepositoryCustom;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.notification.NotificationType;
@@ -36,10 +32,9 @@ public class ApplyService {
     private final ProjectUserRepository projectUserRepository;
     private final UserService userService;
     private final NotificationService notificationService;
-    private final ApplyRepositoryCustom applyRepositoryCustom;
     private final IdGenerator idGenerator;
 
-    public ApplyResponse createApply(User user, Long projectId) {
+    public GetApplyResponse createApply(User user, String projectId) {
         Project project = projectService.findProjectById(projectId);
         String applyId = idGenerator.generateId(IdPrefix.APPLY);
 
@@ -49,27 +44,27 @@ public class ApplyService {
         Apply savedApply = applyRepository.save(apply);
 
         // 리더에게 알림
-        User leader = userService.getUser(projectService.getProject(projectId).getLeaderId());
-        notificationService.send(leader, NotificationType.PROJECT_APPLY, "프로젝트 신청이 완료되었습니다.", projectId);
+//        User leader = userService.getUser(projectService.getProject(projectId).leaderId());
+//        notificationService.send(leader, NotificationType.PROJECT_APPLY, "프로젝트 신청이 완료되었습니다.", projectId);
 
-        return ApplyResponse.from(savedApply);
+        GetApplyResponse getApplyResponse = GetApplyResponse.builder().build();
+
+        return getApplyResponse;
     }
 
-    public ApplyResponse deleteApply(User user, Long projectId) {
-//        Optional<Apply> applyOptional = applyRepository.findByUserIdAndProjectId(user.getUserId(), projectId);
-        Optional<Apply> applyOptional = applyRepositoryCustom.findByUserIdAndProjectId(user.getUserId(), projectId);
+    public void deleteApply(String userId, String projectId) {
+        Optional<Apply> applyOptional = applyRepository.findApplyByUserIdAndProjectId(userId, projectId);
 
         if (applyOptional.isPresent()) {
             applyRepository.delete(applyOptional.get());
 
-            return ApplyResponse.from(applyOptional.get());
         } else {
             throw new ApplyNotFoundException("존재하지 않는 신청내역입니다.");
         }
     }
 
-    public AcceptApplyResponse acceptApply(String userId, Long projectId) {
-        Apply apply = applyRepository.findByUserIdAndProjectId(userId, projectId)
+    public void acceptApply(String userId, String projectId) {
+        Apply apply = applyRepository.findApplyByUserIdAndProjectId(userId, projectId)
                 .orElseThrow(() -> new ApplyNotFoundException("존재하지 않는 신청내역입니다."));
 
         apply.changeStatusToAccept();
@@ -88,13 +83,11 @@ public class ApplyService {
 //        applyRepository.delete(apply);
 
         // 알림 발송
-        notificationService.send(applyUser, NotificationType.PROJECT_ACCEPT, "신청이 수락되었습니다.", projectId);
-
-        return AcceptApplyResponse.from(apply);
+//        notificationService.send(applyUser, NotificationType.PROJECT_ACCEPT, "신청이 수락되었습니다.", projectId);
     }
 
-    public RejectApplyResponse rejectApply(String userId, Long projectId) {
-        Apply apply = applyRepository.findByUserIdAndProjectId(userId, projectId)
+    public void rejectApply(String userId, String projectId) {
+        Apply apply = applyRepository.findApplyByUserIdAndProjectId(userId, projectId)
                 .orElseThrow(() -> new ApplyNotFoundException("존재하지 않는 신청내역입니다."));
         apply.changeStatusToReject();
 
@@ -104,23 +97,27 @@ public class ApplyService {
         // 알림 발송
         User applyUser = userService.getUser(userId);
         notificationService.send(applyUser, NotificationType.PROJECT_REJECT, "신청이 거절되었습니다.", projectId);
-
-        return RejectApplyResponse.from(apply);
+//
+//        return RejectApplyResponse.from(apply);
     }
 
-    public List<ApplyResponse> getMyApplyList(User user) {
+    public GetListApplyResponse getMyApplyList(User user) {
         List<Apply> applies = applyRepository.findAllProcessByUserId(user.getUserId());
 
-        return ApplyResponse.from(applies);
+        GetListApplyResponse getListApplyResponse = GetListApplyResponse.builder().build();
+
+        return getListApplyResponse;
 
     }
 
-    public ListApplyUserResponse getApplyUserList(Long projectId) {
+    public GetListApplyUserResponse getApplyUserList(String projectId) {
         List<String> userIds = applyRepository.findUserIdsByProjectId(projectId);
 
         // user_id 는 PK가 아닌 UNIQUE KEY 이므로 findAllById() 사용 못함
         List<User> users = userService.getUsers(userIds);
 
-        return ListApplyUserResponse.from(users);
+        GetListApplyUserResponse getListApplyUserResponse = GetListApplyUserResponse.builder().build();
+
+        return getListApplyUserResponse;
     }
 }

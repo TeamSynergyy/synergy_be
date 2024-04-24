@@ -20,7 +20,7 @@ public class Notification {
     private String content;
 
     private Boolean isRead;
-    private Long entityId;
+    private String entityId;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;
@@ -34,7 +34,7 @@ public class Notification {
     }
 
     @Builder
-    public Notification(User user, String content, NotificationType type, Long entityId) {
+    public Notification(User user, String content, NotificationType type, String entityId) {
         this.user = user;
         this.content = content;
         this.isRead = false;
