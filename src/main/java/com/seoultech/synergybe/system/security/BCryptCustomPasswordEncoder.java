@@ -1,13 +1,15 @@
 package com.seoultech.synergybe.system.security;
 
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@RequiredArgsConstructor
 public class BCryptCustomPasswordEncoder implements CustomPasswordEncoder {
-    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
+
+    public BCryptCustomPasswordEncoder() {
+        this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
     @Override
     public String encodePassword(String rawPassword) {
