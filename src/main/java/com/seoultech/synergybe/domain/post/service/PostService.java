@@ -150,7 +150,7 @@ public class PostService {
 //    }
 
     public ListResponse<GetPostResponse> getFeed(Long end, User user) {
-        List<String> followingIds = followService.findFollowingIdsByUserId(user.getUserId());
+        List<String> followingIds = followService.findFollowingIdsByUserId(user.getId());
         log.info("followingIds Size{}",followingIds.size());
         List<Post> allPosts = new ArrayList<>();
 
@@ -227,7 +227,7 @@ public class PostService {
     public ListResponse<GetPostResponse> getRecommendPostList(User user, Long end) {
         try {
             log.info("get recommend post list start");
-            String userId = user.getUserId();
+            String userId = user.getId();
             log.info("user Id {}", userId);
 
             RestTemplate restTemplate = new RestTemplate();

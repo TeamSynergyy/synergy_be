@@ -95,7 +95,7 @@ public class ApplyService {
 
     public GetListApplyResponse getMyApplyList(String userId) {
         User user = userService.getUser(userId);
-        List<Apply> applies = applyRepository.findAllProcessByUserId(user.getUserId());
+        List<Apply> applies = applyRepository.findAllProcessByUserId(user.getId());
 
         return ApplyMapperEntityToDto.applyListToResponse(applies);
     }

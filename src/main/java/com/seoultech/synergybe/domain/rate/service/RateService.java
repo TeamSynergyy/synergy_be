@@ -71,7 +71,7 @@ public class RateService {
     }
 
     private UserRateResponse CalculateUserRate(String projectId, User user) {
-        List<Rate> rates = rateRepository.findAllByProjectIdAndReceiverId(projectId, user.getUserId());
+        List<Rate> rates = rateRepository.findAllByProjectIdAndReceiverId(projectId, user.getId());
         int total = 0;
 
         for (Rate rate : rates) {
@@ -88,7 +88,7 @@ public class RateService {
 
     private void checkLeader(String projectId, User leader) {
         Project project = projectService.findProjectById(projectId);
-        if (!Objects.equals(project.getLeaderId(), leader.getUserId())) {
+        if (!Objects.equals(project.getLeaderId(), leader.getId())) {
             throw new ProjectLeaderBadRequestException("프로젝트 리더가 잘못되었습니다.");
         }
     }

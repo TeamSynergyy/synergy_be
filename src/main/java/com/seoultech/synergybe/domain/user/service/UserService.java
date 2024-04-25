@@ -32,7 +32,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -44,6 +44,7 @@ public class UserService {
         return CheckDuplicateVolunteerEmailResponse.from(isDuplicated);
     }
 
+    @Transactional
     public CreateUserResponse createUser(
             String email,
             String password,
@@ -52,11 +53,12 @@ public class UserService {
     ) {
         String userId = idGenerator.generateId(IdPrefix.USER);
         User user = User.builder()
-                .userId(userId)
+                .id(userId)
                 .email(email)
                 .password(password)
                 .name(name)
-                .passwordEncoder(passwordEncoder).major(major)
+                .passwordEncoder(passwordEncoder)
+                .major(major)
                 .build();
         userRepository.save(user);
 

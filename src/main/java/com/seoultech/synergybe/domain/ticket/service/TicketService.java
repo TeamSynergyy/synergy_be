@@ -188,7 +188,7 @@ public class TicketService {
     private void checkUser(List<User> authUsers, User user) {
         boolean userFound = false;
         for (User authUser : authUsers) {
-            if (authUser.getUserId().equals(user.getUserId())) {
+            if (authUser.getId().equals(user.getId())) {
                 userFound = true;
                 break;
             }
