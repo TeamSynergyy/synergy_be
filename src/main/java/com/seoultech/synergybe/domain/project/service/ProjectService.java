@@ -11,6 +11,7 @@ import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
+import com.seoultech.synergybe.domain.project.exception.ProjectBadRequestException;
 import com.seoultech.synergybe.domain.project.exception.ProjectNotFoundException;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
@@ -33,10 +34,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
@@ -47,7 +49,9 @@ public class ProjectService {
     private final IdGenerator idGenerator;
     private final UserService userService;
 
-    public GetProjectResponse createProject(User user, CreateProjectRequest request) {
+    @Transactional
+    public String createProject(String userId, CreateProjectRequest request) {
+        User user = userService.getUser(userId);
         String projectId = idGenerator.generateId(IdPrefix.PROJECT);
         Point point = new Point(request.longitude(), request.latitude());
         // try catch 문 수정 / 여기서 Point에 대한 예외처리 하지 않기
@@ -64,21 +68,24 @@ public class ProjectService {
                 .build();
             Project savedProject = projectRepository.save(project);
             projectUserService.createProjectUser(savedProject, user);
-            return GetProjectResponse.builder().build();
+            return savedProject.getId();
         } catch (Exception e) {
-            throw new IllegalArgumentException("point parse exception");
+            throw new ProjectBadRequestException("올바르지 않은 프로젝트 생성요청입니다.");
         }
     }
 
-    public GetProjectResponse updateProject(User user, UpdateProjectRequest request) {
+    @Transactional
+    public void updateProject(String userId, UpdateProjectRequest request) {
+        // todo
+        // 프로젝트 멤버 검증
         Project project = this.findProjectById(request.projectId());
         Project updatedProject = project.updateProject(request);
         projectRepository.save(updatedProject);
-
-        return GetProjectResponse.builder().build();
     }
 
-    public GetProjectResponse deleteProject(String projectId) {
+    public GetProjectResponse deleteProject(String userId, String projectId) {
+        // todo
+        // 프로젝트 리더 검증
         Project project = this.findProjectById(projectId);
 
 
@@ -94,14 +101,23 @@ public class ProjectService {
     public GetProjectResponse getProject(String projectId) {
         Project project = this.findProjectById(projectId);
 
-        return GetProjectResponse.builder().build();
+        return GetProjectResponse.builder()
+                .name(project.getName().getName())
+                .content(project.getContent().getContent())
+                .field(project.getField().name())
+                .location(project.getLocation().getLocation())
+                .startAt(project.getPeriod().getStartAt())
+                .endAt(project.getPeriod().getEndAt())
+                .leaderId(project.getLeaderId().getLeaderId())
+                .status(project.getStatus().getName())
+                .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getId()).collect(Collectors.toList()))
+                .build();
     }
 
     public ListResponse<GetProjectResponse> getProjectList(Long end) {
         List<Project> projects = projectRepository.findAllByEndId(end);
-        ListResponse<GetProjectResponse> getProjectResponseListResponse = new ListResponse(projects);
 
-        return getProjectResponseListResponse;
+        return (ListResponse<GetProjectResponse>) new ListResponse(projects);
     }
 
     public Page<Project> searchAllProjects(String keyword, Pageable pageable) {

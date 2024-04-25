@@ -11,6 +11,7 @@ import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,25 +31,23 @@ public class ProjectController {
 
     @Operation(summary = "프로젝트 생성", description = "프로젝트가 생성됩니다.")
     @PostMapping
-    public ResponseEntity<GetProjectResponse> createProject(@RequestBody CreateProjectRequest request, @LoginUser String userId) {
-        User user = userService.getUser(userId);
+    public ResponseEntity<String> createProject(@Valid @RequestBody CreateProjectRequest request, @LoginUser String userId) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(user, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(userId, request));
     }
 
     @Operation(summary = "프로젝트 수정", description = "요청된 정보에 따라 프로젝트가 수정됩니다.")
     @PutMapping
-    public ResponseEntity<GetProjectResponse> updateProject(@RequestBody UpdateProjectRequest request, @LoginUser String userId) {
-        User user = userService.getUser(userId);
+    public ResponseEntity<Void> updateProject(@Valid @RequestBody UpdateProjectRequest request, @LoginUser String userId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.updateProject(user, request));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "프로젝트 삭제", description = "프로젝트가 삭제됩니다.")
     @DeleteMapping(value = "/{projectId}")
     public ResponseEntity<GetProjectResponse> deleteProject(@PathVariable("projectId") String projectId, @LoginUser String userId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.deleteProject(projectId));
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.deleteProject(userId, projectId));
     }
 
     @Operation(summary = "프로젝트 조회", description = "프로젝트를 단건 조회합니다.")
