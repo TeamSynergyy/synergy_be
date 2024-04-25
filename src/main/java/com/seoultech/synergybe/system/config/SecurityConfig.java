@@ -34,14 +34,9 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
-    public static CustomPasswordEncoder customPasswordEncoder() {
-        return new BCryptCustomPasswordEncoder(new BCryptPasswordEncoder());
+    public CustomPasswordEncoder customPasswordEncoder() {
+        return new BCryptCustomPasswordEncoder();
     }
-
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

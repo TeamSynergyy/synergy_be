@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.domain.common;
 
-public interface CustomPasswordEncoder{
+public interface CustomPasswordEncoder {
     String encodePassword(String rawPassword);
 
     boolean matchesPassword(String rawPassword, String encodedPassword);

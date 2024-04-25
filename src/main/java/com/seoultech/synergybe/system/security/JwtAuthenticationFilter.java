@@ -7,11 +7,15 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j(topic = "로그인, JWT 생성")
@@ -29,17 +33,26 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             LoginRequest loginRequest = new ObjectMapper().readValue(request.getInputStream(),
                     LoginRequest.class);
+            List<GrantedAuthority> authorities = getAuthorities(List.of("ROLE_USER"));
 
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getEmail(),
                             loginRequest.getPassword(),
-                            null
+                            authorities
+//                            null
                     )
             );
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private List<GrantedAuthority> getAuthorities(List<String> authorities) {
+        return authorities.stream()
+                .map(SimpleGrantedAuthority::new)
+                .map(GrantedAuthority.class::cast)
+                .toList();
     }
 
     @Override
