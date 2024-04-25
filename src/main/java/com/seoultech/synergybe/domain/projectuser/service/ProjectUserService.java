@@ -25,7 +25,7 @@ public class ProjectUserService {
     private final ProjectRepository projectRepository;
 
     public void createProjectUser(Project project, User user) {
-        Optional<ProjectUser> projectUserOptional = projectUserRepository.findByProjectIdAndUserUserId(project.getId(), user.getId());
+        Optional<ProjectUser> projectUserOptional = projectUserRepository.findByProjectIdAndUserId(project.getId(), user.getId());
 
         if (projectUserOptional.isPresent()) {
             // 이미 생성됨
@@ -44,7 +44,7 @@ public class ProjectUserService {
     }
 
     public void deleteProjectUser(Project project, User user) {
-        Optional<ProjectUser> projectUserOptional = projectUserRepository.findByProjectIdAndUserUserId(project.getId(), user.getId());
+        Optional<ProjectUser> projectUserOptional = projectUserRepository.findByProjectIdAndUserId(project.getId(), user.getId());
 
         if (projectUserOptional.isPresent()) {
             projectUserRepository.delete(projectUserOptional.get());

@@ -17,11 +17,11 @@ public class Follow extends BaseTime {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "follower_id")
     private User follower;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "following_id")
     private User following;
 
     @Column(name = "status")

@@ -32,11 +32,11 @@ public class Rate extends BaseTime {
     private Project project;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "give_user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "give_user_id")
     private User giveUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receive_user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "receive_user_id")
     private User receiveUser;
 
     @Embedded

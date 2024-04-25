@@ -21,7 +21,7 @@ public class ApplyRepositoryImpl implements ApplyRepositoryCustom {
                 .select(apply)
                 .from(apply)
                 .where(
-                        apply.user.userId.eq(userId),
+                        apply.user.id.eq(userId),
                         apply.project.id.eq(projectId))
                 .fetchOne();
     }
@@ -32,7 +32,7 @@ public class ApplyRepositoryImpl implements ApplyRepositoryCustom {
                 .select(apply)
                 .from(apply)
                 .where(
-                        apply.user.userId.eq(userId),
+                        apply.user.id.eq(userId),
                         apply.status.eq(ApplyStatus.NEW))
                 .fetch();
     }
@@ -40,7 +40,7 @@ public class ApplyRepositoryImpl implements ApplyRepositoryCustom {
     @Override
     public List<String> findUserIdsByProjectId(String projectId) {
         return queryFactory
-                .select(apply.user.userId)
+                .select(apply.user.id)
                 .from(apply)
                 .where(
                         apply.project.id.eq(projectId),

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProjectUserRepository extends JpaRepository<ProjectUser, String> {
-    Optional<ProjectUser> findByProjectIdAndUserUserId(String projectId, String userId);
+    Optional<ProjectUser> findByProjectIdAndUserId(String projectId, String userId);
 
     @Query(value = "SELECT user_id FROM project_user WHERE project_id = :projectId", nativeQuery = true)
     List<String> findProjectUserIdsByProjectId(@Param("projectId") String projectId);

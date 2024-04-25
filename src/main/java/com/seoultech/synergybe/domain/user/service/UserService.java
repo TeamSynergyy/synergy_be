@@ -66,7 +66,7 @@ public class UserService {
     }
 
     public User getUser(String userId) {
-        return userRepository.findByUserId(userId);
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
     }
 
     public GetUserAccountResponse getUserAccount(String email) {
