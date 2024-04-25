@@ -12,12 +12,12 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "user_entity")
+@Entity(name = "user")
 public class User extends BaseTime {
 
     @Id
     @Column(name = "user_id")
-    private String userId;
+    private String id;
 
     @Embedded
     private UserEmail email;
@@ -36,14 +36,14 @@ public class User extends BaseTime {
 
     @Builder
     public User(
-            String userId,
+            String id,
             String email,
             String password,
             String name,
             CustomPasswordEncoder passwordEncoder,
             String major
     ) {
-        this.userId = userId;
+        this.id = id;
         this.email = new UserEmail(email);
         this.password = new UserPassword(password, passwordEncoder);
         this.name = new UserName(name);
