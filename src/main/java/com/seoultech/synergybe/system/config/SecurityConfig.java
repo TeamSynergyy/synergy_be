@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.system.config;
 
+import com.seoultech.synergybe.domain.auth.JwtAuthenticationProvider;
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.system.security.*;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtAuthenticationProvider authenticationProvider;
 
     @Bean
     public CustomPasswordEncoder customPasswordEncoder() {
@@ -56,7 +58,7 @@ public class SecurityConfig {
     // Authorization, 식별된 사용자에 대해 권한 부여, 인가
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, authenticationProvider);
     }
     @Bean
     public SecurityFilterChain securityFilterChain(
