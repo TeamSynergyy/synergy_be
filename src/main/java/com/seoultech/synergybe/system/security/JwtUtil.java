@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.system.security;
 
+import com.seoultech.synergybe.domain.auth.dto.CustomClaims;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -14,6 +15,7 @@ import java.security.Key;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtil {
@@ -34,13 +36,14 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createToken(String email) {
+    public String createToken(String userId, String email) {
         Date date = new Date();
 //        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256); //or HS384 or HS512
 
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(email) // 사용자 식별
+                        .claim("id", userId)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료시간
                         .setIssuedAt(date) // 발급날짜
                         .signWith(key, signatureAlgorithm) // 암호화시 사용하는 알고리즘
@@ -73,10 +76,24 @@ public class JwtUtil {
         return false;
     }
 
+//    public CustomClaims parseAccessToken(String token) {
+//        try {
+//            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
+//                    .getBody();
+//            String userId = claims.getSubject();
+//        }
+//    }
+
     // 토큰의 사용자 정보
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
                 .getBody();
+    }
+
+    public CustomClaims getUserId(String token) {
+        Claims claims = getUserInfoFromToken(token);
+
+        return new CustomClaims(claims.get("id", String.class), List.of("ROLE_USER"));
     }
 
 }
