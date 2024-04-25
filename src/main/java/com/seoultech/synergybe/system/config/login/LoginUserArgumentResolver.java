@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.system.config.login;
 
+import com.seoultech.synergybe.domain.auth.exception.AuthAuthenticationException;
+import com.seoultech.synergybe.domain.auth.JwtAuthentication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
@@ -29,7 +31,16 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
+        checkAuthenticated(authentication);
 
-        return authentication.getName();
+        JwtAuthentication jwtAuthentication = (JwtAuthentication) authentication.getPrincipal();
+//
+        return jwtAuthentication.userId();
+    }
+
+    private void checkAuthenticated(Authentication authentication) {
+        if (authentication == null) {
+            throw new AuthAuthenticationException("인증되지 않은 사용자입니다.");
+        }
     }
 }
