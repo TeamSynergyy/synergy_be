@@ -69,11 +69,14 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
     }
 
-    public GetUserAccountResponse getUserAccount(String email) {
-        return userRepository.findUserAccountByEmail(email);
+    public String getUserAccount(String userId) {
+        log.info("userId : " + userId);
+        return userId;
     }
 
     public GetUserAccountResponse getUserInfo(String userId) {
+        log.info("userId : " + userId);
+
         return GetUserAccountResponse.builder().build();
 //        return UserResponse.from(this.getUser(userId));
     }
