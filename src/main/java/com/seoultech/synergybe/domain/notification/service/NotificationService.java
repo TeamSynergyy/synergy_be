@@ -64,7 +64,7 @@ public class NotificationService {
 
     public void send(User receiver, NotificationType type, String content, String id) {
         Notification notification = createNotification(receiver, type, content, id);
-        String userId = receiver.getUserId();
+        String userId = receiver.getId();
 
         // 로그인 한 유저의 SseEmitter 모두 가져오기
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(userId);

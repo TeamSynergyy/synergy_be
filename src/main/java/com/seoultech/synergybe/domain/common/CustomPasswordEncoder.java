@@ -1,9 +1,9 @@
 package com.seoultech.synergybe.domain.common;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+public interface CustomPasswordEncoder {
+    String encodePassword(String rawPassword);
 
-@Component
-public class CustomPasswordEncoder extends BCryptPasswordEncoder {
+    boolean matchesPassword(String rawPassword, String encodedPassword);
 
+    boolean noneMatchesPassword(String rawPassword, String encodedPassword);
 }

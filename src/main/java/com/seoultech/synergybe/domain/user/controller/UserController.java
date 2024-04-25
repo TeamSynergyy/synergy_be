@@ -31,9 +31,9 @@ public class UserController {
 
     @Operation(summary = "나의 정보", description = "내 프로필 정보가 반환됩니다.")
     @GetMapping(value = "/me/info")
-    public ResponseEntity<GetUserAccountResponse> getMyInfo(@LoginUser String userId) {
+    public ResponseEntity<String> getMyInfo(@LoginUser String userId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserAccount(userId));
     }
 
     @Operation(summary = "유저 조회", description = "유저Id 기준으로 해당 유저를 반환합니다.")
@@ -43,7 +43,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo(userId));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request.email(), request.password(), request.name(), request.major()));

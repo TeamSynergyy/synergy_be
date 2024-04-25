@@ -59,7 +59,7 @@ public class PostLikeService {
      * post에서 해당 postlike 추가
      */
     public synchronized PostLike update(User user, String postId, LikeStatus likeStatus) {
-        Optional<PostLike> postLikeOptional = postLikeRepository.findByUserUserIdAndPostId(user.getUserId(), postId);
+        Optional<PostLike> postLikeOptional = postLikeRepository.findByUserUserIdAndPostId(user.getId(), postId);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostLikeNotFoundException("존재하지 않는 좋아요입니다."));
@@ -95,6 +95,6 @@ public class PostLikeService {
 
 
     public List<String> findLikedPostIds(User user) {
-        return postLikeRepository.findPostIdsByUserId(user.getUserId());
+        return postLikeRepository.findPostIdsByUserId(user.getId());
     }
 }

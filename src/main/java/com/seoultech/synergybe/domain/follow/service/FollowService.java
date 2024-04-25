@@ -62,7 +62,7 @@ public class FollowService {
     }
 
     public synchronized Follow update(User user, String followingId, FollowStatus status) {
-        Optional<Follow> followOptional = followRepository.findByFollowerIdAndFollowingId(user.getUserId(), followingId);
+        Optional<Follow> followOptional = followRepository.findByFollowerIdAndFollowingId(user.getId(), followingId);
 
         if (followOptional.isPresent()) {
             followOptional.get().updateStatus(status);

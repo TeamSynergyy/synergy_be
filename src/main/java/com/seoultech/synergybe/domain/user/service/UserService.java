@@ -32,7 +32,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -44,6 +44,7 @@ public class UserService {
         return CheckDuplicateVolunteerEmailResponse.from(isDuplicated);
     }
 
+    @Transactional
     public CreateUserResponse createUser(
             String email,
             String password,
@@ -52,11 +53,12 @@ public class UserService {
     ) {
         String userId = idGenerator.generateId(IdPrefix.USER);
         User user = User.builder()
-                .userId(userId)
+                .id(userId)
                 .email(email)
                 .password(password)
                 .name(name)
-                .passwordEncoder(passwordEncoder).major(major)
+                .passwordEncoder(passwordEncoder)
+                .major(major)
                 .build();
         userRepository.save(user);
 
@@ -64,14 +66,17 @@ public class UserService {
     }
 
     public User getUser(String userId) {
-        return userRepository.findByUserId(userId);
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
     }
 
-    public GetUserAccountResponse getUserAccount(String email) {
-        return userRepository.findUserAccountByEmail(email);
+    public String getUserAccount(String userId) {
+        log.info("userId : " + userId);
+        return userId;
     }
 
     public GetUserAccountResponse getUserInfo(String userId) {
+        log.info("userId : " + userId);
+
         return GetUserAccountResponse.builder().build();
 //        return UserResponse.from(this.getUser(userId));
     }

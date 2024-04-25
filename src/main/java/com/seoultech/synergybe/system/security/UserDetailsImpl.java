@@ -22,6 +22,10 @@ public class UserDetailsImpl implements UserDetails {
         return user.getEmail().getEmail();
     }
 
+    public String getUserId() {
+        return user.getId();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String authority = "ROLE_USER";

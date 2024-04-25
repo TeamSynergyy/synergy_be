@@ -19,7 +19,7 @@ public class TicketUserService {
     private final IdGenerator idGenerator;
 
     public void createTicketUser(Ticket ticket, User user) {
-        Optional<TicketUser> ticketUserOptional = ticketUserRepository.findByTicketIdAndUserUserId(ticket.getId(), user.getUserId());
+        Optional<TicketUser> ticketUserOptional = ticketUserRepository.findByTicketIdAndUserId(ticket.getId(), user.getId());
 
         if (ticketUserOptional.isPresent()) {
             // 이미 생성됨

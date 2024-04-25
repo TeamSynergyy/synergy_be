@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.dto.response.GetUserAccountResponse;
 import com.seoultech.synergybe.domain.user.dto.response.QGetUserAccountResponse;
+import com.seoultech.synergybe.domain.user.vo.UserEmail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -23,5 +24,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 //                .fetchOne();
         GetUserAccountResponse getUserAccountResponse = GetUserAccountResponse.builder().build();
         return getUserAccountResponse;
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        UserEmail userEmail = new UserEmail(email);
+        return queryFactory
+                .selectFrom(user)
+                .where(user.email.eq(userEmail))
+                .fetchOne();
     }
 }

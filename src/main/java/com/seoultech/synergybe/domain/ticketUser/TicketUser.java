@@ -22,7 +22,7 @@ public class TicketUser extends BaseTime {
     private Ticket ticket;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Builder

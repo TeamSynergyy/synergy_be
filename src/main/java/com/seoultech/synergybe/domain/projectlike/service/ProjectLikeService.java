@@ -46,7 +46,7 @@ public class ProjectLikeService {
     }
 
     public synchronized ProjectLike update(User user, String projectId, LikeStatus status) {
-        Optional<ProjectLike> projectLikeOptional = projectLikeRepository.findByUserUserIdAndProjectId(user.getUserId(), projectId);
+        Optional<ProjectLike> projectLikeOptional = projectLikeRepository.findByUserUserIdAndProjectId(user.getId(), projectId);
 
         if (projectLikeOptional.isPresent()) {
             projectLikeOptional.get().updateStatus(status);
@@ -68,6 +68,6 @@ public class ProjectLikeService {
     }
 
     public List<String> findLikedProjectIds(User user) {
-        return projectLikeRepository.findProjectIdsByUserId(user.getUserId());
+        return projectLikeRepository.findProjectIdsByUserId(user.getId());
     }
 }

@@ -60,7 +60,7 @@ public class ProjectService {
                 .location(point)
                 .startAt(request.startAt())
                 .endAt(request.endAt())
-                .leaderId(user.getUserId())
+                .leaderId(user.getId())
                 .build();
             Project savedProject = projectRepository.save(project);
             projectUserService.createProjectUser(savedProject, user);
@@ -163,7 +163,7 @@ public class ProjectService {
 
         try {
             log.info("get recommend project list start");
-            String userId = user.getUserId();
+            String userId = user.getId();
             log.info("user Id {}", userId);
 
             RestTemplate restTemplate = new RestTemplate();
