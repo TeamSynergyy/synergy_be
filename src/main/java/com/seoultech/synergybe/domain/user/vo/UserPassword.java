@@ -25,7 +25,7 @@ public class UserPassword {
     public UserPassword(String rawPassword, CustomPasswordEncoder passwordEncoder) {
         validateNotNull(rawPassword);
         validateUserPasswordLength(rawPassword);
-        this.password = passwordEncoder.encode(rawPassword);
+        this.password = passwordEncoder.encodePassword(rawPassword);
     }
 
     private void validateNotNull(String password) {

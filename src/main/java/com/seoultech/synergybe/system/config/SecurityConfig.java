@@ -1,5 +1,7 @@
-package com.seoultech.synergybe.system.security;
+package com.seoultech.synergybe.system.config;
 
+import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
+import com.seoultech.synergybe.system.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,9 +34,14 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public static CustomPasswordEncoder customPasswordEncoder() {
+        return new BCryptCustomPasswordEncoder(new BCryptPasswordEncoder());
     }
+
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
