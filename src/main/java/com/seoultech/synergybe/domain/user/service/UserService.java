@@ -45,7 +45,7 @@ public class UserService {
     }
 
     @Transactional
-    public CreateUserResponse createUser(
+    public String createUser(
             String email,
             String password,
             String name,
@@ -62,23 +62,22 @@ public class UserService {
                 .build();
         userRepository.save(user);
 
-        return CreateUserResponse.from(user);
+        return user.getId();
     }
 
     public User getUser(String userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
     }
 
-    public String getUserAccount(String userId) {
-        log.info("userId : " + userId);
-        return userId;
-    }
-
     public GetUserAccountResponse getUserInfo(String userId) {
-        log.info("userId : " + userId);
+        User user = getUser(userId);
 
-        return GetUserAccountResponse.builder().build();
-//        return UserResponse.from(this.getUser(userId));
+        return GetUserAccountResponse.builder()
+                .email(user.getEmail().getEmail())
+                .major(user.getMajor().getMajor())
+                .name(user.getName().getName())
+                .temperature(user.getTemperature().getTemperature())
+                .build();
     }
 
     public List<User> getUsers(List<String> userIds) {
@@ -114,6 +113,7 @@ public class UserService {
         };
     }
 
+    @Transactional
     public void updateMyInfo(
             String userId,
             String email,
