@@ -31,9 +31,13 @@ import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_D
 @Where(clause = "is_deleted = false")
 @SQLDelete(sql = "UPDATE post SET is_deleted = true WHERE project_id = ?")
 public class Project extends BaseTime {
-    @Id
     @Column(name = "project_id")
     private String id;
+
+    @Id
+    @Column(name = "project_sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long seq;
 
     @Embedded
     private ProjectName name;
