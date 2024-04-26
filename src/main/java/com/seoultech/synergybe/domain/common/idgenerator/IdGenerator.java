@@ -135,38 +135,38 @@ public class IdGenerator {
         String SPseudo = String.format("%4s", pseudo).replace(' ', '0');
 
         String mixedString = mixString(lastFourChar, SPseudo);
-        log.info("mixedString : " + mixedString);
+//        log.info("mixedString : " + mixedString);
 
         int j = 0;
         for (int i = 0; i < 8; i++) {
             char c = mixedString.charAt(i);
-            log.info("c : " + c);
+//            log.info("c : " + c);
             String hex = Integer.toHexString(c);
             hexSb.append(hex.charAt(0));
             hexSb.append(Character.isDigit(hex.charAt(1)) ? hex.charAt(1) : Character.toUpperCase(hex.charAt(1)));
-            log.info("hex : " + hex);
+//            log.info("hex : " + hex);
 
-            log.info("StringBuffer : " + hexSb.charAt(j));
-            log.info("StringBuffer : " + hexSb.charAt(j + 1));
+//            log.info("StringBuffer : " + hexSb.charAt(j));
+//            log.info("StringBuffer : " + hexSb.charAt(j + 1));
             j +=2;
         }
-        log.info("end StringBuffer-----------------------------------------");
+//        log.info("end StringBuffer-----------------------------------------");
 
         for (int i = 0; i < 16; i++) {
             int value;
             char ch = hexSb.charAt(i);
-            log.info("ch : " + ch);
+//            log.info("ch : " + ch);
             if (Character.isDigit(ch)) {
                 value = Character.digit(ch, 16);
             } else {
                 value = Character.digit(ch, 16);
             }
-            log.info("value : " + value);
+//            log.info("value : " + value);
             String binary = String.format("%4s", Integer.toBinaryString(value)).replace(' ', '0');
-            log.info("final binary : " + binary);
+//            log.info("final binary : " + binary);
             binarySb.append(binary);
         }
-        log.info("end binary transfer -----------------------------------------");
+//        log.info("end binary transfer -----------------------------------------");
 
         int n = name.length();
         String nameLengthBinary = String.format("%4s", Integer.toBinaryString(n)).replace(' ', '0');
@@ -174,7 +174,7 @@ public class IdGenerator {
 
         String binarySbString = binarySb.substring(4);
         String transferedBinary = binarySbString.substring(1) + "0";
-        log.info("leftShiftOneBit : " + transferedBinary);
+//        log.info("leftShiftOneBit : " + transferedBinary);
 
         StringBuilder transferedToChar = new StringBuilder();
 
@@ -194,16 +194,16 @@ public class IdGenerator {
                 binary = onesComplement(binary);
             }
 
-            log.info("isASCII : " + isASCII);
-            log.info("binary ASCII : " + binary);
+//            log.info("isASCII : " + isASCII);
+//            log.info("binary ASCII : " + binary);
 
             int first = Integer.parseInt(binary.substring(0, 4), 2);
             int last = Integer.parseInt(binary.substring(4, 8), 2);
             int decimalNumber = (first * (int)Math.pow(2, 4)) + last;
-            log.info("first : " + first);
-            log.info("last : " + last);
-
-            log.info("decimalNumber : " + decimalNumber);
+//            log.info("first : " + first);
+//            log.info("last : " + last);
+//
+//            log.info("decimalNumber : " + decimalNumber);
 
             if (!isValidAscii(decimalNumber)) {
                 decimalNumber = asciiMap.get(decimalNumber);
