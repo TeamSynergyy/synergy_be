@@ -39,7 +39,7 @@ public class ProjectController {
     @Operation(summary = "프로젝트 수정", description = "요청된 정보에 따라 프로젝트가 수정됩니다.")
     @PutMapping
     public ResponseEntity<Void> updateProject(@Valid @RequestBody UpdateProjectRequest request, @LoginUser String userId) {
-
+        projectService.updateProject(userId, request);
         return ResponseEntity.noContent().build();
     }
 
