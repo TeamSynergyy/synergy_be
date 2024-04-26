@@ -69,10 +69,29 @@ public class ProjectService {
         return savedProject.getId();
     }
 
+    private void validateProjectUser(String userId, String projectId) {
+        Project project = findProjectById(projectId);
+        List<String> userListIds = project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getId()).toList();
+
+        if (!userListIds.contains(userId)) {
+            throw new ProjectBadRequestException("프로젝트 변경 권한이 없습니다.");
+        }
+    }
+
+    private void validateProjectLeader(String leaderId, String projectId) {
+        Project project = findProjectById(projectId);
+
+        if (!project.getLeaderId().equals(leaderId)) {
+            throw new ProjectBadRequestException("프로젝트 변경 권한이 없습니다.");
+        }
+    }
+
     @Transactional
     public void updateProject(String userId, UpdateProjectRequest request) {
         // todo
         // 프로젝트 멤버 검증
+        validateProjectUser(userId, request.projectId());
+
         Project project = this.findProjectById(request.projectId());
         Project updatedProject = project.updateProject(request);
         projectRepository.save(updatedProject);
@@ -81,9 +100,9 @@ public class ProjectService {
     public GetProjectResponse deleteProject(String userId, String projectId) {
         // todo
         // 프로젝트 리더 검증
+        validateProjectLeader(userId, projectId);
+
         Project project = this.findProjectById(projectId);
-
-
         projectRepository.delete(project);
 
         return GetProjectResponse.builder().build();
@@ -98,6 +117,7 @@ public class ProjectService {
 
         return GetProjectResponse.builder()
                 .projectId(projectId)
+                .projectSequence(project.getSeq())
                 .name(project.getName().getName())
                 .content(project.getContent().getContent())
                 .field(project.getField().name())
@@ -111,7 +131,7 @@ public class ProjectService {
     }
 
     public ListResponse<GetProjectResponse> getProjectList(Long end) {
-        List<Project> projects = projectRepository.findAllByEndId(end);
+        List<Project> projects = projectRepository.findAllByEndSequence(end);
 
         return (ListResponse<GetProjectResponse>) new ListResponse(projects);
     }
