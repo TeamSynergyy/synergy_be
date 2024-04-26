@@ -10,10 +10,7 @@ import com.seoultech.synergybe.domain.post.vo.PostTitle;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.common.BaseTime;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -30,6 +27,10 @@ public class Post extends BaseTime {
     @Id
     @Column(name = "post_id")
     private String id;
+
+    @Column(name = "post_sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long postSequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
