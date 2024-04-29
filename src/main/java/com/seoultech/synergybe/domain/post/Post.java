@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.post;
 
 import com.seoultech.synergybe.domain.comment.Comment;
+import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.image.Image;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.vo.PostAuthorName;
@@ -18,6 +19,8 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_DELETED_DEFAULT;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
@@ -28,9 +31,9 @@ public class Post extends BaseTime {
     @Column(name = "post_id")
     private String id;
 
-    @Column(name = "post_sequence")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postSequence;
+//    @Column(name = "post_sequence")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long postSequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -62,6 +65,9 @@ public class Post extends BaseTime {
             fetch = FetchType.LAZY
     )
     private List<Comment> comments = new ArrayList<>();
+
+    @Embedded
+    private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @Builder
     public Post(String id, User user, String title, String content, String thumbnailImageId) {
