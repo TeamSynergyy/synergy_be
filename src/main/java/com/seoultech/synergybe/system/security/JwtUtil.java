@@ -21,7 +21,7 @@ import java.util.List;
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; // Header KEY 값
     public static final String BEARER_PREFIX = "Bearer "; // Token 식별자
-    private static final long TOKEN_TIME = Duration.ofMinutes(30).toMillis(); // 토큰 만료시간 30분
+    private static final long TOKEN_TIME = Duration.ofHours(5).toMillis(); // 토큰 만료시간 5hours
 
     @Value("${jwt.secret}") // Base 64 decode시 사용하는 Key
     private String secretKey;

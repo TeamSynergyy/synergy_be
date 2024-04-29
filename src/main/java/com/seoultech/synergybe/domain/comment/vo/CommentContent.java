@@ -14,8 +14,8 @@ import java.util.Objects;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentContent {
-    private static final int MIN_CONTENT_LENGTH = 10;
-    private static final int MAX_CONTENT_LENGTH = 200;
+    private static final int MIN_CONTENT_LENGTH = 1;
+    private static final int MAX_CONTENT_LENGTH = 50;
 
     @Column(name = "content", nullable = false)
     private String content;

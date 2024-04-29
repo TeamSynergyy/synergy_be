@@ -35,6 +35,11 @@ public class Project extends BaseTime {
     @Column(name = "project_id")
     private String id;
 
+//    @Id
+//    @Column(name = "project_sequence")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long seq;
+
     @Embedded
     private ProjectName name;
 

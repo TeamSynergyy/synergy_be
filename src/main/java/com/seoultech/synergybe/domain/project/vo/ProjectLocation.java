@@ -19,7 +19,7 @@ public class ProjectLocation {
     private Point location;
 
     public ProjectLocation(Point value) {
-        validateNotNull(location);
+        validateNotNull(value);
         this.location = value;
     }
 

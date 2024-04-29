@@ -7,12 +7,13 @@ import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
-import com.seoultech.synergybe.domain.follow.repository.FollowRepository;
-import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.user.dto.response.*;
+import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
 import com.seoultech.synergybe.domain.user.exception.UserNotFoundException;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.user.vo.UserEmail;
+import com.seoultech.synergybe.system.exception.ErrorCode;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -39,18 +40,15 @@ public class UserService {
     private final CustomPasswordEncoder passwordEncoder;
     private final IdGenerator idGenerator;
 
-    public CheckDuplicateVolunteerEmailResponse checkDuplicateVolunteerEmailResponse(String email) {
-        boolean isDuplicated = userRepository.existsByEmail(email);
-        return CheckDuplicateVolunteerEmailResponse.from(isDuplicated);
-    }
-
     @Transactional
-    public CreateUserResponse createUser(
+    public String createUser(
             String email,
             String password,
             String name,
             String major
     ) {
+        checkEmailDuplicate(email);
+
         String userId = idGenerator.generateId(IdPrefix.USER);
         User user = User.builder()
                 .id(userId)
@@ -62,23 +60,30 @@ public class UserService {
                 .build();
         userRepository.save(user);
 
-        return CreateUserResponse.from(user);
+        return user.getId();
+    }
+
+    private void checkEmailDuplicate(String email) {
+        UserEmail userEmail = new UserEmail(email);
+        boolean isEmailDuplicated = userRepository.existsByEmail(userEmail);
+        if (isEmailDuplicated) {
+            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "이미 존재하는 이메일입니다.");
+        }
     }
 
     public User getUser(String userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
     }
 
-    public String getUserAccount(String userId) {
-        log.info("userId : " + userId);
-        return userId;
-    }
-
     public GetUserAccountResponse getUserInfo(String userId) {
-        log.info("userId : " + userId);
+        User user = getUser(userId);
 
-        return GetUserAccountResponse.builder().build();
-//        return UserResponse.from(this.getUser(userId));
+        return GetUserAccountResponse.builder()
+                .email(user.getEmail().getEmail())
+                .major(user.getMajor().getMajor())
+                .name(user.getName().getName())
+                .temperature(user.getTemperature().getTemperature())
+                .build();
     }
 
     public List<User> getUsers(List<String> userIds) {
@@ -114,6 +119,7 @@ public class UserService {
         };
     }
 
+    @Transactional
     public void updateMyInfo(
             String userId,
             String email,
@@ -175,21 +181,5 @@ public class UserService {
             throw new RuntimeException(e);
         }
     }
-
-//    public ListResponse<String> getFollowerIds(String userId) {
-//        List<String> getFollowerIdList = followService.getFollowerIdList(userId);
-//
-//        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowerIdList);
-//
-//        return getUserIdListResponses;
-//    }
-//
-//    public ListResponse<String> getFollowingIds(String userId) {
-//        List<String> getFollowingIdList = followService.getFollowingIdList(userId);
-//
-//        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowingIdList);
-//
-//        return getUserIdListResponses;
-//    }
 }
 

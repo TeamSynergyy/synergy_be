@@ -3,6 +3,8 @@ package com.seoultech.synergybe.domain.post.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seoultech.synergybe.domain.comment.dto.response.GetCommentResponse;
+import com.seoultech.synergybe.domain.common.PageInfo;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
@@ -10,7 +12,9 @@ import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
+import com.seoultech.synergybe.domain.post.dto.response.GetListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
+import com.seoultech.synergybe.domain.post.exception.PostBadRequestException;
 import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
@@ -48,17 +52,22 @@ public class PostService {
 
 //    private final ImageService imageService;
 
-    public GetPostResponse createPost(User user, CreatePostRequest request) {
+    public GetPostResponse createPost(String userId, CreatePostRequest request) {
+        User user = userService.getUser(userId);
         if (request.files() == null) {
             log.info(">> getfiles is null");
             String postId = idGenerator.generateId(IdPrefix.POST);
             Post post = Post.builder()
-                    .id(postId).title(request.title()).user(user)
+                    .id(postId)
+                    .title(request.title())
+                    .content(request.content())
+                    .user(user)
                     .build();
             Post savedPost = postRepository.save(post);
-            GetPostResponse getPostResponse = GetPostResponse.builder().build();
 
-            return getPostResponse;
+            return GetPostResponse.builder()
+                    .postId(savedPost.getId())
+                    .build();
 //        } else {
 //            log.info(">> getfiles is NOT NULL");
 //            List<MultipartFile> files = request.files();
@@ -76,58 +85,69 @@ public class PostService {
     }
 
     @Transactional
-    public GetPostResponse updatePost(UpdatePostRequest request) {
+    public GetPostResponse updatePost(String userId, UpdatePostRequest request) {
+        // todo
+        // user 검증
+        User user = userService.getUser(userId);
+
         Post post = findPostById(request.postId());
+        validateUser(user, post);
         post.updatePost(request.title(), request.content());
 //        List<String> imagesUrl = imageService.getImageUrlByPostId(request.getPostId());
 
 //        return PostResponse.from(updatedPost, imagesUrl);
-        GetPostResponse getPostResponse = GetPostResponse.builder().build();
-        return getPostResponse;
+        return GetPostResponse.builder()
+                .postId(post.getId())
+                .build();
     }
 
-    public void deletePost(String postId) {
+    private void validateUser(User user, Post post) {
+        if (!post.getUser().equals(user)) {
+            throw new PostBadRequestException("인증되지 않은 유저입니다.");
+        }
+    }
+
+    public void deletePost(String userId, String postId) {
         Post post = this.findPostById(postId);
+        User user = userService.getUser(userId);
+        validateUser(user, post);
         postRepository.delete(post);
     }
 
-    public Post findPostById(String postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시글입니다."));
-    }
+
 
     public List<Post> findAllByFollowingIdAndEndId(String userId, Long end) {
         return postRepository.findAllByFollowingIdAndEndId(userId, end);
     }
 
 
-    public ListResponse<GetPostResponse> getLikedPostList(User user) {
-        List<String> postIds = postLikeService.findLikedPostIds(user);
+//    public GetListPostResponse getMyLikedPostList(String userId) {
+//        List<Post> postList = postRepository.findAllByLikeAndDate();
+//
+//
+//        return PostMapperEntityToDto.postListToResponse(postList);
+//    }
 
-        List<Post> posts = postRepository.findAllById(postIds);
+    public GetListPostResponse getPostRecentList(Long offset) {
+//        List<Post> posts = postRepository.findAllByEndId(end);
 
-        return new ListResponse(posts);
-    }
+        // offset은 시작 지점
+        // 0부터 시작하며 다음 요청시마다 10씩 증가해야함
+        List<Post> posts = postRepository.findAllByCreateAtAndLimit(offset);
+        int totalCount = postRepository.countTotalPostSize();
 
-    public ListResponse<GetPostResponse> getPostList(String end) {
-        List<Post> posts = postRepository.findAllByEndId(end);
-
-        int count = postRepository.countPostList(end);
-
-        boolean isNext;
+        boolean hasNext;
         int pageSize = 10;
 
-        if (count > pageSize + 1) {
-            isNext = true;
+        if (totalCount > pageSize + offset) {
+            hasNext = true;
         } else {
-            isNext = false;
+            hasNext = false;
         }
         // todo
         // 썸네일이 없을 경우 없는채로 처리가 되어야 함
 
-
-//        return ListPostResponse.from(GetPostResponse.from(posts), isNext);
-        return new ListResponse(posts);
+        return PostMapperEntityToDto.postListToResponse(posts, hasNext);
     }
 
 
@@ -277,7 +297,38 @@ public class PostService {
     }
 
     public GetPostResponse getPost(String postId) {
-        GetPostResponse getPostResponse = GetPostResponse.builder().build();
-        return getPostResponse;
+        Post post = findPostById(postId);
+        List<GetCommentResponse> commentResponses = post.getComments().stream()
+                .map(comment -> new GetCommentResponse(
+                        comment.getId(),
+                        comment.getUser().getId(),
+                        comment.getPost().getId(),
+                        comment.getComment().getContent(),
+                        comment.getUpdateAt()
+                ))
+                .toList();
+
+        return GetPostResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle().getTitle())
+                .content(post.getContent().getContent())
+                .userId(post.getUser().getId())
+                .likes(post.getLikes().size())
+                .authorName(post.getAuthorName().getAuthorName())
+                .createAt(post.getCreateAt())
+                .updateAt(post.getUpdateAt())
+                .commentList(commentResponses)
+                .build();
+    }
+
+    public Post findPostById(String postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시글입니다."));
+    }
+
+    public GetListPostResponse getWeekBestPostList() {
+        List<GetPostResponse> postList = postRepository.findAllByMostLikedAndRecentOneWeek();
+        PageInfo pageInfo = PageInfo.of(postList.size());
+        return new GetListPostResponse(postList, pageInfo);
     }
 }

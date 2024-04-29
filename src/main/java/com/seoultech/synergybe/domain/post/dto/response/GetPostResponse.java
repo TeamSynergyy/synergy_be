@@ -4,21 +4,22 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.seoultech.synergybe.domain.post.Post;
+import com.seoultech.synergybe.domain.comment.dto.response.GetCommentResponse;
 import lombok.Builder;
-import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
 public record GetPostResponse(
-        Long postId,
+        String postId,
         String title,
         String content,
         String userId,
         String authorName,
+
+        List<GetCommentResponse> commentList,
+
         @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)
         LocalDateTime createAt,

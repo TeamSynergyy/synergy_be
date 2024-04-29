@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.apply.service;
 
 import com.seoultech.synergybe.domain.apply.Apply;
 import com.seoultech.synergybe.domain.apply.dto.response.*;
+import com.seoultech.synergybe.domain.apply.exception.ApplyBadRequestException;
 import com.seoultech.synergybe.domain.apply.exception.ApplyNotFoundException;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
@@ -34,7 +35,7 @@ public class ApplyService {
     private final IdGenerator idGenerator;
 
     @Transactional
-    public String createApply(String userId, String projectId) {
+    public GetApplyResponse createApply(String userId, String projectId) {
         Project project = projectService.findProjectById(projectId);
         User user = userService.getUser(userId);
         String applyId = idGenerator.generateId(IdPrefix.APPLY);
@@ -48,23 +49,37 @@ public class ApplyService {
 //        User leader = userService.getUser(projectService.getProject(projectId).leaderId());
 //        notificationService.send(leader, NotificationType.PROJECT_APPLY, "프로젝트 신청이 완료되었습니다.", projectId);
 
-        return savedApply.getId();
+        return GetApplyResponse.builder()
+                .applyId(savedApply.getId())
+                .build();
     }
 
     @Transactional
-    public void deleteApply(String applyId) {
+    public void deleteApply(String userId, String applyId) {
         // todo
         // 사용자 권한 검증
+        User user = userService.getUser(userId);
         Apply apply = getApply(applyId);
+        validateApplyUser(user, apply);
         applyRepository.delete(apply);
     }
 
+    private void validateApplyUser(User user, Apply apply) {
+        if (!apply.getUser().equals(user)) {
+            throw new ApplyBadRequestException("지원내역에 대한 권한이 없습니다.");
+        }
+    }
+
     @Transactional
-    public void updateApplyStatusToAccept(String userId, String projectId) {
-        Apply apply = applyRepository.findApplyByUserIdAndProjectId(userId, projectId);
-        apply.changeStatusToAccept();
+    public void updateApplyStatusToAccept(String leaderId, String applyUserId, String projectId) {
+        Apply apply = applyRepository.findApplyByUserIdAndProjectId(applyUserId, projectId);
         Project project = projectService.findProjectById(projectId);
-        User user = userService.getUser(userId);
+        // 팀장 검증
+        validateLeader(leaderId, project);
+
+        log.info("applyId : " + apply.getId());
+        apply.changeStatusToAccept();
+        User user = userService.getUser(applyUserId);
 
 
         // projectUser 추가
@@ -72,23 +87,33 @@ public class ApplyService {
         ProjectUser projectUser = new ProjectUser(projectUserId, project, user);
         project.getProjectUsers().add(projectUser);
         projectUserRepository.save(projectUser);
-        User applyUser = userService.getUser(userId);
+//        User applyUser = userService.getUser(userId);
 
         // 알림 발송
 //        notificationService.send(applyUser, NotificationType.PROJECT_ACCEPT, "신청이 수락되었습니다.", projectId);
     }
 
+    private void validateLeader(String leaderId, Project project) {
+        if (!project.getLeaderId().getLeaderId().equals(leaderId)) {
+            throw new ApplyBadRequestException("리더가 일치하지 않습니다.");
+        }
+    }
+
     @Transactional
-    public void updateApplyStatusToReject(String userId, String projectId) {
-        Apply apply = applyRepository.findApplyByUserIdAndProjectId(userId, projectId);
+    public void updateApplyStatusToReject(String leaderId, String applyUserId, String projectId) {
+        Apply apply = applyRepository.findApplyByUserIdAndProjectId(applyUserId, projectId);
+        Project project = projectService.findProjectById(projectId);
+        // 팀장 검증
+        validateLeader(leaderId, project);
+
         apply.changeStatusToReject();
 
         // apply 삭제
         applyRepository.delete(apply);
 
         // 알림 발송
-        User applyUser = userService.getUser(userId);
-        notificationService.send(applyUser, NotificationType.PROJECT_REJECT, "신청이 거절되었습니다.", projectId);
+//        User applyUser = userService.getUser(applyUserId);
+//        notificationService.send(applyUser, NotificationType.PROJECT_REJECT, "신청이 거절되었습니다.", projectId);
 //
 //        return RejectApplyResponse.from(apply);
     }

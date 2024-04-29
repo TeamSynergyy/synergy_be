@@ -25,10 +25,10 @@ public record CreateProjectRequest(
         @NotBlank(message = "위도는 필수항목입니다.")
         Double latitude,
         @NotBlank(message = "시작일시는 필수항목입니다.")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy hh:mm:ss.SSS", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         LocalDateTime startAt,
         @NotBlank(message = "종료일시는 필수항목입니다.")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy hh:mm:ss.SSS", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         LocalDateTime endAt
 
 ) {

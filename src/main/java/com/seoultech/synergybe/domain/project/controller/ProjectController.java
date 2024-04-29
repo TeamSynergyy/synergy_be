@@ -4,6 +4,7 @@ import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.dto.response.GetListProjectResponse;
 import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
 import com.seoultech.synergybe.domain.project.service.ProjectService;
 import com.seoultech.synergybe.domain.user.User;
@@ -11,6 +12,7 @@ import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,25 +32,24 @@ public class ProjectController {
 
     @Operation(summary = "프로젝트 생성", description = "프로젝트가 생성됩니다.")
     @PostMapping
-    public ResponseEntity<GetProjectResponse> createProject(@RequestBody CreateProjectRequest request, @LoginUser String userId) {
-        User user = userService.getUser(userId);
+    public ResponseEntity<GetProjectResponse> createProject(@Valid @RequestBody CreateProjectRequest request, @LoginUser String userId) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(user, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(userId, request));
     }
 
     @Operation(summary = "프로젝트 수정", description = "요청된 정보에 따라 프로젝트가 수정됩니다.")
     @PutMapping
-    public ResponseEntity<GetProjectResponse> updateProject(@RequestBody UpdateProjectRequest request, @LoginUser String userId) {
-        User user = userService.getUser(userId);
-
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.updateProject(user, request));
+    public ResponseEntity<Void> updateProject(@Valid @RequestBody UpdateProjectRequest request, @LoginUser String userId) {
+        projectService.updateProject(userId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "프로젝트 삭제", description = "프로젝트가 삭제됩니다.")
     @DeleteMapping(value = "/{projectId}")
-    public ResponseEntity<GetProjectResponse> deleteProject(@PathVariable("projectId") String projectId, @LoginUser String userId) {
+    public ResponseEntity<Void> deleteProject(@PathVariable("projectId") String projectId, @LoginUser String userId) {
+        projectService.deleteProject(userId, projectId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.deleteProject(projectId));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "프로젝트 조회", description = "프로젝트를 단건 조회합니다.")
@@ -60,9 +61,9 @@ public class ProjectController {
 
     @Operation(summary = "프로젝트 목록", description = "최근 프로젝트들의 목록을 반환하며, end값(default로는 long 최대값)으로 마지막 조회된 프로젝트Id를 전달받으며 이후 10개의 post만 반환합니다")
     @GetMapping("/recent")
-    public ResponseEntity<ListResponse<GetProjectResponse>> getProjectList(@RequestParam(value = "end", required = false, defaultValue = "9223372036854775807") Long end) {
+    public ResponseEntity<GetListProjectResponse> getProjectList(@RequestParam(value = "offset", required = false) Long offset) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.getProjectList(end));
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getProjectList(offset));
     }
 
     @Operation(summary = "검색어를 포함하는 프로젝트", description = "검색어를 포함하는 프로젝트가 반환됩니다")

@@ -1,6 +1,7 @@
 package com.seoultech.synergybe.domain.user.repository;
 
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.user.vo.UserEmail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,5 +21,5 @@ public interface UserRepository extends JpaRepository<User, String>, UserReposit
 
     Page<User> findAll(Specification<User> spec, Pageable pageable);
 
-    boolean existsByEmail(String email);
+    boolean existsByEmail(UserEmail email);
 }

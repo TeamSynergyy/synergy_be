@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, String> {
+public interface PostRepository extends JpaRepository<Post, String>, PostRepositoryCustom {
 
     @Query(value = "SELECT * FROM post WHERE post_id < :postId AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
     List<Post> findAllByEndId(@Param("postId") String postId);
@@ -42,6 +42,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
             , nativeQuery = true)
     List<Post> findAllByLikeAndDate();
 
-    @Query(value = "SELECT * FROM post e WHERE post_id IN :ids ORDER BY FIELD(post_id, :ids)", nativeQuery = true)
+    @Query(value = "SELECT * FROM post WHERE post_id IN :ids ORDER BY FIELD(post_id, :ids)", nativeQuery = true)
     List<Post> findAllByIdInOrderByListOrder(@Param("ids") List<String> ids);
 }

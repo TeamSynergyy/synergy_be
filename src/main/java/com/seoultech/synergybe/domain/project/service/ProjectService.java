@@ -10,7 +10,9 @@ import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.dto.response.GetListProjectResponse;
 import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
+import com.seoultech.synergybe.domain.project.exception.ProjectBadRequestException;
 import com.seoultech.synergybe.domain.project.exception.ProjectNotFoundException;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
@@ -33,10 +35,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
@@ -47,12 +50,12 @@ public class ProjectService {
     private final IdGenerator idGenerator;
     private final UserService userService;
 
-    public GetProjectResponse createProject(User user, CreateProjectRequest request) {
+    @Transactional
+    public GetProjectResponse createProject(String userId, CreateProjectRequest request) {
+        User user = userService.getUser(userId);
         String projectId = idGenerator.generateId(IdPrefix.PROJECT);
         Point point = new Point(request.longitude(), request.latitude());
-        // try catch 문 수정 / 여기서 Point에 대한 예외처리 하지 않기
-        try {
-            Project project = Project.builder()
+        Project project = Project.builder()
                 .id(projectId)
                 .name(request.name())
                 .content(request.content())
@@ -62,26 +65,47 @@ public class ProjectService {
                 .endAt(request.endAt())
                 .leaderId(user.getId())
                 .build();
-            Project savedProject = projectRepository.save(project);
-            projectUserService.createProjectUser(savedProject, user);
-            return GetProjectResponse.builder().build();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("point parse exception");
+        Project savedProject = projectRepository.save(project);
+        projectUserService.createProjectUser(savedProject, user);
+        return GetProjectResponse.builder()
+                .projectId(savedProject.getId())
+                .build();
+    }
+
+    private void validateProjectUser(String userId, String projectId) {
+        Project project = findProjectById(projectId);
+        List<String> userListIds = project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getId()).toList();
+
+        if (!userListIds.contains(userId)) {
+            throw new ProjectBadRequestException("프로젝트 변경 권한이 없습니다.");
         }
     }
 
-    public GetProjectResponse updateProject(User user, UpdateProjectRequest request) {
+    private void validateProjectLeader(String leaderId, String projectId) {
+        Project project = findProjectById(projectId);
+
+        if (!project.getLeaderId().equals(leaderId)) {
+            throw new ProjectBadRequestException("프로젝트 변경 권한이 없습니다.");
+        }
+    }
+
+    @Transactional
+    public void updateProject(String userId, UpdateProjectRequest request) {
+        // todo
+        // 프로젝트 멤버 검증
+        validateProjectUser(userId, request.projectId());
+
         Project project = this.findProjectById(request.projectId());
         Project updatedProject = project.updateProject(request);
         projectRepository.save(updatedProject);
-
-        return GetProjectResponse.builder().build();
     }
 
-    public GetProjectResponse deleteProject(String projectId) {
+    public GetProjectResponse deleteProject(String userId, String projectId) {
+        // todo
+        // 프로젝트 리더 검증
+        validateProjectLeader(userId, projectId);
+
         Project project = this.findProjectById(projectId);
-
-
         projectRepository.delete(project);
 
         return GetProjectResponse.builder().build();
@@ -94,14 +118,35 @@ public class ProjectService {
     public GetProjectResponse getProject(String projectId) {
         Project project = this.findProjectById(projectId);
 
-        return GetProjectResponse.builder().build();
+        return GetProjectResponse.builder()
+                .projectId(projectId)
+                .name(project.getName().getName())
+                .content(project.getContent().getContent())
+                .field(project.getField().name())
+                .location(project.getLocation().getLocation())
+                .startAt(project.getPeriod().getStartAt())
+                .endAt(project.getPeriod().getEndAt())
+                .leaderId(project.getLeaderId().getLeaderId())
+                .status(project.getStatus().getName())
+                .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getId()).collect(Collectors.toList()))
+                .build();
     }
 
-    public ListResponse<GetProjectResponse> getProjectList(Long end) {
-        List<Project> projects = projectRepository.findAllByEndId(end);
-        ListResponse<GetProjectResponse> getProjectResponseListResponse = new ListResponse(projects);
+    public GetListProjectResponse getProjectList(Long offset) {
+        List<Project> projects = projectRepository.findAllByCreateAtAndLimit(offset);
+        int totalCount = projectRepository.countTotalProjectSize();
 
-        return getProjectResponseListResponse;
+        boolean hasNext;
+        int pageSize = 10;
+
+        if (totalCount > pageSize + offset) {
+            hasNext = true;
+        } else {
+            hasNext = false;
+        }
+
+        return ProjectMapperEntityToDto.projectListToResponse(projects, hasNext);
+
     }
 
     public Page<Project> searchAllProjects(String keyword, Pageable pageable) {
