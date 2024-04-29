@@ -5,9 +5,11 @@ import com.seoultech.synergybe.domain.apply.dto.response.GetApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.GetApplyUserResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.GetListApplyResponse;
 import com.seoultech.synergybe.domain.apply.dto.response.GetListApplyUserResponse;
+import com.seoultech.synergybe.domain.common.PageInfo;
 import com.seoultech.synergybe.domain.user.User;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -21,7 +23,8 @@ public final class ApplyMapperEntityToDto {
                         result.getId(),
                         result.getStatus()))
                 .toList();
-        return new GetListApplyResponse(getApplyResponses);
+        PageInfo pageInfo = PageInfo.of(applyList.size());
+        return new GetListApplyResponse(getApplyResponses, pageInfo);
     }
 
     public static GetListApplyUserResponse userListToResponse(
@@ -30,6 +33,7 @@ public final class ApplyMapperEntityToDto {
         List<GetApplyUserResponse> getApplyUserResponses = userList.stream()
                 .map(GetApplyUserResponse::new)
                 .toList();
-        return new GetListApplyUserResponse(getApplyUserResponses);
+        PageInfo pageInfo = PageInfo.of(getApplyUserResponses.size());
+        return new GetListApplyUserResponse(getApplyUserResponses, pageInfo);
     }
 }
