@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 
 @Builder
 public record GetCommentResponse(
-    Long commentId,
+    String commentId,
     String userId,
-    Long postId,
+    String postId,
     String comment,
     LocalDateTime updateAt
 ) {

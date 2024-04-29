@@ -11,7 +11,6 @@ import java.util.List;
 @Builder
 public record GetProjectResponse(
         String projectId,
-        Long projectSequence,
         String name,
         String content,
         String field,

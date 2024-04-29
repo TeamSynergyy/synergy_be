@@ -10,6 +10,7 @@ import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.dto.response.GetListProjectResponse;
 import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
 import com.seoultech.synergybe.domain.project.exception.ProjectBadRequestException;
 import com.seoultech.synergybe.domain.project.exception.ProjectNotFoundException;
@@ -50,7 +51,7 @@ public class ProjectService {
     private final UserService userService;
 
     @Transactional
-    public String createProject(String userId, CreateProjectRequest request) {
+    public GetProjectResponse createProject(String userId, CreateProjectRequest request) {
         User user = userService.getUser(userId);
         String projectId = idGenerator.generateId(IdPrefix.PROJECT);
         Point point = new Point(request.longitude(), request.latitude());
@@ -66,7 +67,9 @@ public class ProjectService {
                 .build();
         Project savedProject = projectRepository.save(project);
         projectUserService.createProjectUser(savedProject, user);
-        return savedProject.getId();
+        return GetProjectResponse.builder()
+                .projectId(savedProject.getId())
+                .build();
     }
 
     private void validateProjectUser(String userId, String projectId) {
@@ -117,7 +120,6 @@ public class ProjectService {
 
         return GetProjectResponse.builder()
                 .projectId(projectId)
-                .projectSequence(project.getSeq())
                 .name(project.getName().getName())
                 .content(project.getContent().getContent())
                 .field(project.getField().name())
@@ -130,10 +132,21 @@ public class ProjectService {
                 .build();
     }
 
-    public ListResponse<GetProjectResponse> getProjectList(Long end) {
-        List<Project> projects = projectRepository.findAllByEndSequence(end);
+    public GetListProjectResponse getProjectList(Long offset) {
+        List<Project> projects = projectRepository.findAllByCreateAtAndLimit(offset);
+        int totalCount = projectRepository.countTotalProjectSize();
 
-        return (ListResponse<GetProjectResponse>) new ListResponse(projects);
+        boolean hasNext;
+        int pageSize = 10;
+
+        if (totalCount > pageSize + offset) {
+            hasNext = true;
+        } else {
+            hasNext = false;
+        }
+
+        return ProjectMapperEntityToDto.projectListToResponse(projects, hasNext);
+
     }
 
     public Page<Project> searchAllProjects(String keyword, Pageable pageable) {
