@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProjectRepository extends JpaRepository<Project, String> {
+public interface ProjectRepository extends JpaRepository<Project, String>, ProjectRepositoryCustom {
     @Query(value = "SELECT * FROM project WHERE project_sequence < :projectSequence ORDER BY project_sequence DESC LIMIT 10", nativeQuery = true)
     List<Project> findAllByEndSequence(@Param("projectSequence") Long projectSequence);
 
