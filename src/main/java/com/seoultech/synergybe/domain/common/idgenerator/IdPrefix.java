@@ -16,6 +16,7 @@ public enum IdPrefix {
     PROJECT_USER("project_user"),
     RATE("rate"),
     SCHEDULE("schedule"),
+    LIBRARY("library"),
     TICKET("ticket"),
     TICKET_USER("ticket_user");
 
