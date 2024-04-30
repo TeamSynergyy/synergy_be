@@ -70,6 +70,26 @@
 
 </div>
 
+## Docker Hub Images
+
+We publish two images to https://hub.docker.com at every release.
+
+### [API Backend](https://hub.docker.com/r/jonghuni/synergy_be)
+
+```
+docker pull jonghuni/synergy_be
+```
+
+### Use Guide
+
+1. `jonghuni/synergy_be` 도커 이미지를 `docker pull jonghuni/synergy_be` 명령어로 Pull 받습니다.
+2. app_network 이름의 네트워크를 `docker network create app_network` 명령어로 생성합니다.
+3. docker-compose 를 `docker-compose up --build` 명령어로 실행합니다.
+4. hostname 은 `localhost` 로 해당 url를 통해 테스트를 진행합니다.
+
+
+
+<br>
 
 ## 서비스 최종 성능 정리
 
