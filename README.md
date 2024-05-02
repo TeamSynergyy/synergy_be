@@ -72,16 +72,22 @@
 
 ## Setup Dev Environment (Local)
 
+> Java 17이 설치되어있다고 가정합니다
+
 <br>
 
 1. synergy_be 프로젝트를 `git clone` 명령어를 통해 클론 받습니다.
    - git clone https://github.com/TeamSynergyy/synergy_be.git
-2. app_network 이름의 네트워크를 `docker network create app_network` 명령어로 생성합니다.
-3. `docker-compose.yml` 파일을 루트 디렉토리에 생성합니다.
+2. 클론받은 스프링 프로젝트 실행파일 (*.jar) 을 생성합니다.
+   - 루트 위치에서 권한 부여를 위해 `chmod +x gradlew` 명령어 실행
+   - `./gradlew build -x test` 명령어 실행
+3. app_network 이름의 네트워크를 `docker network create app_network` 명령어로 생성합니다.
+4. `docker-compose.yml` 파일을 루트 디렉토리에 생성합니다.
    - `docker-compose.yml` 파일은 보안상 개인적으로 전달합니다.
-4. `docker-compose build` 명령어로 docker 이미지를 생성합니다.
-5. `docker-compose up -d` 명령어로 docker-compose 를 통해 docker 이미지를 실행 (컨테이너화) 합니다.
-6. host 는 `localhost` 이며 `localhost` url을 통해 프론트 로컬 개발환경을 구성합니다.
+     - mac일 경우 docker-compose.yml의 mysql, mongo 에 `platform: linux/amd64` 추가 필요
+5. `docker-compose build` 명령어로 docker 이미지를 생성합니다.
+6. `docker-compose up -d` 명령어로 docker-compose 를 통해 docker 이미지를 실행 (컨테이너화) 합니다. 
+7. host 는 `localhost` 이며 `localhost` url을 통해 프론트 로컬 개발환경을 구성합니다.
 
 <br>
 
@@ -89,10 +95,11 @@
 위 로컬 개발환경 구성 순서는 아래와 같이 진행됩니다.
 
 1. 프로젝트 clone
-2. docker network 생성
-3. docker-compose.yml 파일 생성
-4. docker image 빌드
-5. docker image 실행
+2. 프로젝트 빌드
+3. docker network 생성
+4. docker-compose.yml 파일 생성
+5. docker image 빌드
+6. docker image 실행
 ```
 
 <br>
