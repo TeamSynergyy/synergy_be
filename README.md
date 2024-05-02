@@ -70,24 +70,42 @@
 
 </div>
 
+## Setup Dev Environment (Local)
+
+<br>
+
+1. synergy_be 프로젝트를 `git clone` 명령어를 통해 클론 받습니다.
+   - git clone https://github.com/TeamSynergyy/synergy_be.git
+2. app_network 이름의 네트워크를 `docker network create app_network` 명령어로 생성합니다.
+3. `docker-compose.yml` 파일을 루트 디렉토리에 생성합니다.
+   - `docker-compose.yml` 파일은 보안상 개인적으로 전달합니다.
+4. `docker-compose build` 명령어로 docker 이미지를 생성합니다.
+5. `docker-compose up -d` 명령어로 docker-compose 를 통해 docker 이미지를 실행 (컨테이너화) 합니다.
+6. host 는 `localhost` 이며 `localhost` url을 통해 프론트 로컬 개발환경을 구성합니다.
+
+<br>
+
+```
+위 로컬 개발환경 구성 순서는 아래와 같이 진행됩니다.
+
+1. 프로젝트 clone
+2. docker network 생성
+3. docker-compose.yml 파일 생성
+4. docker image 빌드
+5. docker image 실행
+```
+
+<br>
+
 ## Docker Hub Images
 
-We publish two images to https://hub.docker.com at every release.
+We publish image to https://hub.docker.com at every release.
 
 ### [API Backend](https://hub.docker.com/r/jonghuni/synergy_be)
 
 ```
 docker pull jonghuni/synergy_be
 ```
-
-### Use Guide
-
-1. `jonghuni/synergy_be` 도커 이미지를 `docker pull jonghuni/synergy_be` 명령어로 Pull 받습니다.
-2. app_network 이름의 네트워크를 `docker network create app_network` 명령어로 생성합니다.
-3. docker-compose 를 `docker-compose up --build` 명령어로 실행합니다.
-4. hostname 은 `localhost` 로 해당 url를 통해 테스트를 진행합니다.
-
-
 
 <br>
 
