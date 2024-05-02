@@ -3,16 +3,13 @@ package com.seoultech.synergybe.domain.library.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class SeoulPublicLibraryInfo {
     @JsonProperty("list_total_count")
     private int listTotalCount;
@@ -25,7 +22,6 @@ public class SeoulPublicLibraryInfo {
 
     @Getter
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class Result {
         @JsonProperty("CODE")
         private String CODE;
@@ -37,7 +33,6 @@ public class SeoulPublicLibraryInfo {
     @Getter
     @NoArgsConstructor
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-    @AllArgsConstructor
     public static class RawLibrary {
         @JsonProperty("LBRRY_SEQ_NO")
         private String LBRRY_SEQ_NO;
