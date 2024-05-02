@@ -5,16 +5,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "raw_public_library")
 @Getter
 @NoArgsConstructor
-public class RawLibrary {
+public class RawPublicLibrary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "library_seq") // 도서관 일련번호
-    private String librarySeq;
+    @Column(name = "public_library_seq") // 도서관 일련번호
+    private String publicLibrarySeq;
 
     @Column(name = "name") // 도서관 명
     private String name;
@@ -50,8 +50,8 @@ public class RawLibrary {
     private Double longitude;
 
     @Builder
-    public RawLibrary(
-            String librarySeq,
+    public RawPublicLibrary(
+            String publicLibrarySeq,
             String name,
             String guCode,
             String guCodeValue,
@@ -64,7 +64,7 @@ public class RawLibrary {
             Double latitude,
             Double longitude
     ) {
-        this.librarySeq = librarySeq;
+        this.publicLibrarySeq = publicLibrarySeq;
         this.name = name;
         this.guCode = guCode;
         this.guCodeValue = guCodeValue;
