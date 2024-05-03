@@ -7,23 +7,29 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "chat_message")
 @Getter
+@Builder
 public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Indexed
+    private Long chatRoomId;
+
     private String message;
 
-    @OneToOne
-    private User user;
+    private String userId;
 
-    @Builder
-    public ChatMessage(String message, User user) {
-        this.message = message;
-        this.user = user;
-    }
+    private Integer readCount;
+
+    private ChatType chatType;
+
+    private String imageName;
+
+    private String imageUrl;
 }
