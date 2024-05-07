@@ -1,16 +1,17 @@
 package com.seoultech.synergybe.domain.chat.handler;
 
-import org.springframework.stereotype.Component;
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Getter
 public class WebSocketSessionList {
-    private List<WebSocketSession> webSocketSessions = new ArrayList<>();
+    private List<WebSocketSession> webSocketSessions;
 
-    public void createWebSocketSession() {
-
+    @Builder
+    public WebSocketSessionList(List<WebSocketSession> webSocketSessions) {
+        this.webSocketSessions = webSocketSessions;
     }
 }

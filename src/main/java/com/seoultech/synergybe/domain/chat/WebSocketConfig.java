@@ -13,32 +13,9 @@ import org.springframework.web.socket.config.annotation.*;
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
     private final ChatHandler chatHandler;
-    private final JwtChannelInterceptor jwtChannelInterceptor;
-
-
-
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatHandler, "/ws").setAllowedOrigins("*");
     }
-
-
-//    @Override
-//    public void registerStompEndpoints(StompEndpointRegistry registry) {
-//        registry
-//                .addEndpoint("/ws")
-//                .setAllowedOriginPatterns("*")
-//                .withSockJS();
-//    }
-//    @Override
-//    public void configureMessageBroker(MessageBrokerRegistry registry) {
-//        registry.enableSimpleBroker("/sub");
-//        registry.setApplicationDestinationPrefixes("/pub");
-//    }
-//
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-//        registration.interceptors(jwtChannelInterceptor);
-//    }
 }

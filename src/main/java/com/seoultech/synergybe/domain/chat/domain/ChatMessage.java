@@ -25,8 +25,6 @@ public class ChatMessage {
 
     private String userId;
 
-    private Integer readCount;
-
     private ChatType chatType;
 
     private String imageName;
