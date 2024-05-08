@@ -14,4 +14,9 @@ public class WebSocketSessionList {
     public WebSocketSessionList(List<WebSocketSession> webSocketSessions) {
         this.webSocketSessions = webSocketSessions;
     }
+
+    // 해당 세션을 포함하는지 확인하는 메서드
+    public boolean contains(WebSocketSession session) {
+        return webSocketSessions.contains(session);
+    }
 }
