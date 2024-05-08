@@ -48,8 +48,8 @@ public class RawPublicLibraryScheduler {
      * 여섯 번째 필드: 요일 (0-6, 일요일부터 토요일까지, 일요일=0 또는 7)
      * 데이터 총 개수를 가져와서 dataCount에 넣어줍니다.
      */
-//    @Scheduled(cron = "0 31 15 * * 4", zone = "Asia/Seoul")
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(cron = "0 31 15 * * 4", zone = "Asia/Seoul")
+//    @Scheduled(fixedDelay = 10000)
     public void updateRawLibrary() throws JSONException, JsonProcessingException {
         log.info("================시작");
         countTotalData();
