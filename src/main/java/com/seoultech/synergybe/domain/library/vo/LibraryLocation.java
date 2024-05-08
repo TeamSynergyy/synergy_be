@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.domain.library.vo;
 
-import com.seoultech.synergybe.domain.project.exception.ProjectBadRequestException;
+import com.seoultech.synergybe.domain.library.exception.LibraryBadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -24,7 +24,7 @@ public class LibraryLocation {
 
     private void validateNotNull(Point value) {
         if (value == null) {
-            throw new ProjectBadRequestException("위치 정보는 필수 항목입니다.");
+            throw new LibraryBadRequestException("위치 정보는 필수 항목입니다.");
         }
     }
 
