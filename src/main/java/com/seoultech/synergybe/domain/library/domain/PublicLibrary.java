@@ -41,6 +41,7 @@ public class PublicLibrary {
 
     @Builder
     public PublicLibrary(
+            String id,
             String name,
             String address,
             String telNumber,
@@ -49,6 +50,7 @@ public class PublicLibrary {
             String closeDate,
             Point location
     ) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.telNumber = telNumber;
