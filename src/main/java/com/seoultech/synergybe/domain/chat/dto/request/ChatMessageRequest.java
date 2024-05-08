@@ -1,13 +1,22 @@
 package com.seoultech.synergybe.domain.chat.dto.request;
 
 import com.seoultech.synergybe.domain.chat.domain.ChatType;
+import jakarta.validation.constraints.NotBlank;
 
 public record ChatMessageRequest(
+        @NotBlank
         Long chatRoomId,
-//        String userId,
+
+        @NotBlank
+        String userId,
+
+        @NotBlank
         String message,
-        ChatType chatType
-//        String imageName,
-//        String imageUrl
+
+        @NotBlank
+        ChatType chatType,
+
+        String imageName,
+        String imageUrl
 ) {
 }
