@@ -1,12 +1,10 @@
 package com.seoultech.synergybe.domain.chat;
 
 import com.seoultech.synergybe.domain.chat.handler.ChatHandler;
-import com.seoultech.synergybe.domain.chat.interceptor.JwtChannelInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.ChannelRegistration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -16,6 +14,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatHandler, "/ws").setAllowedOrigins("*");
+        registry.addHandler(chatHandler, "/ws")
+                .addInterceptors(new HttpSessionHandshakeInterceptor())
+                .setAllowedOrigins("*");
     }
 }
