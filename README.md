@@ -26,10 +26,15 @@
 
 **(프로젝트, 게시글, 팀원을 추천하는 기능을 통해 원활한 프로젝트 진행을 지원합니다)**
 
+<br/>
 
 ## Infra Architecture
 
 <img src="./public/infra_architecture.png" alt="logo" width="80%" />
+
+
+<br/>
+
 
 ## Skills
 
@@ -69,6 +74,8 @@
 
 
 </div>
+
+<br>
 
 ## Setup Dev Environment (Local)
 
@@ -126,8 +133,11 @@ docker pull jonghuni/synergy_be
 - 프로젝트 신청, 수락, 거절
 - 프로젝트 평가
 
+<br/>
 
 ## Directory
+
+<br/>
 
 <details>
 <summary> 파일 구조 보기 </summary>
@@ -295,18 +305,26 @@ src
 - 로그인(첫 소셜로그인시 자동 회원가입)
 - 회원 정보 변경
 
+<br/>
+
 ### API Lists
 - login (users/auth/login)
   - 로그인, 회원가입을 수행합니다. 로그인 성공시 token을 발급하며 이후 요청에 대해서 해당 토큰으로 인증을 진행합니다.
 - updateMyInfo (users/me/info)
   - 회원 정보를 변경합니다.
 
+<br/>
+
 #### Using stack
 - Spring Boot, Java 11, Spring Data JPA, Mysql, Lombok, Gradle, JWT
+
+<br/>
 
 ### Sequence Diagram Example (회원 가입, JWT 토큰 인증 프로세스)
 
 <img src="./public/socialLogin.jpg" alt="logo" width="80%" />
+
+<br/>
 
 ## Recommend Service
 
@@ -315,6 +333,8 @@ src
   - 채택한 이유는 사용자와 아이템을 그들의 콘텐츠 특성의 잠재 요인들로 표현하며, 상호작용 데이터가 부족한 콜드 스타트 상황에서도 효과적이므로
     - 추천 기능이 동작하는 FastAPI 서버를 docker Image화 하여 docker 컨테이너 위에서 실행 (메인서버 또한 Image화 하여 컨테이너위에서 실행)
     - DB와 메인 서버로부터 데이터와 API 요청을 받아 모델학습 및 추천을 수행
+
+<br/>
 
 ### API List
 
@@ -325,9 +345,15 @@ src
 - getSimilarUsers (users/recommend)
   - 유저 활동을 바탕으로 적합한 유저를 추천합니다.
 
+<br/>
+
 ### Sequence Diagram Example (컨텐츠 추천 프로세스)
 
+<br/>
+
 <img src="./public/recommend.png" alt="logo" width="80%" />
+
+<br/>
 
 ## Project Service
 
@@ -336,18 +362,41 @@ src
 
 - 티켓 관리 기능의 경우 티켓을 칸반보드로 관리하는 기능으로 각 Status별로 나누어 티켓들을 올바른 위치로 이동하게끔 구현
 
+<br/>
+
 ### API List
 - changePositionTicket (tickets/change/{ticketId})
   - 티켓 위치 변경 기능을 제공합니다.
+
+<br/>
 
 ### Sequence Diagram Example (프로젝트 팀원 참가 신청 프로세스)
 
 <img src="./public/apply.png" alt="logo" width="80%" />
 
+<br/>
+
 ### Sequence Diagram Example (티켓 위치 변경 프로세스)
 
 <img src="./public/ticket.png" alt="logo" width="80%" />
 
+<br/>
+<br/>
+
+## 고민 흔적
+
+- [좋은 객체 ID 만들기 블로그 - click](https://velog.io/@rivkode/ID-%EC%83%9D%EC%84%B1%EA%B8%B0-%EA%B5%AC%ED%98%84%EC%9D%84-%ED%95%B4%EB%B3%B4%EC%95%84%EC%9A%94-2%ED%83%84)
+    - 좋은 객체 ID를 만들기 위해 아래 4가지 사항을 고려하여 만들기 위해 노력하였습니다.
+        - 고유성
+        - 식별 가능성
+        - 보안성
+        - 생성 시간순 정렬
+    - 관련 PR
+        - [ID 생성기 구현](https://github.com/TeamSynergyy/synergy_be/pull/70)
+- [WebSocket 을 이해하며 채팅서비스를 구현해보아요 | MySQL, MongoDB](https://velog.io/@rivkode/WebSocket-%EC%9D%84-%EC%9D%B4%ED%95%B4%ED%95%98%EB%A9%B0-%EC%B1%84%ED%8C%85%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A5%BC-%EA%B5%AC%ED%98%84%ED%95%B4%EB%B3%B4%EC%95%84%EC%9A%94-MySQL-MongoDB)
+    - 채팅 서비스를 구현하기 위해 아래 사항들을 고려해보았습니다.
+        - 웹소켓 프로토콜 이해
+        - 실시간성 보장
 
 <br/>
 
@@ -382,17 +431,6 @@ https://github.com/TeamSynergyy/synergy_be/assets/109144975/46ca7bdf-9372-49b0-9
 
 https://github.com/TeamSynergyy/synergy_be/assets/109144975/ada92a51-bc5e-41a8-b0aa-cfef4a11d66b
 
-
-## 고민 흔적
-
-- [좋은 객체 ID 만들기 블로그 - click](https://velog.io/@rivkode/ID-%EC%83%9D%EC%84%B1%EA%B8%B0-%EA%B5%AC%ED%98%84%EC%9D%84-%ED%95%B4%EB%B3%B4%EC%95%84%EC%9A%94-2%ED%83%84)
-  - 좋은 객체 ID를 만들기 위해 아래 4가지 사항을 고려하여 만들기 위해 노력하였습니다.
-    - 고유성
-    - 식별 가능성
-    - 보안성
-    - 생성 시간순 정렬
-  - 관련 PR
-    - [ID 생성기 구현](https://github.com/TeamSynergyy/synergy_be/pull/70)
 
 
 
