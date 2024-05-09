@@ -3,9 +3,11 @@ package com.seoultech.synergybe.domain.chat.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.chat.domain.ChatType;
 import com.seoultech.synergybe.domain.chat.dto.request.ChatMessageRequest;
+import com.seoultech.synergybe.domain.chat.exception.WebSocketBadRequestException;
 import com.seoultech.synergybe.domain.chat.service.ChatMessageService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
+import com.seoultech.synergybe.system.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -67,7 +69,10 @@ public class ChatHandler extends TextWebSocketHandler {
         log.info("session {}", chatMessageRequest.toString());
 
         // 유저 검증
-        userService.getUser(chatMessageRequest.userId());
+        User user = userService.getUser(chatMessageRequest.userId());
+        if (user == null) {
+            throw new WebSocketBadRequestException(ErrorCode.BAD_REQUEST, "유효하지 않은 유저의 메세지 요청입니다.");
+        }
 
 
         // payload에 chatroomId 가져옴
@@ -98,10 +103,8 @@ public class ChatHandler extends TextWebSocketHandler {
             // 현재 들어온 세션을 해당 채팅방 세션리스트에 추가
             webSocketSessionList.getWebSocketSessions().add(session);
             log.info("session add | session Id : {}", session.getId());
-        }
 
-        // 만약 텍스트를 보낸다면
-        if (chatMessageRequest.chatType().equals(ChatType.TEXT)) {
+        } else if (chatMessageRequest.chatType().equals(ChatType.TEXT)) {
             log.info("websocket Session List size : {}",webSocketSessionList.getWebSocketSessions().size());
 
             // 채팅 전송
@@ -109,6 +112,7 @@ public class ChatHandler extends TextWebSocketHandler {
 
             // 한사람에 대해서만 저장을 해야함
             saveMessage(chatMessageRequest);
+
         } else if (chatMessageRequest.chatType().equals(ChatType.IMAGE)) {
             // todo
             // 이미지 혹은 영상 처리
