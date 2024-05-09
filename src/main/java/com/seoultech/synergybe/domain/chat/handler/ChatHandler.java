@@ -20,7 +20,6 @@ import java.util.Map;
 
 @Slf4j
 @Component
-//@RequiredArgsConstructor
 public class ChatHandler extends TextWebSocketHandler {
     private WebSocketSessionMap webSocketSessionMap; // 채팅방별 세션리스트 모음
     private ObjectMapper objectMapper;
