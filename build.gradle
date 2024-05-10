@@ -26,14 +26,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
-    // redis
-//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // json
     implementation 'org.json:json:20231013'
+
+    // email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     //lombok
     compileOnly 'org.projectlombok:lombok'
@@ -50,6 +50,9 @@ dependencies {
 
     // database
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // mongo db
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
