@@ -1,5 +1,6 @@
 package com.seoultech.synergybe.domain.email;
 
+import com.seoultech.synergybe.domain.common.RandomNumber;
 import com.seoultech.synergybe.system.utils.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -14,16 +15,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailService {
     private final JavaMailSender javaMailSender;
+    private final RandomNumber randomNumber;
     private final RedisUtil redisUtil;
 
-    private int generateSixNumber() {
+    private int generateRandomNumber() {
         // generate random number
+        String generatedNumber = randomNumber.generateRandomNumber();
 
-        return 123456;
+        return Integer.parseInt(generatedNumber);
     }
 
     public void validateEmail(String email) {
-        Integer authNumber = generateSixNumber();
+        Integer authNumber = generateRandomNumber();
         String from = "jonghuncu@gmail.com";
         String to = email;
         String title = "[Synergy] 인증 이메일입니다.";
