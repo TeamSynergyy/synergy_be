@@ -35,6 +35,9 @@ dependencies {
     // json
     implementation 'org.json:json:20231013'
 
+    // email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     //lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
