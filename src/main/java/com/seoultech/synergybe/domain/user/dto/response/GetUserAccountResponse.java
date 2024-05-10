@@ -5,13 +5,15 @@ import lombok.Builder;
 
 @Builder
 public record GetUserAccountResponse(
+        String userId,
         String email,
         String name,
         String major,
         Double temperature
 ) {
     @QueryProjection
-    public GetUserAccountResponse(String email, String name, String major, Double temperature) {
+    public GetUserAccountResponse(String userId, String email, String name, String major, Double temperature) {
+        this.userId = userId;
         this.email = email;
         this.name = name;
         this.major = major;
