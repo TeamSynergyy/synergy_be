@@ -48,15 +48,15 @@ public class RawPublicLibraryScheduler {
      * 여섯 번째 필드: 요일 (0-6, 일요일부터 토요일까지, 일요일=0 또는 7)
      * 데이터 총 개수를 가져와서 dataCount에 넣어줍니다.
      */
-    @Scheduled(cron = "0 31 15 * * 4", zone = "Asia/Seoul")
-    public void updateRawLibrary() throws JsonProcessingException {
+    @Scheduled(cron = "0 0 4 * * 6", zone = "Asia/Seoul")
+    public void updateRawPublicLibrary() {
         log.info("================시작");
-        countTotalData();
-        updatePublicLibrary();
+        countRawPublicLibraryTotalData();
+        savePublicLibraryFromOpenApi();
         log.info("=================끝");
     }
 
-    private void countTotalData() {
+    private void countRawPublicLibraryTotalData() {
         UriComponents uriComponents = UriComponentsBuilder
                 .newInstance()
                 .scheme("http")
@@ -81,8 +81,8 @@ public class RawPublicLibraryScheduler {
         log.info("dataCount : " + dataCount);
     }
 
-    public void updatePublicLibrary() {
-        List<SeoulPublicLibraryInfo.RawLibrary> libraries = getPublicLibraryFromOpenApi();
+    public void insertRawPublicLibrary(List<SeoulPublicLibraryInfo.RawLibrary> libraries) {
+//        List<SeoulPublicLibraryInfo.RawLibrary> libraries = getPublicLibraryFromOpenApi();
 
         // stream api로
         List<RawPublicLibrary> rawPublicLibraries = libraries.stream()
@@ -108,7 +108,7 @@ public class RawPublicLibraryScheduler {
     }
 
 
-    private List<SeoulPublicLibraryInfo.RawLibrary> getPublicLibraryFromOpenApi() {
+    private void savePublicLibraryFromOpenApi() {
         int start;
         List<SeoulPublicLibraryInfo.RawLibrary> rawLibraries = new ArrayList<>();
         for (start = 1; start <= dataCount; start += BATCH_SIZE) {
@@ -146,12 +146,8 @@ public class RawPublicLibraryScheduler {
 
             log.info("RawLibrary 변환중 ======================");
 
-            // 가져온 데이터 사용 예시
-//            List<RawLibrary> libraryInfos = libraryInfoResponse.getSeoulPublicLibraryInfo().getRawLibrary();
-//            rawLibraries.addAll(libraryInfos);
-
+            // batch size로 저장
+            insertRawPublicLibrary(rawLibraries);
         }
-
-        return rawLibraries;
     }
 }

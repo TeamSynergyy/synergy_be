@@ -22,7 +22,7 @@ public class PublicLibraryScheduler {
     private final RawPublicLibraryRepository rawPublicLibraryRepository;
     private final IdGenerator idGenerator;
 
-    @Scheduled(cron = "0 31 15 * * 4", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 4 * * 6", zone = "Asia/Seoul")
     public void updatePublicLibrary() {
         log.info("update Public Library");
 
