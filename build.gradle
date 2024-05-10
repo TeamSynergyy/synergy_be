@@ -30,13 +30,10 @@ dependencies {
 //    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     //security
-//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // 좌표 저장
-//    implementation 'org.hibernate', name: 'hibernate-spatial'
-
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    // json
+    implementation 'org.json:json:20231013'
 
     //lombok
     compileOnly 'org.projectlombok:lombok'
