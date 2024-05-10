@@ -9,9 +9,9 @@ import com.seoultech.synergybe.domain.library.dto.response.SeoulPublicLibraryInf
 import com.seoultech.synergybe.domain.library.repository.RawPublicLibraryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -49,15 +49,14 @@ public class RawPublicLibraryScheduler {
      * 데이터 총 개수를 가져와서 dataCount에 넣어줍니다.
      */
     @Scheduled(cron = "0 31 15 * * 4", zone = "Asia/Seoul")
-//    @Scheduled(fixedDelay = 10000)
-    public void updateRawLibrary() throws JSONException, JsonProcessingException {
+    public void updateRawLibrary() throws JsonProcessingException {
         log.info("================시작");
         countTotalData();
         updatePublicLibrary();
         log.info("=================끝");
     }
 
-    private void countTotalData() throws JSONException {
+    private void countTotalData() {
         UriComponents uriComponents = UriComponentsBuilder
                 .newInstance()
                 .scheme("http")
@@ -71,13 +70,18 @@ public class RawPublicLibraryScheduler {
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
 
         log.info(responseEntity.getBody());
-        dataCount = new JSONObject(responseEntity.getBody())
-                .getJSONObject("SeoulPublicLibraryInfo")
-                .getInt("list_total_count");
+        try {
+            dataCount = new JSONObject(responseEntity.getBody())
+                    .getJSONObject("SeoulPublicLibraryInfo")
+                    .getInt("list_total_count");
+        } catch (JSONException jsonException) {
+            log.error("JSONException {}", jsonException.toString());
+        }
+
         log.info("dataCount : " + dataCount);
     }
 
-    public void updatePublicLibrary() throws JsonProcessingException, JSONException {
+    public void updatePublicLibrary() {
         List<SeoulPublicLibraryInfo.RawLibrary> libraries = getPublicLibraryFromOpenApi();
 
         // stream api로
@@ -104,7 +108,7 @@ public class RawPublicLibraryScheduler {
     }
 
 
-    private List<SeoulPublicLibraryInfo.RawLibrary> getPublicLibraryFromOpenApi() throws JsonProcessingException, JSONException {
+    private List<SeoulPublicLibraryInfo.RawLibrary> getPublicLibraryFromOpenApi() {
         int start;
         List<SeoulPublicLibraryInfo.RawLibrary> rawLibraries = new ArrayList<>();
         for (start = 1; start <= dataCount; start += BATCH_SIZE) {
