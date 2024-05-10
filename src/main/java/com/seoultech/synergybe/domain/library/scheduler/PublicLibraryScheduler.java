@@ -30,7 +30,7 @@ public class PublicLibraryScheduler {
 
         List<PublicLibrary> publicLibraries = rawPublicLibraryList.stream().map(
                 rawPublicLibrary -> PublicLibrary.builder()
-                        .id(idGenerator.generateId(IdPrefix.LIBRARY))
+                        .id(idGenerator.generateId(IdPrefix.PUBLIC_LIBRARY))
                         .name(rawPublicLibrary.getName())
                         .address(rawPublicLibrary.getAddress())
                         .telNumber(rawPublicLibrary.getTelNumber())
