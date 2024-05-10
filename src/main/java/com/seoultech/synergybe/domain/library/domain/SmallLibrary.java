@@ -36,6 +36,7 @@ public class SmallLibrary {
 
     @Builder
     public SmallLibrary(
+            String id,
             String name,
             String address,
             String telNumber,
@@ -44,6 +45,7 @@ public class SmallLibrary {
             String closeDate,
             Point location
     ) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.telNumber = telNumber;
