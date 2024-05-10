@@ -1,5 +1,7 @@
 package com.seoultech.synergybe.domain.chat.handler;
 
+import com.seoultech.synergybe.domain.chat.exception.WebSocketBadRequestException;
+import com.seoultech.synergybe.system.exception.ErrorCode;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
@@ -24,6 +26,6 @@ public class WebSocketSessionMap {
                 return entry.getKey();
             }
         }
-        return null; // 세션을 찾지 못한 경우
+        throw new WebSocketBadRequestException(ErrorCode.BAD_REQUEST, "채팅방 세션을 찾을 수 없습니다.");
     }
 }

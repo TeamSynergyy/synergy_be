@@ -79,6 +79,7 @@ public class UserService {
         User user = getUser(userId);
 
         return GetUserAccountResponse.builder()
+                .userId(user.getId())
                 .email(user.getEmail().getEmail())
                 .major(user.getMajor().getMajor())
                 .name(user.getName().getName())
