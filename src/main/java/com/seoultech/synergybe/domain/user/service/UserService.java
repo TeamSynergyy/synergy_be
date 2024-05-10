@@ -7,6 +7,7 @@ import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
+import com.seoultech.synergybe.domain.email.MailService;
 import com.seoultech.synergybe.domain.user.dto.response.*;
 import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
 import com.seoultech.synergybe.domain.user.exception.UserNotFoundException;
@@ -14,6 +15,7 @@ import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.vo.UserEmail;
 import com.seoultech.synergybe.system.exception.ErrorCode;
+import com.seoultech.synergybe.system.utils.EmailRequest;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -27,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CustomPasswordEncoder passwordEncoder;
     private final IdGenerator idGenerator;
+    private final MailService mailService;
 
     @Transactional
     public String createUser(
@@ -59,6 +61,8 @@ public class UserService {
                 .major(major)
                 .build();
         userRepository.save(user);
+
+        mailService.validateEmail(email);
 
         return user.getId();
     }
@@ -180,6 +184,15 @@ public class UserService {
             });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void validateEmail(EmailRequest request) {
+        boolean isAuthorize = mailService.checkAuthNumber(request.email(), request.authNumber());
+
+        if (!isAuthorize) {
+            // todo
+            // 인증번호가 다르다면 회원가입 진행하지 않음
         }
     }
 }

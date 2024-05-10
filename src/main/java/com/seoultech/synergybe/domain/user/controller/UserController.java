@@ -8,6 +8,7 @@ import com.seoultech.synergybe.domain.user.dto.response.GetUserAccountResponse;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.config.login.LoginUser;
+import com.seoultech.synergybe.system.utils.EmailRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,12 +29,18 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-
     @Operation(summary = "나의 정보", description = "내 프로필 정보가 반환됩니다.")
     @GetMapping(value = "/me/info")
     public ResponseEntity<GetUserAccountResponse> getMyInfo(@LoginUser String userId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo(userId));
+    }
+
+    @PostMapping("/email-auth")
+    public ResponseEntity<Void> validateEmail(@Valid @RequestBody EmailRequest request) {
+        userService.validateEmail(request);
+
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "유저 조회", description = "유저Id 기준으로 해당 유저를 반환합니다.")
