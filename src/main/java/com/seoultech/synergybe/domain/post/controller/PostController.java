@@ -7,8 +7,6 @@ import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.dto.response.GetListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
 import com.seoultech.synergybe.domain.post.service.PostService;
-import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
