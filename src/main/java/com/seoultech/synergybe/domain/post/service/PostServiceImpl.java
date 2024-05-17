@@ -16,6 +16,7 @@ import com.seoultech.synergybe.domain.post.dto.response.GetListPostResponse;
 import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
 import com.seoultech.synergybe.domain.post.exception.PostBadRequestException;
 import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
+import com.seoultech.synergybe.domain.post.repository.PostReader;
 import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
 import com.seoultech.synergybe.domain.user.User;
@@ -47,8 +48,11 @@ public class PostServiceImpl implements PostService {
     private final PostLikeService postLikeService;
     private final IdGenerator idGenerator;
     private final UserService userService;
+    private final PostReader postReader;
+    private final PostValidator postValidator;
 //    private final ImageService imageService;
 
+    @Override
     public GetPostResponse createPost(String userId, CreatePostRequest request) {
         User user = userService.getUser(userId);
         if (request.files() == null) {
@@ -86,8 +90,9 @@ public class PostServiceImpl implements PostService {
         // todo
         // user 검증
         User user = userService.getUser(userId);
-
         Post post = findPostById(request.postId());
+
+        postValidator.validateUser(user, post);
         validateUser(user, post);
         post.updatePost(request.title(), request.content());
 //        List<String> imagesUrl = imageService.getImageUrlByPostId(request.getPostId());
@@ -107,6 +112,7 @@ public class PostServiceImpl implements PostService {
     public void deletePost(String userId, String postId) {
         Post post = this.findPostById(postId);
         User user = userService.getUser(userId);
+        postValidator.validateUser(user, post);
         validateUser(user, post);
         postRepository.delete(post);
     }
