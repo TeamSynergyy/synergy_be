@@ -11,7 +11,7 @@ import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.service.PostService;
+import com.seoultech.synergybe.domain.post.business.PostService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;

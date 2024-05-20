@@ -4,7 +4,7 @@ import com.seoultech.synergybe.domain.common.constants.LikeStatus;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.repository.PostRepository;
+import com.seoultech.synergybe.domain.post.data.PostJpaRepository;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
 import com.seoultech.synergybe.domain.postlike.dto.response.GetPostLikeResponse;
@@ -25,7 +25,7 @@ import java.util.Optional;
 public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final IdGenerator idGenerator;
-    private final PostRepository postRepository;
+    private final PostJpaRepository postJpaRepository;
 
     @Transactional
     public GetPostLikeResponse updatePostLike(User user, String postId, PostLikeType type) {
@@ -61,7 +61,7 @@ public class PostLikeService {
     public synchronized PostLike update(User user, String postId, LikeStatus likeStatus) {
         Optional<PostLike> postLikeOptional = postLikeRepository.findByUserUserIdAndPostId(user.getId(), postId);
 
-        Post post = postRepository.findById(postId)
+        Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new PostLikeNotFoundException("존재하지 않는 좋아요입니다."));
 
         if (postLikeOptional.isPresent()) {
