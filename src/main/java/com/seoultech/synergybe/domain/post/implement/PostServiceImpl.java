@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.service;
+package com.seoultech.synergybe.domain.post.implement;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -10,14 +10,15 @@ import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.follow.service.FollowService;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
-import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
-import com.seoultech.synergybe.domain.post.dto.response.GetListPostResponse;
-import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
+import com.seoultech.synergybe.domain.post.business.PostMapperEntityToDto;
+import com.seoultech.synergybe.domain.post.business.PostService;
+import com.seoultech.synergybe.domain.post.presentation.dto.request.CreatePostRequest;
+import com.seoultech.synergybe.domain.post.presentation.dto.request.UpdatePostRequest;
+import com.seoultech.synergybe.domain.post.presentation.dto.response.GetListPostResponse;
+import com.seoultech.synergybe.domain.post.presentation.dto.response.GetPostResponse;
 import com.seoultech.synergybe.domain.post.exception.PostBadRequestException;
 import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
-import com.seoultech.synergybe.domain.post.repository.PostReader;
-import com.seoultech.synergybe.domain.post.repository.PostRepository;
+import com.seoultech.synergybe.domain.post.data.PostJpaRepository;
 import com.seoultech.synergybe.domain.postlike.service.PostLikeService;
 import com.seoultech.synergybe.domain.user.User;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -43,7 +44,7 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-    private final PostRepository postRepository;
+    private final PostJpaRepository postJpaRepository;
     private final FollowService followService;
     private final PostLikeService postLikeService;
     private final IdGenerator idGenerator;
@@ -52,8 +53,26 @@ public class PostServiceImpl implements PostService {
     private final PostValidator postValidator;
 //    private final ImageService imageService;
 
+    /**
+     * 게시글 객체 생성 비즈니스 로직은 ?
+     * - 게시글 생성
+     * - 게시글 저장 객체에 저장을 위임
+     * 필요한 인자를 어떻게 정리할 수 있을까 ?
+     * Post 생성에 필요한 인자들
+     *
+     * @param userId
+     * @param request
+     * @return
+     */
     @Override
     public GetPostResponse createPost(String userId, CreatePostRequest request) {
+        /**
+         * 게시글 객체 생성 비즈니스 로직은 ?
+         * - 게시글 생성
+         * - 게시글 저장 객체에 저장을 위임
+         * -
+         */
+
         User user = userService.getUser(userId);
         if (request.files() == null) {
             log.info(">> getfiles is null");
@@ -64,7 +83,7 @@ public class PostServiceImpl implements PostService {
                     .content(request.content())
                     .user(user)
                     .build();
-            Post savedPost = postRepository.save(post);
+            Post savedPost = postJpaRepository.save(post);
 
             return GetPostResponse.builder()
                     .postId(savedPost.getId())
@@ -114,13 +133,13 @@ public class PostServiceImpl implements PostService {
         User user = userService.getUser(userId);
         postValidator.validateUser(user, post);
         validateUser(user, post);
-        postRepository.delete(post);
+        postJpaRepository.delete(post);
     }
 
 
 
     public List<Post> findAllByFollowingIdAndEndId(String userId, Long end) {
-        return postRepository.findAllByFollowingIdAndEndId(userId, end);
+        return postJpaRepository.findAllByFollowingIdAndEndId(userId, end);
     }
 
 
@@ -136,8 +155,8 @@ public class PostServiceImpl implements PostService {
 
         // offset은 시작 지점
         // 0부터 시작하며 다음 요청시마다 10씩 증가해야함
-        List<Post> posts = postRepository.findAllByCreateAtAndLimit(offset);
-        int totalCount = postRepository.countTotalPostSize();
+        List<Post> posts = postJpaRepository.findAllByCreateAtAndLimit(offset);
+        int totalCount = postJpaRepository.countTotalPostSize();
 
         boolean hasNext;
         int pageSize = 10;
@@ -156,7 +175,7 @@ public class PostServiceImpl implements PostService {
 
 
     public ListResponse<GetPostResponse> getPostListByUser(String userId) {
-        List<Post> posts = postRepository.findAllByUserId(userId);
+        List<Post> posts = postJpaRepository.findAllByUserId(userId);
         ListResponse<GetPostResponse> getPostResponseListResponse = new ListResponse(posts);
 
         return getPostResponseListResponse;
@@ -215,7 +234,7 @@ public class PostServiceImpl implements PostService {
         // query 생성
         Specification<Post> spec = this.search(keyword);
 
-        Page<Post> posts = postRepository.findAll(spec, pageable);
+        Page<Post> posts = postJpaRepository.findAll(spec, pageable);
         // 위에서 post를 바로 images url을 넣어서 전달해야함
 
 
@@ -275,7 +294,7 @@ public class PostServiceImpl implements PostService {
             List<String> result = postIds.subList(startIdx, endIdx);
             log.info(">> postIds result {} ", result);
 
-            List<Post> posts = postRepository.findAllByIdInOrderByListOrder(result);
+            List<Post> posts = postJpaRepository.findAllByIdInOrderByListOrder(result);
 
             ListResponse<GetPostResponse> getPostResponseListResponse = new ListResponse(posts);
 
@@ -325,12 +344,12 @@ public class PostServiceImpl implements PostService {
     }
 
     public Post findPostById(String postId) {
-        return postRepository.findById(postId)
+        return postJpaRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시글입니다."));
     }
 
     public GetListPostResponse getWeekBestPostList() {
-        List<GetPostResponse> postList = postRepository.findAllByMostLikedAndRecentOneWeek();
+        List<GetPostResponse> postList = postJpaRepository.findAllByMostLikedAndRecentOneWeek();
         PageInfo pageInfo = PageInfo.of(postList.size());
         return new GetListPostResponse(postList, pageInfo);
     }

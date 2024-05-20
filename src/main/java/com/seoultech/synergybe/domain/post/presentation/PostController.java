@@ -1,16 +1,18 @@
-package com.seoultech.synergybe.domain.post.controller;
+package com.seoultech.synergybe.domain.post.presentation;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.dto.request.CreatePostRequest;
-import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
-import com.seoultech.synergybe.domain.post.dto.response.GetListPostResponse;
-import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
-import com.seoultech.synergybe.domain.post.service.PostService;
+import com.seoultech.synergybe.domain.post.presentation.dto.CreatePostDto;
+import com.seoultech.synergybe.domain.post.presentation.dto.request.CreatePostRequest;
+import com.seoultech.synergybe.domain.post.presentation.dto.request.UpdatePostRequest;
+import com.seoultech.synergybe.domain.post.presentation.dto.response.GetListPostResponse;
+import com.seoultech.synergybe.domain.post.presentation.dto.response.GetPostResponse;
+import com.seoultech.synergybe.domain.post.business.PostService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -29,11 +33,20 @@ public class PostController {
     private final PostService postService;
 
 
+
     @Operation(summary = "post 생성", description = "PostResponse가 반환되며 이미지가 함께 저장됩니다.")
     @PostMapping
-    public ResponseEntity<GetPostResponse> createPost(@ModelAttribute CreatePostRequest request, @LoginUser String userId) {
+    public ResponseEntity<GetPostResponse> createPost(@ModelAttribute @Valid CreatePostRequest request, @LoginUser String userId) {
+        // service layer에 맞게 변경 필요
+        CreatePostDto createPostDto = new CreatePostDto(
+                request.title(),
+                request.content(),
+                request.files() == null ? List.of() : request.files()
+        );
+        GetPostResponse response = postService.createPost(userId, createPostDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(userId, request));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body();
     }
 
     @Operation(summary = "post 수정", description = "PostResponse가 반환되며 UpdatePostRequest에 담긴 내용으로 수정됩니다.")

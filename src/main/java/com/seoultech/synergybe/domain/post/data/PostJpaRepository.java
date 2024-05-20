@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.repository;
+package com.seoultech.synergybe.domain.post.data;
 
 import com.seoultech.synergybe.domain.post.Post;
 import org.springframework.data.domain.Page;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, String>, PostRepositoryCustom {
+public interface PostJpaRepository extends JpaRepository<Post, String>, PostRepositoryCustom {
 
     @Query(value = "SELECT * FROM post WHERE post_id < :postId AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
     List<Post> findAllByEndId(@Param("postId") String postId);

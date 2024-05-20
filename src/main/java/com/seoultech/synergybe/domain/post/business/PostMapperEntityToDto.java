@@ -1,10 +1,9 @@
-package com.seoultech.synergybe.domain.post.service;
+package com.seoultech.synergybe.domain.post.business;
 
-import com.seoultech.synergybe.domain.comment.dto.response.GetCommentResponse;
 import com.seoultech.synergybe.domain.common.PageInfo;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.dto.response.GetListPostResponse;
-import com.seoultech.synergybe.domain.post.dto.response.GetPostResponse;
+import com.seoultech.synergybe.domain.post.presentation.dto.response.GetListPostResponse;
+import com.seoultech.synergybe.domain.post.presentation.dto.response.GetPostResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
