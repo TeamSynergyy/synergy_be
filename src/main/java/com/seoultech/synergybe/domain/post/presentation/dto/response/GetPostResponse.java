@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.dto.response;
+package com.seoultech.synergybe.domain.post.presentation.dto.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

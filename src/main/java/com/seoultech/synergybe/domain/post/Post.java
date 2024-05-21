@@ -3,7 +3,6 @@ package com.seoultech.synergybe.domain.post;
 import com.seoultech.synergybe.domain.comment.Comment;
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.image.Image;
-import com.seoultech.synergybe.domain.post.dto.request.UpdatePostRequest;
 import com.seoultech.synergybe.domain.post.vo.PostAuthorName;
 import com.seoultech.synergybe.domain.post.vo.PostContent;
 import com.seoultech.synergybe.domain.post.vo.PostThumbnailImageId;

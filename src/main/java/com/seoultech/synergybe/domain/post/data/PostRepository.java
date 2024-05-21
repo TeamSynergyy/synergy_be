@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.repository;
+package com.seoultech.synergybe.domain.post.data;
 
 import com.seoultech.synergybe.domain.post.Post;
 import org.springframework.data.domain.Page;
@@ -7,23 +7,18 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface PostRepository extends JpaRepository<Post, String>, PostRepositoryCustom {
 
     @Query(value = "SELECT * FROM post WHERE post_id < :postId AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
     List<Post> findAllByEndId(@Param("postId") String postId);
 
-    @Query(value = "SELECT * FROM post WHERE user_id = :userId AND is_deleted = 0", nativeQuery = true)
-    List<Post> findAllByUserId(@Param("userId") String userId);
-
     Page<Post> findAll(Specification<Post> spec, Pageable pageable);
 
     @Query(value = "SELECT * FROM (SELECT * FROM post WHERE user_id = :userId) p WHERE post_id < :end AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
-    List<Post> findAllByFollowingIdAndEndId(@Param("userId") String userId, @Param("end") Long end);
+    List<Post> findAllByIdsAndEndId(@Param("userId") String userId, @Param("end") Long end);
 
     @Query(value = "SELECT count(*) FROM post WHERE post_id < :end AND is_deleted = 0", nativeQuery = true)
     int countPostList(@Param("end") String end);

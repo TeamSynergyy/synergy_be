@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.dto.request;
+package com.seoultech.synergybe.domain.post.presentation.dto.request;
 
 import com.seoultech.synergybe.domain.image.Image;
 import com.seoultech.synergybe.domain.post.Post;
