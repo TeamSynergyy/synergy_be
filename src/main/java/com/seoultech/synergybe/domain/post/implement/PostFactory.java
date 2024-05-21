@@ -22,6 +22,7 @@ public class PostFactory {
                 .id(postId)
                 .title(title)
                 .content(content)
+                .user(user)
                 .build();
         return post;
     }
