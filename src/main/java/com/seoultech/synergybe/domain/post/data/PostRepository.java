@@ -15,9 +15,6 @@ public interface PostRepository extends JpaRepository<Post, String>, PostReposit
     @Query(value = "SELECT * FROM post WHERE post_id < :postId AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
     List<Post> findAllByEndId(@Param("postId") String postId);
 
-//    @Query(value = "SELECT * FROM post WHERE user_id = :userId AND is_deleted = 0", nativeQuery = true)
-//    List<Post> findAllByUserId(@Param("userId") String userId);
-
     Page<Post> findAll(Specification<Post> spec, Pageable pageable);
 
     @Query(value = "SELECT * FROM (SELECT * FROM post WHERE user_id = :userId) p WHERE post_id < :end AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)

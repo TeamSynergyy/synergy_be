@@ -30,7 +30,6 @@ public class PostJpaRepository {
     }
 
     public List<Post> findAllRecentByCount(Long offset) {
-        System.out.println("v1");
         return postRepository.findAllRecentByCount(offset);
     }
 

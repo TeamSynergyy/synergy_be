@@ -2,7 +2,6 @@ package com.seoultech.synergybe.domain.post.implement;
 
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.business.dto.UpdatePostDto;
-//import com.seoultech.synergybe.domain.post.data.PostRepository;
 import com.seoultech.synergybe.domain.post.data.PostJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
