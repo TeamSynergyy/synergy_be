@@ -15,13 +15,12 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "user_refresh_token")
 public class UserRefreshToken {
-    @JsonIgnore
     @Id
     @Column(name = "user_refresh_token_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long refreshTokenSeq;
+    private Long id;
 
-    @Column(name = "user_id", length = 64, unique = true)
+    @Column(name = "user_id")
     private String userId;
 
     @Column(name = "refresh_token", length = 256)
