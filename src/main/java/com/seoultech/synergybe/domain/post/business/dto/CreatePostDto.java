@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.presentation.dto;
+package com.seoultech.synergybe.domain.post.business.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
