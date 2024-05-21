@@ -21,7 +21,7 @@ import java.util.List;
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; // Header KEY 값
     public static final String BEARER_PREFIX = "Bearer "; // Token 식별자
-    private static final long TOKEN_TIME = Duration.ofHours(5).toMillis(); // 토큰 만료시간 5hours
+    private static final long TOKEN_TIME = Duration.ofDays(5).toMillis(); // 토큰 만료시간 5 days
 
     @Value("${jwt.secret}") // Base 64 decode시 사용하는 Key
     private String secretKey;
@@ -38,7 +38,6 @@ public class JwtUtil {
 
     public String createToken(String userId, String email) {
         Date date = new Date();
-//        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256); //or HS384 or HS512
 
         return BEARER_PREFIX +
                 Jwts.builder()
@@ -75,14 +74,6 @@ public class JwtUtil {
         }
         return false;
     }
-
-//    public CustomClaims parseAccessToken(String token) {
-//        try {
-//            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
-//                    .getBody();
-//            String userId = claims.getSubject();
-//        }
-//    }
 
     // 토큰의 사용자 정보
     public Claims getUserInfoFromToken(String token) {
