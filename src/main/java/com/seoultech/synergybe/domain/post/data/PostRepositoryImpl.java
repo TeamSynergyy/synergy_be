@@ -77,9 +77,12 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public List<Post> findAllByFollowerIds(List<String> userIds) {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+
         return queryFactory
                 .selectFrom(post)
-                .where(post.user.id.in(userIds))
+                .where(post.user.id.in(userIds)
+                        .and(post.createAt.goe(oneWeekAgo)))
                 .orderBy(post.createAt.desc())
                 .limit(10)
                 .fetch();
