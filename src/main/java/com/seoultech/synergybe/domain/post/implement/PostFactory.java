@@ -18,12 +18,11 @@ public class PostFactory {
     public Post createPost(User user, String title, String content, List<MultipartFile> files) {
         String postId = idGenerator.generateId(IdPrefix.POST);
 
-        Post post = Post.builder()
+        return Post.builder()
                 .id(postId)
                 .title(title)
                 .content(content)
                 .user(user)
                 .build();
-        return post;
     }
 }
