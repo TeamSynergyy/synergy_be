@@ -1,21 +1,15 @@
 package com.seoultech.synergybe.domain.post.business;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
+import com.seoultech.synergybe.domain.follow.implement.FollowReader;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.data.PostRepository;
-import com.seoultech.synergybe.domain.post.implement.PostFactory;
-import com.seoultech.synergybe.domain.post.implement.PostReader;
-import com.seoultech.synergybe.domain.post.implement.PostValidator;
-import com.seoultech.synergybe.domain.post.presentation.dto.CreatePostDto;
-import com.seoultech.synergybe.domain.post.presentation.dto.request.UpdatePostRequest;
-import com.seoultech.synergybe.domain.post.presentation.dto.response.GetListPostResponse;
+import com.seoultech.synergybe.domain.post.business.dto.UpdatePostDto;
+import com.seoultech.synergybe.domain.post.implement.*;
+import com.seoultech.synergybe.domain.post.business.dto.CreatePostDto;
 import com.seoultech.synergybe.domain.post.presentation.dto.response.GetPostResponse;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.repository.UserReader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,42 +18,70 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
     private final UserReader userReader;
+    private final FollowReader followReader;
     private final PostReader postReader;
     private final PostFactory postFactory;
+    private final PostManager postManager;
     private final PostValidator postValidator;
-    private final PostRepository postRepository;
 
-    protected GetPostResponse createPost(String userId, CreatePostDto postData) {
+    public GetPostResponse createPost(String userId, CreatePostDto postData) {
         User user = userReader.read(userId);
         Post post = postFactory.createPost(user, postData.title(), postData.content(), postData.files());
-        postRepository.save(post);
+        postManager.save(post);
 
         return GetPostResponse.builder()
                 .postId(post.getId())
                 .build();
     }
 
-    GetPostResponse updatePost(String userId, UpdatePostRequest request);
+    public GetPostResponse updatePost(String userId, UpdatePostDto updatePostDto) {
+        User user = userReader.read(userId);
+        Post post = postReader.read(updatePostDto.postId());
 
-    void deletePost(String userId, String postId);
+        postValidator.validateUser(user, post);
+        postManager.update(post, updatePostDto);
 
-    List<Post> findAllByFollowingIdAndEndId(String userId, Long end);
+        return GetPostResponse.builder()
+                .postId(post.getId())
+                .build();
+    }
 
-    GetListPostResponse getPostRecentList(Long offset);
+    public void deletePost(String userId, String postId) {
+        User user = userReader.read(userId);
+        Post post = postReader.read(postId);
 
-    ListResponse<GetPostResponse> getPostListByUser(String userId);
+        postValidator.validateUser(user, post);
+        postManager.delete(post);
+    }
 
-    ListResponse<GetPostResponse> getFeed(Long end, User user);
+    public ListResponse<GetPostResponse> getRecentList(Long offset) {
 
-    Page<Post> searchAllPosts(String keyword, Pageable pageable);
+        return postReader.readRecentList(offset);
+    }
 
-    Specification<Post> search(String keyword);
+    public GetPostResponse getPost(String postId) {
+        Post post = postReader.read(postId);
+        System.out.println(postId);
 
-    ListResponse<GetPostResponse> getRecommendPostList(User user, Long end);
+        return PostMapperEntityToDto.postToResponse(post);
+    }
 
-    GetPostResponse getPost(String postId);
+    public ListResponse<GetPostResponse> getFeed(Long end, String userId) {
+        List<String> followingIds = followReader.readFollowingIds(userId);
+        System.out.println(followingIds.size());
 
-    Post findPostById(String postId);
+        return postReader.readFeed(followingIds);
+    }
 
-    GetListPostResponse getWeekBestPostList();
+    public ListResponse<GetPostResponse> getList(String userId) {
+        return postReader.readListByUser(userId);
+    }
+
+//    Page<Post> searchAllPosts(String keyword, Pageable pageable);
+//
+//    Specification<Post> search(String keyword);
+
+    public ListResponse<GetPostResponse> getWeekBestPostList() {
+        return postReader.readWeekBest();
+    }
 }
