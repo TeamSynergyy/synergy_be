@@ -6,13 +6,19 @@ import com.seoultech.synergybe.domain.post.presentation.dto.response.GetPostResp
 import java.util.List;
 
 public interface PostRepositoryCustom {
-    List<Post> findAllByCreateAtAndLimit(Long offset);
+//    List<Post> findAllByCreateAtAndLimit(Long offset);
+
+    List<Post> findAllRecentByCount(Long offset);
 
     List<Post> findAllByUserId(String userId);
 
-    List<Post> findAllByFollowingIdAndEndSeq(String followingId, Long end);
+//    List<Post> findAllByFollowingIdAndEndSeq(String followingId, Long end);
 
-    int countTotalPostSize();
+    Long countSize();
 
-    List<GetPostResponse> findAllByMostLikedAndRecentOneWeek();
+    Long totalSizeUser(String userId);
+
+    List<Post> WeekBest();
+
+    List<Post> findAllByFollowerIds(List<String> userIds);
 }

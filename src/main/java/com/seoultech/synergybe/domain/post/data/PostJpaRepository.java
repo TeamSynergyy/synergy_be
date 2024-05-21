@@ -1,47 +1,56 @@
 package com.seoultech.synergybe.domain.post.data;
 
 import com.seoultech.synergybe.domain.post.Post;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Repository
-public interface PostJpaRepository extends JpaRepository<Post, String>, PostRepositoryCustom {
+@Component
+@RequiredArgsConstructor
+public class PostJpaRepository {
+    private final PostRepository postRepository;
 
-    @Query(value = "SELECT * FROM post WHERE post_id < :postId AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
-    List<Post> findAllByEndId(@Param("postId") String postId);
+    public void save(Post post) {
+        postRepository.save(post);
+    }
 
-    @Query(value = "SELECT * FROM post WHERE user_id = :userId AND is_deleted = 0", nativeQuery = true)
-    List<Post> findAllByUserId(@Param("userId") String userId);
+    public void delete(Post post) {
+        postRepository.delete(post);
+    }
 
-    Page<Post> findAll(Specification<Post> spec, Pageable pageable);
+    public Post findById(String postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시글입니다."));
+    }
 
-    @Query(value = "SELECT * FROM (SELECT * FROM post WHERE user_id = :userId) p WHERE post_id < :end AND is_deleted = 0 ORDER BY post_id DESC LIMIT 10", nativeQuery = true)
-    List<Post> findAllByFollowingIdAndEndId(@Param("userId") String userId, @Param("end") Long end);
+    public List<Post> findAllByEndId(String postId) {
+        return postRepository.findAllByEndId(postId);
+    }
 
-    @Query(value = "SELECT count(*) FROM post WHERE post_id < :end AND is_deleted = 0", nativeQuery = true)
-    int countPostList(@Param("end") String end);
+    public List<Post> findAllRecentByCount(Long offset) {
+        System.out.println("v1");
+        return postRepository.findAllRecentByCount(offset);
+    }
 
-    @Query(value = "SELECT count(*) FROM (SELECT * FROM post WHERE user_id = :userId AND is_deleted = 0) p WHERE post_id < :end AND is_deleted = 0", nativeQuery = true)
-    int countFeed(@Param("end") Long end);
+    public Long countSize() {
+        return postRepository.countSize();
+    }
 
-    @Query(value =
-            "SELECT p.post_id, p.create_at, p.update_at, p.author_name, p.content, p.is_deleted, p.title, p.user_id, p.thumbnail_image_id, COUNT(pl.post_like_id) AS like_count " +
-            "FROM post p " +
-            "LEFT JOIN post_like pl ON p.post_id = pl.post_id " +
-            "WHERE p.create_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) AND p.is_deleted = 0 " +
-            "GROUP BY p.post_id " +
-            "ORDER BY like_count DESC " +
-            "LIMIT 5"
-            , nativeQuery = true)
-    List<Post> findAllByLikeAndDate();
+    public Long countPostSizeByUserId(String userId) {
+        return postRepository.totalSizeUser(userId);
+    }
 
-    @Query(value = "SELECT * FROM post WHERE post_id IN :ids ORDER BY FIELD(post_id, :ids)", nativeQuery = true)
-    List<Post> findAllByIdInOrderByListOrder(@Param("ids") List<String> ids);
+    public List<Post> findAllByFollowerIds(List<String> followingIds) {
+        return postRepository.findAllByFollowerIds(followingIds);
+    }
+
+    public List<Post> WeekBest() {
+        return postRepository.WeekBest();
+    }
+
+    public List<Post> findAllByUserId(String userId) {
+        return postRepository.findAllByUserId(userId);
+    }
 }
