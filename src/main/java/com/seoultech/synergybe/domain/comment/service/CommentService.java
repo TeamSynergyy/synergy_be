@@ -11,7 +11,7 @@ import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.business.PostService;
+import com.seoultech.synergybe.domain.post.implement.PostReader;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +26,14 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
 
-    private final PostService postService;
+    private final PostReader postReader;
     private final UserService userService;
 
     private final NotificationService notificationService;
     private final IdGenerator idGenerator;
 
     public GetCommentResponse createComment(String userId, CreateCommentRequest request) {
-        Post post = postService.findPostById(request.postId());
+        Post post = postReader.read(request.postId());
         User user = userService.getUser(userId);
         String commentId = idGenerator.generateId(IdPrefix.COMMENT);
 
