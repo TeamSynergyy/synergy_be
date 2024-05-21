@@ -1,11 +1,9 @@
 package com.seoultech.synergybe.domain.post.presentation.dto.request;
 
-import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.user.User;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 
 public record UpdatePostRequest(
         @NotBlank(message = "게시글 제목은 필수항목입니다.")
@@ -13,14 +11,7 @@ public record UpdatePostRequest(
         @NotBlank(message = "게시글 내용은 필수항목입니다.")
         String content,
         @NotBlank(message = "게시글ID는 필수항목입니다.")
-        String postId
+        String postId,
+        List<MultipartFile> files
 ) {
-
-//    public Post toEntity(User user) {
-//        return Post.builder()
-//                .user(user)
-//                .title(title)
-//                .content(content)
-//                .build();
-//    }
 }
