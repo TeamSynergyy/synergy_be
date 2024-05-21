@@ -30,6 +30,10 @@ public class PostLikeService {
     @Transactional
     public GetPostLikeResponse updatePostLike(User user, String postId, PostLikeType type) {
         LikeStatus status;
+        log.info("before find");
+        Post post = postJpaRepository.findById(postId);
+        log.info("after find");
+
         if (type.getLikeType().equals("like")) {
             status = LikeStatus.LIKE;
         } else {
@@ -59,10 +63,11 @@ public class PostLikeService {
      * post에서 해당 postlike 추가
      */
     public synchronized PostLike update(User user, String postId, LikeStatus likeStatus) {
-        Optional<PostLike> postLikeOptional = postLikeRepository.findByUserUserIdAndPostId(user.getId(), postId);
+        Optional<PostLike> postLikeOptional = postLikeRepository.findByUserIdAndPostId(user.getId(), postId);
+        log.info("option");
 
-        Post post = postJpaRepository.findById(postId)
-                .orElseThrow(() -> new PostLikeNotFoundException("존재하지 않는 좋아요입니다."));
+        Post post = postJpaRepository.findById(postId);
+        log.info("post");
 
         if (postLikeOptional.isPresent()) {
             postLikeOptional.get().updateStatus(likeStatus);
