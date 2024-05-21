@@ -17,6 +17,10 @@ public class UserRefreshTokenReader {
     }
 
     public UserRefreshToken readByRefreshToken(String token) {
-        return userRefreshTokenRepository.findByRefreshToken(token);
+        return userRefreshTokenRepository.findByRefreshTokenRefreshToken(token);
+    }
+
+    public String readUserByRefreshToken(String token) {
+        return userRefreshTokenRepository.findUserIdByRefreshTokenRefreshToken(token);
     }
 }

@@ -68,21 +68,23 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 // 재로그인 요청
                 return true;
             }
-            String userId = "";
-            String email = "";
+
+            String userId = userRefreshTokenReader.readUserByRefreshToken(refreshToken);
+            String email = userDetailsService.getUserEmail(userId);;
 
             // accessToken 재발급
-            String newRefreshToken = jwtUtil.createToken(userId, email);
-
-
+            String newAccessToken = jwtUtil.createToken(userId, email);
 
 
             // refreshToken 재발급
-            UserRefreshToken userRefreshToken = userRefreshTokenReader.readByRefreshToken(newRefreshToken);
+            UserRefreshToken userRefreshToken = userRefreshTokenReader.readByRefreshToken(refreshToken);
             userRefreshToken.updateRefreshToken();
 
+            addRefreshTokenCookie(response, userRefreshToken);
 
 
+            // Add JWT token in the Authorization header
+            response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.setContentType("application/json");
             String result = new ObjectMapper().writeValueAsString(
@@ -93,6 +95,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return true;
         }
         return false;
+    }
+
+    private void addRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken) {
+        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // Set to true if using HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed
+        cookie.setAttribute("SameSite", "Strict"); // Can be "Lax" or "Strict" depending on your requirements
+        response.addCookie(cookie);
     }
 
     private String getRefreshTokenFromRequest(HttpServletRequest request) {
