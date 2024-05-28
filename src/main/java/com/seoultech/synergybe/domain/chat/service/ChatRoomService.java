@@ -9,6 +9,7 @@ import com.seoultech.synergybe.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,13 +33,18 @@ public class ChatRoomService {
 
     public List<GetChatRoomResponse> getChatRoomsByUserId(String userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findAllByCreateUserIdOrAttendUserId(userId);
-
-        List<GetChatRoomResponse> getChatRoomResponses = chatRooms.stream().map(
-                chatRoom -> new GetChatRoomResponse(
-                        chatRoom.getId(), chatRoom.getName()
-                )
+        return chatRooms.stream().map(
+                chatRoom -> {
+                    // 기존 userIds 리스트를 복사하고, 새로운 userId를 추가
+                    List<String> newUserIds = new ArrayList<>();
+                    newUserIds.add(chatRoom.getCreateUser().getId());
+                    newUserIds.add(chatRoom.getAttendUser().getId());
+                    return new GetChatRoomResponse(
+                            chatRoom.getId(),
+                            chatRoom.getName(),
+                            newUserIds
+                    );
+                }
         ).toList();
-
-        return getChatRoomResponses;
     }
 }
