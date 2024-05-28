@@ -17,9 +17,8 @@ import java.util.List;
 public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
 
-    public void saveChat(ChatMessageRequest chatMessageRequest) {
+    public String saveChat(ChatMessageRequest chatMessageRequest) {
         // mongoDB는 UTC로 저장되므로 +9를 해주어 한국시간과 맞춘다
-//        LocalDateTime createAt = LocalDateTime.now().plusHours(9);
         LocalDateTime createAt = LocalDateTime.now();
 
         if (chatMessageRequest.chatType().equals(ChatType.TEXT)) {
@@ -31,10 +30,16 @@ public class ChatMessageService {
                     .createAt(createAt)
                     .build();
 
-            log.info("chatMessage Id" + chatMessage.getId());
+            log.info("chatMessage Id: " + chatMessage.getId());
+
             log.info("chatMessage message " + chatMessage.getMessage());
 
-            chatMessageRepository.save(chatMessage);
+            ChatMessage chat = chatMessageRepository.save(chatMessage);
+
+            log.info("chat Id: " + chat.getId());
+
+
+            return chat.getId();
 
         } else if (chatMessageRequest.chatType().equals(ChatType.IMAGE)) {
             ChatMessage chatMessage = ChatMessage.builder()
@@ -46,7 +51,11 @@ public class ChatMessageService {
                     .createAt(createAt)
                     .build();
             chatMessageRepository.save(chatMessage);
+
+            return chatMessage.getId();
+
         }
+        return "";
     }
 
     public List<ChatMessage> getChatListByChatRoomId(Long chatRoomId) {
