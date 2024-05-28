@@ -11,6 +11,4 @@ public interface UserRefreshTokenRepository extends JpaRepository<UserRefreshTok
     Optional<UserRefreshToken> findByUserId(String userId);
 
     UserRefreshToken findByRefreshTokenRefreshToken(String token);
-
-    String findUserIdByRefreshTokenRefreshToken(String token);
 }
