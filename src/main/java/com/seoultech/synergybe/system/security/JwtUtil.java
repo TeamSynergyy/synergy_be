@@ -29,6 +29,11 @@ public class JwtUtil {
     private static final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
+    public enum TokenStatus {
+        VALID,
+        INVALID,
+        EXPIRED
+    }
 
     @PostConstruct
     public void init() {
@@ -59,20 +64,25 @@ public class JwtUtil {
     }
 
     // 토큰 검증
-    public boolean validateToken(String token) {
+    public TokenStatus validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            return TokenStatus.VALID;
         } catch (SecurityException | MalformedJwtException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+            return TokenStatus.INVALID;
         } catch (ExpiredJwtException e) {
             logger.error("Expired JWT token, 만료된 JWT token 입니다.");
+            logger.info("after expired error log");
+            return TokenStatus.EXPIRED;
+
         } catch (UnsupportedJwtException e) {
             logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+            return TokenStatus.INVALID;
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+            return TokenStatus.INVALID;
         }
-        return false;
     }
 
     // 토큰의 사용자 정보
