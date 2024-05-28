@@ -21,7 +21,7 @@ import java.util.List;
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; // Header KEY 값
     public static final String BEARER_PREFIX = "Bearer "; // Token 식별자
-    private static final long TOKEN_TIME = Duration.ofHours(5).toMillis(); // 토큰 만료시간 5hours
+    private static final long TOKEN_TIME = Duration.ofDays(5).toMillis(); // 토큰 만료시간 5 days
 
     @Value("${jwt.secret}") // Base 64 decode시 사용하는 Key
     private String secretKey;
@@ -29,6 +29,11 @@ public class JwtUtil {
     private static final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
+    public enum TokenStatus {
+        VALID,
+        INVALID,
+        EXPIRED
+    }
 
     @PostConstruct
     public void init() {
@@ -38,7 +43,6 @@ public class JwtUtil {
 
     public String createToken(String userId, String email) {
         Date date = new Date();
-//        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256); //or HS384 or HS512
 
         return BEARER_PREFIX +
                 Jwts.builder()
@@ -60,29 +64,26 @@ public class JwtUtil {
     }
 
     // 토큰 검증
-    public boolean validateToken(String token) {
+    public TokenStatus validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            return TokenStatus.VALID;
         } catch (SecurityException | MalformedJwtException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+            return TokenStatus.INVALID;
         } catch (ExpiredJwtException e) {
             logger.error("Expired JWT token, 만료된 JWT token 입니다.");
+            logger.info("after expired error log");
+            return TokenStatus.EXPIRED;
+
         } catch (UnsupportedJwtException e) {
             logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+            return TokenStatus.INVALID;
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+            return TokenStatus.INVALID;
         }
-        return false;
     }
-
-//    public CustomClaims parseAccessToken(String token) {
-//        try {
-//            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
-//                    .getBody();
-//            String userId = claims.getSubject();
-//        }
-//    }
 
     // 토큰의 사용자 정보
     public Claims getUserInfoFromToken(String token) {
