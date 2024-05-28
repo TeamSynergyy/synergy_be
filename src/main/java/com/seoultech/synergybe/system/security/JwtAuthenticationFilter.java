@@ -69,7 +69,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                          FilterChain chain, Authentication authentication) throws IOException {
         UserDetailsImpl userDetails = ((UserDetailsImpl) authentication.getPrincipal());
 
-        // Jwt token 생성 refresh token 생성 후 db에 저장하기
+        // Jwt token 생성 access token 생성
         String token = jwtUtil.createToken(userDetails.getUserId(), userDetails.getEmail());
 
         handleLoginSuccess(response, userDetails, token);
@@ -106,9 +106,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         if (userRefreshToken.isPresent()) {
             userRefreshToken.get().updateRefreshToken();
+            log.info("userRefreshToken" + userRefreshToken.get().getRefreshToken().getRefreshToken());
+            userRefreshTokenFactory.save(userRefreshToken.get());
 
             return userRefreshToken.get();
         } else {
+            // refresh Token 생성 저장
             UserRefreshToken newUserRefreshToken = new UserRefreshToken(userId);
             userRefreshTokenFactory.save(newUserRefreshToken);
 
