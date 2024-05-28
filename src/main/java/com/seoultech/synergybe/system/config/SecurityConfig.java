@@ -59,7 +59,7 @@ public class SecurityConfig {
     // Authorization, 식별된 사용자에 대해 권한 부여, 인가
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, authenticationProvider, userRefreshTokenReader);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, authenticationProvider, userRefreshTokenReader,userRefreshTokenFactory);
     }
     @Bean
     public SecurityFilterChain securityFilterChain(
