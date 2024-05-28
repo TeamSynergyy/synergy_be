@@ -1,8 +1,10 @@
 package com.seoultech.synergybe.domain.chat.handler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.chat.domain.ChatType;
 import com.seoultech.synergybe.domain.chat.dto.request.ChatMessageRequest;
+import com.seoultech.synergybe.domain.chat.dto.response.ChatMessageResponse;
 import com.seoultech.synergybe.domain.chat.exception.WebSocketBadRequestException;
 import com.seoultech.synergybe.domain.chat.service.ChatMessageService;
 import com.seoultech.synergybe.domain.user.User;
@@ -110,9 +112,6 @@ public class ChatHandler extends TextWebSocketHandler {
             // 채팅 전송
             sendMessageToChatRoom(chatMessageRequest, webSocketSessionList);
 
-            // 한사람에 대해서만 저장을 해야함
-            saveMessage(chatMessageRequest);
-
         } else if (chatMessageRequest.chatType().equals(ChatType.IMAGE)) {
             // todo
             // 이미지 혹은 영상 처리
@@ -141,19 +140,30 @@ public class ChatHandler extends TextWebSocketHandler {
         return webSocketSessionMap.getWebsocketListHashMap().get(chatRoomId).getWebSocketSessions();
     }
 
-    private void sendMessageToChatRoom(ChatMessageRequest chatMessageRequest, WebSocketSessionList webSocketSessionList) {
+    private void sendMessageToChatRoom(ChatMessageRequest chatMessageRequest, WebSocketSessionList webSocketSessionList) throws JsonProcessingException {
         for (WebSocketSession session : webSocketSessionList.getWebSocketSessions()) {
-            sendMessage(session, chatMessageRequest.message());
+            // 한사람에 대해서만 저장을 해야함
+            String chatId = saveMessage(chatMessageRequest);
+            ChatMessageResponse chatMessageResponse = new ChatMessageResponse(
+                    chatId,
+                    chatMessageRequest.chatRoomId(),
+                    chatMessageRequest.userId(),
+                    chatMessageRequest.message(),
+                    chatMessageRequest.chatType(),
+                    null,
+                    null
+            );
+            sendMessage(session, objectMapper.writeValueAsString(chatMessageResponse));
         }
     }
 
-    private void saveMessage(ChatMessageRequest chatMessageRequest) {
-        chatMessageService.saveChat(chatMessageRequest);
+    private String saveMessage(ChatMessageRequest chatMessageRequest) {
+        return chatMessageService.saveChat(chatMessageRequest);
     }
 
     private <T> void sendMessage(WebSocketSession session, T message) {
         try {
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
+            session.sendMessage(new TextMessage(message.toString()));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
