@@ -3,6 +3,7 @@ package com.seoultech.synergybe.system.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.auth.JwtAuthenticationProvider;
 import com.seoultech.synergybe.domain.user.UserRefreshToken;
+import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenFactory;
 import com.seoultech.synergybe.domain.user.service.UserRefreshTokenReader;
 import com.seoultech.synergybe.system.apiresponse.ApiResponseDto;
 import io.jsonwebtoken.Claims;
@@ -27,12 +28,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationProvider authenticationProvider;
     private final UserRefreshTokenReader userRefreshTokenReader;
+    private final UserRefreshTokenFactory userRefreshTokenFactory;
 
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, JwtAuthenticationProvider authenticationProvider, UserRefreshTokenReader userRefreshTokenReader) {
+    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, JwtAuthenticationProvider authenticationProvider, UserRefreshTokenReader userRefreshTokenReader,
+                                  UserRefreshTokenFactory userRefreshTokenFactory) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
         this.authenticationProvider = authenticationProvider;
         this.userRefreshTokenReader = userRefreshTokenReader;
+        this.userRefreshTokenFactory = userRefreshTokenFactory;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(tokenValue)) {
             // 토큰 검증
-            if (isValidate(request, response, tokenValue)) return;
+            if (isNotValidate(request, response, tokenValue)) return;
 
             // 토큰에서 사용자 정보 가져오기
             Claims info = getClaims(response, tokenValue);
@@ -56,44 +60,59 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isValidate(HttpServletRequest request, HttpServletResponse response, String tokenValue) throws IOException {
-        // jwt 검증 진행 로직
-        if (!jwtUtil.validateToken(tokenValue)) {
-            // 만료되었을 경우
-            // refreshToken가 존재하면 accessToken 재발급, refreshToken 재발급
+    // 만료되었을 경우 로직 실행
+    // todo
+    // 1. refresh Token 존재 유무 체크
+    // 2. refresh Token이 아직 사용하지 않은 토큰이라면 access token, refresh token 재발급
+    // 3. 만약 refresh token이 사용된 토큰이라면
+    // 4. 재 로그인 요청
+    private boolean isNotValidate(HttpServletRequest request, HttpServletResponse response, String tokenValue) throws IOException {
+        JwtUtil.TokenStatus tokenStatus = jwtUtil.validateToken(tokenValue);
 
+        if (tokenStatus == JwtUtil.TokenStatus.INVALID) {
+            // Invalid token handling
+            // 재로그인 요청
+            return true;
+        } else if (tokenStatus == JwtUtil.TokenStatus.EXPIRED) {
+            // 만료된 경우 refreshToken을 확인
+            log.info("get refreshtokenfromrequest");
             String refreshToken = getRefreshTokenFromRequest(request);
 
             if (refreshToken.equals("expiration")) {
                 // 재로그인 요청
+                log.info("재로그인 요청합니다");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setContentType("application/json");
                 return true;
             }
+            log.info("check readrefreshToken");
+            log.info("refreshToken: " + refreshToken);
 
-            String userId = userRefreshTokenReader.readUserByRefreshToken(refreshToken);
-            String email = userDetailsService.getUserEmail(userId);;
+            UserRefreshToken userRefreshTokenEntity = userRefreshTokenReader.readByRefreshToken(refreshToken);
+            String userId = userRefreshTokenEntity.getUserId();
+            String email = userDetailsService.getUserEmail(userId);
+            log.info("check after readrefreshToken");
 
             // accessToken 재발급
             String newAccessToken = jwtUtil.createToken(userId, email);
 
-
             // refreshToken 재발급
             UserRefreshToken userRefreshToken = userRefreshTokenReader.readByRefreshToken(refreshToken);
             userRefreshToken.updateRefreshToken();
+            userRefreshTokenFactory.save(userRefreshToken);
 
             addRefreshTokenCookie(response, userRefreshToken);
-
+            log.info("cookie after readrefreshToken");
 
             // Add JWT token in the Authorization header
             response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json");
-            String result = new ObjectMapper().writeValueAsString(
-                    new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "INVALID_TOKEN")
-            );
 
-            response.getOutputStream().print(result);
+            // Set response status and content type
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("application/json");
             return true;
         }
+
         return false;
     }
 
@@ -103,7 +122,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         cookie.setHttpOnly(true);
         cookie.setSecure(true); // Set to true if using HTTPS
         cookie.setPath("/");
-        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed
+        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed / 2 week
         cookie.setAttribute("SameSite", "Strict"); // Can be "Lax" or "Strict" depending on your requirements
         response.addCookie(cookie);
     }
@@ -154,11 +173,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     // 인증 처리
     public void setAuthentication(String tokenValue) {
-//        SecurityContext context = SecurityContextHolder.createEmptyContext();
-//        Authentication authentication = createAuthentication(account);
-//        context.setAuthentication(authentication);
-
-//        SecurityContextHolder.setContext(context);
         Authentication authentication = authenticationProvider.authenticate(tokenValue);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
