@@ -6,6 +6,7 @@ import com.seoultech.synergybe.domain.user.dto.request.LoginRequest;
 import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenFactory;
 import com.seoultech.synergybe.domain.user.service.UserRefreshTokenReader;
 import com.seoultech.synergybe.system.apiresponse.ApiResponseDto;
+import com.seoultech.synergybe.system.utils.CookieUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,11 +29,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final JwtUtil jwtUtil;
     private final UserRefreshTokenReader userRefreshTokenReader;
     private final UserRefreshTokenFactory userRefreshTokenFactory;
+    private final CookieUtil cookieUtil;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRefreshTokenReader userRefreshTokenReader, UserRefreshTokenFactory userRefreshTokenFactory) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRefreshTokenReader userRefreshTokenReader, UserRefreshTokenFactory userRefreshTokenFactory, CookieUtil cookieUtil) {
         this.jwtUtil = jwtUtil;
         this.userRefreshTokenReader = userRefreshTokenReader;
         this.userRefreshTokenFactory = userRefreshTokenFactory;
+        this.cookieUtil = cookieUtil;
         setFilterProcessesUrl("/api/v1/users/login");
     }
 
@@ -91,7 +94,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserRefreshToken userRefreshToken = getOrGenerate(userDetails.getUserId());
 
         // Add refresh token as a cookie
-        addRefreshTokenCookie(response, userRefreshToken);
+//        addRefreshTokenCookie(response, userRefreshToken);
+
+        cookieUtil.addRefreshTokenCookie(response, userRefreshToken);
 
         // Add JWT token in the Authorization header
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
@@ -119,14 +124,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
-    private void addRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken) {
-        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Set to true if using HTTPS
-        cookie.setPath("/");
-        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed
-        cookie.setAttribute("SameSite", "Strict"); // Can be "Lax" or "Strict" depending on your requirements
-        response.addCookie(cookie);
-    }
+//    private void addRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken) {
+//        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
+//        Cookie cookie = new Cookie("refreshToken", refreshToken);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(true); // Set to true if using HTTPS
+//        cookie.setPath("/");
+//        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed
+//        cookie.setAttribute("SameSite", "Strict"); // Can be "Lax" or "Strict" depending on your requirements
+//        response.addCookie(cookie);
+//    }
 }
