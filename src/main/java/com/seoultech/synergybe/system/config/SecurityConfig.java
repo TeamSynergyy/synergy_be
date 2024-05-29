@@ -5,6 +5,7 @@ import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenFactory;
 import com.seoultech.synergybe.domain.user.service.UserRefreshTokenReader;
 import com.seoultech.synergybe.system.security.*;
+import com.seoultech.synergybe.system.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +36,7 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtAuthenticationProvider authenticationProvider;
-
+    private final CookieUtil cookieUtil;
     @Bean
     public CustomPasswordEncoder customPasswordEncoder() {
         return new BCryptCustomPasswordEncoder();
@@ -49,7 +50,7 @@ public class SecurityConfig {
     // Authenticatoin, 토큰에 대해 인증
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, userRefreshTokenReader, userRefreshTokenFactory);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, userRefreshTokenReader, userRefreshTokenFactory, cookieUtil);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
 
         return filter;
@@ -59,7 +60,7 @@ public class SecurityConfig {
     // Authorization, 식별된 사용자에 대해 권한 부여, 인가
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, authenticationProvider, userRefreshTokenReader,userRefreshTokenFactory);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, authenticationProvider, userRefreshTokenReader,userRefreshTokenFactory, cookieUtil);
     }
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -89,7 +90,7 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(
-                List.of("http://localhost:5173", "http://localhost:5174"));
+                List.of("http://localhost:5173", "http://localhost:5174", "http://localhost:4173"));
         config.setAllowedMethods(
                 List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowCredentials(true);
