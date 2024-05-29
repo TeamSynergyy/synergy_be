@@ -1,18 +1,15 @@
 package com.seoultech.synergybe.domain.user;
 
 import com.seoultech.synergybe.domain.user.vo.RefreshToken;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "user_refresh_token")
 public class UserRefreshToken {
