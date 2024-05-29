@@ -19,7 +19,7 @@ public class ChatMessageService {
 
     public String saveChat(ChatMessageRequest chatMessageRequest) {
         // mongoDB는 UTC로 저장되므로 +9를 해주어 한국시간과 맞춘다
-        LocalDateTime createAt = LocalDateTime.now();
+//        LocalDateTime createAt = LocalDateTime.now();
 
         if (chatMessageRequest.chatType().equals(ChatType.TEXT)) {
             ChatMessage chatMessage = ChatMessage.builder()
@@ -27,19 +27,19 @@ public class ChatMessageService {
                     .userId(chatMessageRequest.userId())
                     .message(chatMessageRequest.message())
                     .chatType(chatMessageRequest.chatType())
-                    .createAt(createAt)
+                    .createAt(chatMessageRequest.createAt())
                     .build();
 
-            log.info("chatMessage Id: " + chatMessage.getId());
 
+
+            ChatMessage newChatMessage = chatMessageRepository.save(chatMessage);
+
+            log.info("chatMessage Id: " + newChatMessage.getId());
             log.info("chatMessage message " + chatMessage.getMessage());
 
-            ChatMessage chat = chatMessageRepository.save(chatMessage);
-
-            log.info("chat Id: " + chat.getId());
 
 
-            return chat.getId();
+            return newChatMessage.getId();
 
         } else if (chatMessageRequest.chatType().equals(ChatType.IMAGE)) {
             ChatMessage chatMessage = ChatMessage.builder()
@@ -48,17 +48,17 @@ public class ChatMessageService {
                     .imageName(chatMessageRequest.imageName())
                     .imageUrl(chatMessageRequest.imageUrl())
                     .chatType(chatMessageRequest.chatType())
-                    .createAt(createAt)
+                    .createAt(chatMessageRequest.createAt())
                     .build();
-            chatMessageRepository.save(chatMessage);
+            ChatMessage newChatMessage = chatMessageRepository.save(chatMessage);
 
-            return chatMessage.getId();
+            return newChatMessage.getId();
 
         }
         return "";
     }
 
-    public List<ChatMessage> getChatListByChatRoomId(Long chatRoomId) {
+    public List<ChatMessage> getChatListByChatRoomId(String chatRoomId) {
 
         return chatMessageRepository.findChatMessagesByChatRoomIdOrderByCreateAtAsc(chatRoomId);
     }
