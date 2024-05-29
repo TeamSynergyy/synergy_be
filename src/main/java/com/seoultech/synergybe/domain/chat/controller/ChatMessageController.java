@@ -14,7 +14,7 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
 
     @GetMapping("/{chatRoomId}")
-    public List<ChatMessage> getChatList(@PathVariable("chatRoomId") Long chatRoomId) {
+    public List<ChatMessage> getChatList(@PathVariable("chatRoomId") String chatRoomId) {
 
         return chatMessageService.getChatListByChatRoomId(chatRoomId);
     }
