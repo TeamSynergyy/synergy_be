@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatRoom {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_room_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "create_user_id", nullable = false)
@@ -28,7 +27,8 @@ public class ChatRoom {
 
 
     @Builder
-    public ChatRoom(User createUser, User attendUser, String name) {
+    public ChatRoom(String id, User createUser, User attendUser, String name) {
+        this.id = id;
         this.createUser = createUser;
         this.attendUser = attendUser;
         this.name = name;

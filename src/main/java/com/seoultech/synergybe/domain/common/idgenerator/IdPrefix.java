@@ -18,6 +18,7 @@ public enum IdPrefix {
     SCHEDULE("schedule"),
     PUBLIC_LIBRARY("public_library"),
     SMALL_LIBRARY("small_library"),
+    CHAT_ROOM("chat_room"),
     TICKET("ticket"),
     TICKET_USER("ticket_user");
 

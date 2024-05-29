@@ -4,6 +4,8 @@ import com.seoultech.synergybe.domain.chat.domain.ChatRoom;
 import com.seoultech.synergybe.domain.chat.dto.request.CreateChatRoomRequest;
 import com.seoultech.synergybe.domain.chat.dto.response.GetChatRoomResponse;
 import com.seoultech.synergybe.domain.chat.jpa_repository.ChatRoomRepository;
+import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
+import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +19,14 @@ import java.util.List;
 public class ChatRoomService {
     private final UserService userService;
     private final ChatRoomRepository chatRoomRepository;
+    private final IdGenerator idGenerator;
     public void createRoom(CreateChatRoomRequest request) {
+        String chatRoomId = idGenerator.generateId(IdPrefix.CHAT_ROOM);
         User createUser = userService.getUser(request.createUserId());
         User attendUser = userService.getUser(request.attendUserId());
 
         ChatRoom chatRoom = ChatRoom.builder()
+                .id(chatRoomId)
                 .createUser(createUser)
                 .attendUser(attendUser)
                 .name(request.roomName())
