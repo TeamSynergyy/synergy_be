@@ -1,9 +1,11 @@
 package com.seoultech.synergybe.system.utils;
 
 import com.seoultech.synergybe.domain.user.UserRefreshToken;
+import com.seoultech.synergybe.system.security.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
 
@@ -12,13 +14,16 @@ import java.util.Base64;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class CookieUtil {
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
 
-        if (cookies != null && cookies.length > 0) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
+                String name1 = cookie.getName();
+                log.info("refresh Token: " + name1);
                 if (name.equals(cookie.getName())) {
                     return Optional.of(cookie);
                 }
@@ -76,5 +81,18 @@ public class CookieUtil {
         response.addCookie(cookie);
     }
 
+    public void addRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken, String accessToken) {
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+
+        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // Set to true if using HTTPS
+        cookie.setPath("/");
+//        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed
+        cookie.setMaxAge(5 * 60); // Set expiration time if needed / 2 분
+        cookie.setAttribute("SameSite", "Strict"); // Can be "Lax" or "Strict" depending on your requirements
+        response.addCookie(cookie);
+    }
 }
 
