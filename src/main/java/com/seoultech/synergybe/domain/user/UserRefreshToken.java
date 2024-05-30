@@ -32,8 +32,7 @@ public class UserRefreshToken {
         this.refreshToken = new RefreshToken();
     }
 
-    public UserRefreshToken updateRefreshToken() {
+    public void updateRefreshToken() {
         this.refreshToken = new RefreshToken();
-        return this;
     }
 }
