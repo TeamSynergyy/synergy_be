@@ -80,7 +80,11 @@ public class SecurityConfig {
                     .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
                     .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                     .headers(AbstractHttpConfigurer::disable)
-                    .cors(AbstractHttpConfigurer::disable);
+                    .cors(AbstractHttpConfigurer::disable)
+                    .authorizeHttpRequests(authorize -> authorize
+                            .requestMatchers("/api/v1/users/refresh-token", "/api/v1/users").permitAll() // 특정 경로 허용
+                            .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                    );
 
         return httpSecurity.build();
     }
