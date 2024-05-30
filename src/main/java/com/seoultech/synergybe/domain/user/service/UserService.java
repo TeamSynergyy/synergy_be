@@ -8,18 +8,25 @@ import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.email.MailService;
+import com.seoultech.synergybe.domain.user.UserRefreshToken;
 import com.seoultech.synergybe.domain.user.dto.response.*;
 import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
 import com.seoultech.synergybe.domain.user.exception.UserNotFoundException;
+import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenRepository;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.vo.UserEmail;
 import com.seoultech.synergybe.system.exception.ErrorCode;
+import com.seoultech.synergybe.system.security.JwtUtil;
+import com.seoultech.synergybe.system.utils.CookieUtil;
 import com.seoultech.synergybe.system.utils.EmailRequest;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,6 +38,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -38,9 +46,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserRefreshTokenReader userRefreshTokenReader;
+    private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final CustomPasswordEncoder passwordEncoder;
     private final IdGenerator idGenerator;
     private final MailService mailService;
+    private final CookieUtil cookieUtil;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public String createUser(
@@ -194,6 +206,33 @@ public class UserService {
             // todo
             // 인증번호가 다르다면 회원가입 진행하지 않음
         }
+    }
+
+    // todo
+    // 만약 쿠키가 userRefreshToken 과 일치한다면
+    // accessToken 재발급 진행
+    @Transactional
+    public void generateAccessTokenByRefreshToken(HttpServletRequest request, HttpServletResponse response) {
+        Optional<Cookie> refreshTokenCookie = CookieUtil.getCookie(request, "refreshToken");
+
+        if (refreshTokenCookie.isEmpty()) {
+            throw new UserBadRequestException(ErrorCode.UN_AUTHORIZATION, "empty() refreshToken 입니다.");
+        }
+        String refreshToken = refreshTokenCookie.get().getValue();
+        log.info("existing refreshToken value: " + refreshToken);
+        UserRefreshToken getRefreshToken = userRefreshTokenReader.readByRefreshToken(refreshToken);
+
+        getRefreshToken.updateRefreshToken();
+        log.info("new refreshToken value: " + getRefreshToken.getRefreshToken().getRefreshToken());
+
+        String userId = getRefreshToken.getUserId();
+
+        User user = getUser(userId);
+        String email = user.getEmail().getEmail();
+        String accessToken = jwtUtil.createToken(userId, email);
+        log.info("refreshToken save success");
+        cookieUtil.addRefreshTokenCookie(response, getRefreshToken, accessToken);
+        log.info("add refreshToken cookie");
     }
 }
 

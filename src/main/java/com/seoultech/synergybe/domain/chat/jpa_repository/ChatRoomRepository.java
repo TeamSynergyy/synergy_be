@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
 
     @Query(value = "SELECT * from chat_room where create_user_id = :userId or attend_user_id = :userId", nativeQuery = true)
     List<ChatRoom> findAllByCreateUserIdOrAttendUserId(@Param("userId") String userId);

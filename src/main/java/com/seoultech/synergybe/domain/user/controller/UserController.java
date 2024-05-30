@@ -3,7 +3,6 @@ package com.seoultech.synergybe.domain.user.controller;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.user.dto.request.CreateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
-import com.seoultech.synergybe.domain.user.dto.response.CreateUserResponse;
 import com.seoultech.synergybe.domain.user.dto.response.GetUserAccountResponse;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.domain.user.User;
@@ -11,6 +10,8 @@ import com.seoultech.synergybe.system.config.login.LoginUser;
 import com.seoultech.synergybe.system.utils.EmailRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,13 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getSimilarUserListByUser(userId, end));
     }
+
+    @PostMapping(value = "/refresh-token")
+    public ResponseEntity<Void> generateAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        userService.generateAccessTokenByRefreshToken(request, response);
+        return ResponseEntity.noContent().build();
+    }
+
 
 //    @Operation(summary = "나의 팔로워 목록", description = "나를 팔로우 하고있는 유저의 Id 목록을 반환합니다")
 //    @GetMapping(value = "/followers")

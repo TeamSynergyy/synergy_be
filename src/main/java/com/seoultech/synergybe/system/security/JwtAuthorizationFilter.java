@@ -6,6 +6,7 @@ import com.seoultech.synergybe.domain.user.UserRefreshToken;
 import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenFactory;
 import com.seoultech.synergybe.domain.user.service.UserRefreshTokenReader;
 import com.seoultech.synergybe.system.apiresponse.ApiResponseDto;
+import com.seoultech.synergybe.system.utils.CookieUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,14 +30,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtAuthenticationProvider authenticationProvider;
     private final UserRefreshTokenReader userRefreshTokenReader;
     private final UserRefreshTokenFactory userRefreshTokenFactory;
+    private final CookieUtil cookieUtil;
 
     public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, JwtAuthenticationProvider authenticationProvider, UserRefreshTokenReader userRefreshTokenReader,
-                                  UserRefreshTokenFactory userRefreshTokenFactory) {
+                                  UserRefreshTokenFactory userRefreshTokenFactory, CookieUtil cookieUtil) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
         this.authenticationProvider = authenticationProvider;
         this.userRefreshTokenReader = userRefreshTokenReader;
         this.userRefreshTokenFactory = userRefreshTokenFactory;
+        this.cookieUtil = cookieUtil;
     }
 
     @Override
@@ -101,7 +104,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             userRefreshToken.updateRefreshToken();
             userRefreshTokenFactory.save(userRefreshToken);
 
-            addRefreshTokenCookie(response, userRefreshToken);
+            cookieUtil.addRefreshTokenCookie(response, userRefreshToken);
+//            addRefreshTokenCookie(response, userRefreshToken);
             log.info("cookie after readrefreshToken");
 
             // Add JWT token in the Authorization header
@@ -116,16 +120,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return false;
     }
 
-    private void addRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken) {
-        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Set to true if using HTTPS
-        cookie.setPath("/");
-        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed / 2 week
-        cookie.setAttribute("SameSite", "Strict"); // Can be "Lax" or "Strict" depending on your requirements
-        response.addCookie(cookie);
-    }
+//    private void addRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken) {
+//        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
+//        Cookie cookie = new Cookie("refreshToken", refreshToken);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(true); // Set to true if using HTTPS
+//        cookie.setPath("/");
+//        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed / 2 week
+//        cookie.setAttribute("SameSite", "Strict"); // Can be "Lax" or "Strict" depending on your requirements
+//        response.addCookie(cookie);
+//    }
 
     private String getRefreshTokenFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();

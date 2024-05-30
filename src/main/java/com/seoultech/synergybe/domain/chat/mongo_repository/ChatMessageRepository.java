@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
     @Query("{chatRoomId :?0}")
-    List<ChatMessage> findChatMessagesByChatRoomIdOrderByCreateAtAsc(Long chatRoomId);
+    List<ChatMessage> findChatMessagesByChatRoomIdOrderByCreateAtAsc(String chatRoomId);
 }

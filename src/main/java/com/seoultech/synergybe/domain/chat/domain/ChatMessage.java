@@ -13,11 +13,10 @@ import java.time.LocalDateTime;
 @Getter
 public class ChatMessage {
     @Id
-    @Field("_id")
     private String id;
 
     @Indexed
-    private Long chatRoomId;
+    private String chatRoomId;
 
     private String message;
 
@@ -28,10 +27,11 @@ public class ChatMessage {
     private String imageName;
 
     private String imageUrl;
+
     private LocalDateTime createAt;
 
     @Builder
-    public ChatMessage(Long chatRoomId, String message, String userId, ChatType chatType, String imageName, String imageUrl,
+    public ChatMessage(String chatRoomId, String message, String userId, ChatType chatType, String imageName, String imageUrl,
                        LocalDateTime createAt) {
         this.chatRoomId = chatRoomId;
         this.message = message;

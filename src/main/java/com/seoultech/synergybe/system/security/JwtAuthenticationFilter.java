@@ -6,8 +6,8 @@ import com.seoultech.synergybe.domain.user.dto.request.LoginRequest;
 import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenFactory;
 import com.seoultech.synergybe.domain.user.service.UserRefreshTokenReader;
 import com.seoultech.synergybe.system.apiresponse.ApiResponseDto;
+import com.seoultech.synergybe.system.utils.CookieUtil;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -28,11 +28,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final JwtUtil jwtUtil;
     private final UserRefreshTokenReader userRefreshTokenReader;
     private final UserRefreshTokenFactory userRefreshTokenFactory;
+    private final CookieUtil cookieUtil;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRefreshTokenReader userRefreshTokenReader, UserRefreshTokenFactory userRefreshTokenFactory) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRefreshTokenReader userRefreshTokenReader, UserRefreshTokenFactory userRefreshTokenFactory, CookieUtil cookieUtil) {
         this.jwtUtil = jwtUtil;
         this.userRefreshTokenReader = userRefreshTokenReader;
         this.userRefreshTokenFactory = userRefreshTokenFactory;
+        this.cookieUtil = cookieUtil;
         setFilterProcessesUrl("/api/v1/users/login");
     }
 
@@ -91,7 +93,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserRefreshToken userRefreshToken = getOrGenerate(userDetails.getUserId());
 
         // Add refresh token as a cookie
-        addRefreshTokenCookie(response, userRefreshToken);
+//        addRefreshTokenCookie(response, userRefreshToken);
+
+        cookieUtil.addRefreshTokenCookie(response, userRefreshToken);
 
         // Add JWT token in the Authorization header
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
@@ -105,28 +109,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Optional<UserRefreshToken> userRefreshToken = userRefreshTokenReader.readByUserId(userId);
 
         if (userRefreshToken.isPresent()) {
+            log.info("Before userRefreshToken" + userRefreshToken.get().getRefreshToken().getRefreshToken());
             userRefreshToken.get().updateRefreshToken();
-            log.info("userRefreshToken" + userRefreshToken.get().getRefreshToken().getRefreshToken());
+            log.info("After userRefreshToken" + userRefreshToken.get().getRefreshToken().getRefreshToken());
             userRefreshTokenFactory.save(userRefreshToken.get());
 
             return userRefreshToken.get();
         } else {
             // refresh Token 생성 저장
             UserRefreshToken newUserRefreshToken = new UserRefreshToken(userId);
+            log.info("generate RefreshToken value: " + newUserRefreshToken.getRefreshToken().getRefreshToken());
             userRefreshTokenFactory.save(newUserRefreshToken);
 
             return newUserRefreshToken;
         }
-    }
-
-    private void addRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken) {
-        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Set to true if using HTTPS
-        cookie.setPath("/");
-        cookie.setMaxAge(2 * 7 * 24 * 60 * 60); // Set expiration time if needed
-        cookie.setAttribute("SameSite", "Strict"); // Can be "Lax" or "Strict" depending on your requirements
-        response.addCookie(cookie);
     }
 }

@@ -78,9 +78,9 @@ public class ChatHandler extends TextWebSocketHandler {
 
 
         // payload에 chatroomId 가져옴
-        Long chatRoomId = chatMessageRequest.chatRoomId();
+        String chatRoomId = chatMessageRequest.chatRoomId();
 
-        Map<Long, WebSocketSessionList> chatRoomSessionMap = webSocketSessionMap.getWebsocketListHashMap();
+        Map<String, WebSocketSessionList> chatRoomSessionMap = webSocketSessionMap.getWebsocketListHashMap();
 
 
         // 현재 채팅방의 세션이 존재하는지 체크
@@ -109,8 +109,10 @@ public class ChatHandler extends TextWebSocketHandler {
         } else if (chatMessageRequest.chatType().equals(ChatType.TEXT)) {
             log.info("websocket Session List size : {}",webSocketSessionList.getWebSocketSessions().size());
 
+            // 채팅 저장
+            String chatId = saveMessage(chatMessageRequest);
             // 채팅 전송
-            sendMessageToChatRoom(chatMessageRequest, webSocketSessionList);
+            sendMessageToChatRoom(chatMessageRequest, webSocketSessionList,chatId);
 
         } else if (chatMessageRequest.chatType().equals(ChatType.IMAGE)) {
             // todo
@@ -122,7 +124,7 @@ public class ChatHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        Long chatRoomId = webSocketSessionMap.getKeyFromSession(session);
+        String chatRoomId = webSocketSessionMap.getKeyFromSession(session);
 
         // 얘가 호출되니까 여기서 removeClosedSession을 호출해야지
         // 그런데 roomId로 해당하는 채팅방의 채팅세션리스트들을 가져와야하는데 ?
@@ -136,20 +138,20 @@ public class ChatHandler extends TextWebSocketHandler {
         log.info("after connection closed session List size : {}",webSocketSessions.size());
     }
 
-    private List<WebSocketSession> getSessionListByChatRoomId(Long chatRoomId) {
+    private List<WebSocketSession> getSessionListByChatRoomId(String chatRoomId) {
         return webSocketSessionMap.getWebsocketListHashMap().get(chatRoomId).getWebSocketSessions();
     }
 
-    private void sendMessageToChatRoom(ChatMessageRequest chatMessageRequest, WebSocketSessionList webSocketSessionList) throws JsonProcessingException {
+    private void sendMessageToChatRoom(ChatMessageRequest chatMessageRequest, WebSocketSessionList webSocketSessionList, String chatId) throws JsonProcessingException {
         for (WebSocketSession session : webSocketSessionList.getWebSocketSessions()) {
-            // 한사람에 대해서만 저장을 해야함
-            String chatId = saveMessage(chatMessageRequest);
+
             ChatMessageResponse chatMessageResponse = new ChatMessageResponse(
                     chatId,
                     chatMessageRequest.chatRoomId(),
                     chatMessageRequest.userId(),
                     chatMessageRequest.message(),
                     chatMessageRequest.chatType(),
+                    chatMessageRequest.createAt(),
                     null,
                     null
             );
@@ -158,6 +160,7 @@ public class ChatHandler extends TextWebSocketHandler {
     }
 
     private String saveMessage(ChatMessageRequest chatMessageRequest) {
+        log.info("enter save message");
         return chatMessageService.saveChat(chatMessageRequest);
     }
 

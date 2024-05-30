@@ -62,6 +62,7 @@ public class MailService {
         }
         log.info("before setDataExpire");
         redisUtil.setDataExpire(String.valueOf(authNumber), to, 60*5L);
+        log.info("after setDataExpire");
     }
 
     public boolean checkAuthNumber(String email, String authNumber) {
