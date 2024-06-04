@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.project.service;
+package com.seoultech.synergybe.domain.project.domain.service;
 
 import org.springframework.stereotype.Service;
 

@@ -1,12 +1,7 @@
 package com.seoultech.synergybe.domain.ticket.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.ticket.Ticket;
-import com.seoultech.synergybe.domain.ticket.TicketStatus;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;

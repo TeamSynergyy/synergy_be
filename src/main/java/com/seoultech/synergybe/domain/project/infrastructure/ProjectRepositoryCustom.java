@@ -1,6 +1,6 @@
-package com.seoultech.synergybe.domain.project.repository;
+package com.seoultech.synergybe.domain.project.infrastructure;
 
-import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.project.domain.Project;
 
 import java.util.List;
 

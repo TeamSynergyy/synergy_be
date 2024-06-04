@@ -1,8 +1,8 @@
 package com.seoultech.synergybe.domain.schedule.service;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
-import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.service.ProjectService;
+import com.seoultech.synergybe.domain.project.domain.Project;
+import com.seoultech.synergybe.domain.project.domain.service.ProjectService;
 import com.seoultech.synergybe.domain.schedule.Schedule;
 import com.seoultech.synergybe.domain.schedule.dto.request.CreateScheduleRequest;
 import com.seoultech.synergybe.domain.schedule.dto.response.GetScheduleResponse;
@@ -11,8 +11,6 @@ import com.seoultech.synergybe.domain.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

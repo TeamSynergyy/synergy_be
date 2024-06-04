@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.project.vo;
+package com.seoultech.synergybe.domain.project.domain.vo;
 
 import com.seoultech.synergybe.domain.project.exception.ProjectBadRequestException;
 import jakarta.persistence.Column;

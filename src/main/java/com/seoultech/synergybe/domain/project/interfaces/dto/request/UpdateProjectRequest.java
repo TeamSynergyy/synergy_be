@@ -1,13 +1,8 @@
-package com.seoultech.synergybe.domain.project.dto.request;
+package com.seoultech.synergybe.domain.project.interfaces.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.ProjectField;
-import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.project.domain.ProjectField;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 

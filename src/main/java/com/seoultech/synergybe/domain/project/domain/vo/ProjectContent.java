@@ -1,9 +1,8 @@
-package com.seoultech.synergybe.domain.project.vo;
+package com.seoultech.synergybe.domain.project.domain.vo;
 
 import com.seoultech.synergybe.domain.project.exception.ProjectBadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

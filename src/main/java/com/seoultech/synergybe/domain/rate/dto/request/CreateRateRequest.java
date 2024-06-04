@@ -1,11 +1,6 @@
 package com.seoultech.synergybe.domain.rate.dto.request;
 
-import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.rate.Rate;
-import com.seoultech.synergybe.domain.user.User;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 public record CreateRateRequest(
         @NotBlank(message = "프로젝트 ID는 필수항목입니다.")

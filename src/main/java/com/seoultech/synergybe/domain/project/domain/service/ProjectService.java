@@ -1,20 +1,19 @@
-package com.seoultech.synergybe.domain.project.service;
+package com.seoultech.synergybe.domain.project.domain.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
 import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
-import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
-import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
-import com.seoultech.synergybe.domain.project.dto.response.GetListProjectResponse;
-import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
+import com.seoultech.synergybe.domain.project.domain.Project;
+import com.seoultech.synergybe.domain.project.interfaces.dto.request.CreateProjectRequest;
+import com.seoultech.synergybe.domain.project.interfaces.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.interfaces.dto.response.GetListProjectResponse;
+import com.seoultech.synergybe.domain.project.interfaces.dto.response.GetProjectResponse;
 import com.seoultech.synergybe.domain.project.exception.ProjectBadRequestException;
 import com.seoultech.synergybe.domain.project.exception.ProjectNotFoundException;
-import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
+import com.seoultech.synergybe.domain.project.infrastructure.ProjectRepository;
 import com.seoultech.synergybe.domain.projectlike.service.ProjectLikeService;
 import com.seoultech.synergybe.domain.projectuser.service.ProjectUserService;
 import com.seoultech.synergybe.domain.user.User;

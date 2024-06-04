@@ -1,12 +1,12 @@
-package com.seoultech.synergybe.domain.project.controller;
+package com.seoultech.synergybe.domain.project.interfaces;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
-import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
-import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
-import com.seoultech.synergybe.domain.project.dto.response.GetListProjectResponse;
-import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
-import com.seoultech.synergybe.domain.project.service.ProjectService;
+import com.seoultech.synergybe.domain.project.domain.Project;
+import com.seoultech.synergybe.domain.project.interfaces.dto.request.CreateProjectRequest;
+import com.seoultech.synergybe.domain.project.interfaces.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.interfaces.dto.response.GetListProjectResponse;
+import com.seoultech.synergybe.domain.project.interfaces.dto.response.GetProjectResponse;
+import com.seoultech.synergybe.domain.project.domain.service.ProjectService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.config.login.LoginUser;

@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.rate;
 
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
-import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.rate.vo.RateContent;
 import com.seoultech.synergybe.domain.rate.vo.RateScore;
 import com.seoultech.synergybe.domain.user.User;

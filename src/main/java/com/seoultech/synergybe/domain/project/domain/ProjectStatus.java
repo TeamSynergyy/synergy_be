@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.project;
+package com.seoultech.synergybe.domain.project.domain;
 
 import com.seoultech.synergybe.domain.common.EnumType;
 

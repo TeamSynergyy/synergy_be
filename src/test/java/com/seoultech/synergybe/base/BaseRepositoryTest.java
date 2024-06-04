@@ -4,7 +4,7 @@ import com.seoultech.synergybe.base.config.TestQueryDslConfig;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
+import com.seoultech.synergybe.domain.project.infrastructure.ProjectRepository;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;

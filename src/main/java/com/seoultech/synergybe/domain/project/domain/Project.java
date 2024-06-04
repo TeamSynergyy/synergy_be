@@ -1,10 +1,10 @@
-package com.seoultech.synergybe.domain.project;
+package com.seoultech.synergybe.domain.project.domain;
 
 import com.seoultech.synergybe.domain.apply.Apply;
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.notice.Notice;
-import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
-import com.seoultech.synergybe.domain.project.vo.*;
+import com.seoultech.synergybe.domain.project.domain.vo.*;
+import com.seoultech.synergybe.domain.project.interfaces.dto.request.UpdateProjectRequest;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.schedule.Schedule;
