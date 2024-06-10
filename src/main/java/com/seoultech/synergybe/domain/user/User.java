@@ -16,7 +16,10 @@ public class User extends BaseTime {
 
     @Id
     @Column(name = "user_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "user_token")
+    private String userToken;
 
     @Embedded
     private UserEmail email;
@@ -35,7 +38,8 @@ public class User extends BaseTime {
 
     @Builder
     public User(
-            String id,
+            Long id,
+            String userToken,
             String email,
             String password,
             String name,
@@ -43,6 +47,7 @@ public class User extends BaseTime {
             String major
     ) {
         this.id = id;
+        this.userToken = userToken;
         this.email = new UserEmail(email);
         this.password = new UserPassword(password, passwordEncoder);
         this.name = new UserName(name);

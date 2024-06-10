@@ -15,7 +15,10 @@ import jakarta.persistence.*;
 public class TicketUser extends BaseTime {
     @Id
     @Column(name = "ticket_user_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "ticket_user_token")
+    private String ticketUserToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
@@ -26,8 +29,9 @@ public class TicketUser extends BaseTime {
     private User user;
 
     @Builder
-    public TicketUser(String id, Ticket ticket, User user) {
+    public TicketUser(Long id, String ticketUserToken, Ticket ticket, User user) {
         this.id = id;
+        this.ticketUserToken = ticketUserToken;
         this.ticket = ticket;
         this.user = user;
     }
