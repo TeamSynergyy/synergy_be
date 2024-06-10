@@ -1,16 +1,13 @@
-package com.seoultech.synergybe.domain.common.idgenerator;
+package com.seoultech.synergybe.domain.common.generator;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class IdGeneratorUUIDTest {
+public class TokenGeneratorUUIDTest {
     @Autowired
     IdGenerator idGenerator;
 
@@ -19,7 +16,7 @@ public class IdGeneratorUUIDTest {
 //        List<String> list = new ArrayList<>();
 
         for (int i = 0; i < 100; i++) {
-            String postId = idGenerator.generateId(IdPrefix.POST);
+            Long postId = idGenerator.generateId();
             System.out.println("postId : " + i + " 번째 : "+ postId);
 //            list.add(postId);
         }
