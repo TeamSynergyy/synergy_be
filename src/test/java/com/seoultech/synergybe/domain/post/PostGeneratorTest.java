@@ -1,13 +1,11 @@
 package com.seoultech.synergybe.domain.post;
 
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
-import com.seoultech.synergybe.domain.post.implement.PostFactory;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.post.implement.PostManager;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
-import com.seoultech.synergybe.domain.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

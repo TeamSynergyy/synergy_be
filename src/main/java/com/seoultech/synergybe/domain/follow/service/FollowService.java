@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.follow.service;
 
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.follow.Follow;
 import com.seoultech.synergybe.domain.follow.FollowStatus;

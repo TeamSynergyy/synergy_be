@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.library.scheduler;
 
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.library.domain.PublicLibrary;
 import com.seoultech.synergybe.domain.library.domain.RawPublicLibrary;
 import com.seoultech.synergybe.domain.library.repository.PublicLibraryRepository;

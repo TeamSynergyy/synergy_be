@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.projectuser.service;
 
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.project.Project;
 import com.seoultech.synergybe.domain.project.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
