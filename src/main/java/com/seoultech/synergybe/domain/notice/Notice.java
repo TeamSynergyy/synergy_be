@@ -25,7 +25,10 @@ import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_D
 public class Notice extends BaseTime {
     @Id
     @Column(name = "notice_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "notice_token")
+    private String noticeToken;
 
     @Embedded
     private NoticeTitle title;
@@ -42,8 +45,9 @@ public class Notice extends BaseTime {
 
 
     @Builder
-    public Notice(String id, String title, String content, Project project) {
+    public Notice(Long id, String noticeToken, String title, String content, Project project) {
         this.id = id;
+        this.noticeToken = noticeToken;
         this.title = new NoticeTitle(title);
         this.content = new NoticeContent(content);
         this.project = project;
