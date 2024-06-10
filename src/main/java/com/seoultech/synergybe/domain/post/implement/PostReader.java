@@ -2,7 +2,7 @@ package com.seoultech.synergybe.domain.post.implement;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.data.PostJpaRepository;
+import com.seoultech.synergybe.domain.post.infrastructure.PostJpaRepository;
 import com.seoultech.synergybe.domain.post.presentation.dto.response.GetPostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

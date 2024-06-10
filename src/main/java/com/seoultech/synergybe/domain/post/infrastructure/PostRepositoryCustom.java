@@ -1,7 +1,6 @@
-package com.seoultech.synergybe.domain.post.data;
+package com.seoultech.synergybe.domain.post.infrastructure;
 
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.presentation.dto.response.GetPostResponse;
 
 import java.util.List;
 

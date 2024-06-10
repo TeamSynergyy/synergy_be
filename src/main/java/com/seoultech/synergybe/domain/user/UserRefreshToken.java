@@ -19,14 +19,14 @@ public class UserRefreshToken {
     private Long id;
 
     @Column(name = "user_id")
-    private String userId;
+    private Long userId;
 
 
     @Embedded
     private RefreshToken refreshToken;
 
     public UserRefreshToken(
-            String userId
+            Long userId
     ) {
         this.userId = userId;
         this.refreshToken = new RefreshToken();

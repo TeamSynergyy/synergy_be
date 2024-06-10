@@ -31,7 +31,10 @@ import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_D
 public class Ticket extends BaseTime {
     @Id
     @Column(name = "ticket_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "ticket_token")
+    private String ticketToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
@@ -60,9 +63,10 @@ public class Ticket extends BaseTime {
     private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @Builder
-    public Ticket(String id, String name, String content, Integer orderNumber, String tag, Project project,
+    public Ticket(Long id, String ticketToken, String name, String content, Integer orderNumber, String tag, Project project,
                   String tagColor) {
         this.id = id;
+        this.ticketToken = ticketToken;
         this.name = new TicketName(name);
         this.content = new TicketContent(content);
         this.information = new TicketTagInformation(tag, tagColor);

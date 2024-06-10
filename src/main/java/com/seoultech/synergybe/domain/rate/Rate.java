@@ -25,7 +25,10 @@ import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_D
 public class Rate extends BaseTime {
     @Id
     @Column(name = "rate_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "rate_token")
+    private String rateToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
@@ -49,8 +52,9 @@ public class Rate extends BaseTime {
     private RateContent content;
 
     @Builder
-    public Rate(String id, Project project, User giveUser, User receiveUser, int score, String content) {
+    public Rate(Long id, String rateToken, Project project, User giveUser, User receiveUser, int score, String content) {
         this.id = id;
+        this.rateToken = rateToken;
         this.project = project;
         this.giveUser = giveUser;
         this.receiveUser = receiveUser;

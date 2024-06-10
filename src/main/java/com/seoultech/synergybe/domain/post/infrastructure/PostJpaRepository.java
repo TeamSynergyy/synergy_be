@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.data;
+package com.seoultech.synergybe.domain.post.infrastructure;
 
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.exception.PostNotFoundException;
@@ -16,11 +16,15 @@ public class PostJpaRepository {
         postRepository.save(post);
     }
 
+    public void saveAll(List<Post> postList) {
+        postRepository.saveAll(postList);
+    }
+
     public void delete(Post post) {
         postRepository.delete(post);
     }
 
-    public Post findById(String postId) {
+    public Post findById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시글입니다."));
     }

@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.ticketUser.service;
 
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.ticketUser.TicketUser;
 import com.seoultech.synergybe.domain.ticketUser.repository.TicketUserRepository;

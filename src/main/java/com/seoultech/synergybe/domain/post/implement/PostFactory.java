@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.post.implement;
 
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.user.User;
 import lombok.RequiredArgsConstructor;

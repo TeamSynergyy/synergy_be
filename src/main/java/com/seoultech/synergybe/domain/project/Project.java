@@ -33,12 +33,10 @@ import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_D
 public class Project extends BaseTime {
     @Id
     @Column(name = "project_id")
-    private String id;
+    private Long id;
 
-//    @Id
-//    @Column(name = "project_sequence")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long seq;
+    @Column(name = "project_token")
+    private String projectToken;
 
     @Embedded
     private ProjectName name;
@@ -88,9 +86,10 @@ public class Project extends BaseTime {
     private List<Schedule> schedules = new ArrayList<>();
 
     @Builder
-    public Project(String id, String name, String content, ProjectField field, Point location, LocalDateTime startAt,
+    public Project(Long id, String projectToken, String name, String content, ProjectField field, Point location, LocalDateTime startAt,
                    LocalDateTime endAt, String leaderId) {
         this.id = id;
+        this.projectToken = projectToken;
         this.name = new ProjectName(name);
         this.content = new ProjectContent(content);
         this.field = field;
