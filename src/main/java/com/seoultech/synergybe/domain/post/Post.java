@@ -28,11 +28,10 @@ import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_D
 public class Post extends BaseTime {
     @Id
     @Column(name = "post_id")
-    private String id;
+    private Long id;
 
-//    @Column(name = "post_sequence")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long postSequence;
+    @Column(name = "post_token")
+    private String postToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -69,8 +68,9 @@ public class Post extends BaseTime {
     private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @Builder
-    public Post(String id, User user, String title, String content, String thumbnailImageId) {
+    public Post(Long id, String postToken, User user, String title, String content, String thumbnailImageId) {
         this.id = id;
+        this.postToken = postToken;
         this.user = user;
         this.title = new PostTitle(title);
         this.content = new PostContent(content);
