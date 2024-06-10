@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.data;
+package com.seoultech.synergybe.domain.post.infrastructure;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seoultech.synergybe.domain.post.Post;

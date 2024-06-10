@@ -2,10 +2,12 @@ package com.seoultech.synergybe.domain.post.implement;
 
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.business.dto.UpdatePostDto;
-import com.seoultech.synergybe.domain.post.data.PostJpaRepository;
+import com.seoultech.synergybe.domain.post.infrastructure.PostJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional
 @Component
@@ -23,5 +25,9 @@ public class PostManager {
 
     public void delete(Post post) {
         postRepository.delete(post);
+    }
+
+    public void saveAll(List<Post> postList) {
+        postRepository.saveAll(postList);
     }
 }

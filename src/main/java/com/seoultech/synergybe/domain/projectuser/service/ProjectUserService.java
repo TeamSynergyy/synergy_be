@@ -1,9 +1,9 @@
 package com.seoultech.synergybe.domain.projectuser.service;
 
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.project.domain.Project;
-import com.seoultech.synergybe.domain.project.infrastructure.ProjectRepository;
+import com.seoultech.synergybe.domain.project.infrastructure.repository.ProjectRepository;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.projectuser.exception.ProjectUserNotFoundException;
 import com.seoultech.synergybe.domain.projectuser.repository.ProjectUserRepository;

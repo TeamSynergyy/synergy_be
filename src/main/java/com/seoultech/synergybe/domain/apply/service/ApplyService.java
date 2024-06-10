@@ -5,8 +5,9 @@ import com.seoultech.synergybe.domain.apply.dto.response.*;
 import com.seoultech.synergybe.domain.apply.exception.ApplyBadRequestException;
 import com.seoultech.synergybe.domain.apply.exception.ApplyNotFoundException;
 import com.seoultech.synergybe.domain.apply.repository.ApplyRepository;
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.project.domain.service.ProjectService;
@@ -32,12 +33,14 @@ public class ApplyService {
     private final UserService userService;
     private final NotificationService notificationService;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
     @Transactional
     public GetApplyResponse createApply(String userId, String projectId) {
         Project project = projectService.findProjectById(projectId);
         User user = userService.getUser(userId);
-        String applyId = idGenerator.generateId(IdPrefix.APPLY);
+        Long applyId = idGenerator.generateId();
+        String applyToken = tokenGenerator.generateToken(IdPrefix.APPLY);
 
         Apply apply = Apply.builder()
                 .id(applyId).user(user).project(project)

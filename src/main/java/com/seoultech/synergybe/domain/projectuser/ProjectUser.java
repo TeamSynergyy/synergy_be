@@ -16,7 +16,10 @@ import jakarta.persistence.*;
 public class ProjectUser extends BaseTime {
     @Id
     @Column(name = "project_user_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "project_user_token")
+    private String projectUserToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
@@ -27,8 +30,9 @@ public class ProjectUser extends BaseTime {
     private User user;
 
     @Builder
-    public ProjectUser(String id, Project project, User user) {
+    public ProjectUser(Long id, String projectUserToken, Project project, User user) {
         this.id = id;
+        this.projectUserToken = projectUserToken;
         this.project = project;
         this.user = user;
     }

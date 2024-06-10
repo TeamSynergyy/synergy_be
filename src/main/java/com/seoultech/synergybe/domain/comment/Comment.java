@@ -28,7 +28,10 @@ public class Comment extends BaseTime {
 
     @Id
     @Column(name = "comment_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "comment_token")
+    private String commentToken;
 
     @Embedded
     private CommentContent comment;

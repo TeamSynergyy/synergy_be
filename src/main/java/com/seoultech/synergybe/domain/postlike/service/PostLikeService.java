@@ -1,10 +1,10 @@
 package com.seoultech.synergybe.domain.postlike.service;
 
 import com.seoultech.synergybe.domain.common.constants.LikeStatus;
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.data.PostJpaRepository;
+import com.seoultech.synergybe.domain.post.infrastructure.PostJpaRepository;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
 import com.seoultech.synergybe.domain.postlike.dto.response.GetPostLikeResponse;

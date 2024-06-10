@@ -27,7 +27,10 @@ import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_D
 public class Schedule extends BaseTime {
     @Id
     @Column(name = "schedule_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "schedule_token")
+    private String scheduleToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
@@ -48,8 +51,9 @@ public class Schedule extends BaseTime {
     private SchedulePeriod period;
 
     @Builder
-    public Schedule(String id, Project project, String title, String content, String label, LocalDateTime startAt, LocalDateTime endAt) {
+    public Schedule(Long id, String scheduleToken, Project project, String title, String content, String label, LocalDateTime startAt, LocalDateTime endAt) {
         this.id = id;
+        this.scheduleToken = scheduleToken;
         this.title = new ScheduleTitle(title);
         this.content = new ScheduleContent(content);
         this.label = label;

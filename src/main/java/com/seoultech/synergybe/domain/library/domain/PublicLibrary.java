@@ -16,7 +16,10 @@ import org.springframework.data.geo.Point;
 public class PublicLibrary {
     @Id
     @Column(name = "library_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "public_library")
+    private String publicLibraryToken;
 
     @Column(name = "name")
     private String name;
@@ -41,7 +44,8 @@ public class PublicLibrary {
 
     @Builder
     public PublicLibrary(
-            String id,
+            Long id,
+            String publicLibraryToken,
             String name,
             String address,
             String telNumber,
@@ -51,6 +55,7 @@ public class PublicLibrary {
             Point location
     ) {
         this.id = id;
+        this.publicLibraryToken = publicLibraryToken;
         this.name = name;
         this.address = address;
         this.telNumber = telNumber;

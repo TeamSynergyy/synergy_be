@@ -1,8 +1,8 @@
 package com.seoultech.synergybe.domain.projectlike.service;
 
 import com.seoultech.synergybe.domain.common.constants.LikeStatus;
-import com.seoultech.synergybe.domain.common.idgenerator.IdGenerator;
-import com.seoultech.synergybe.domain.common.idgenerator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.IdGenerator;
+import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.project.infrastructure.ProjectRepository;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
