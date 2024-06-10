@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.common.idgenerator;
+package com.seoultech.synergybe.domain.common.generator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import java.util.random.RandomGenerator;
 
 @Slf4j
 @Component
-public class IdGeneratorRivkodeImpl implements IdGenerator {
+public class IdGeneratorRivkodeImpl {
     private static final int ASCII_LOWER_CASE_START = 97;
     private static final int ASCII_LOWER_CASE_END = 122;
     private static final int ASCII_UPPER_CASE_START = 65;

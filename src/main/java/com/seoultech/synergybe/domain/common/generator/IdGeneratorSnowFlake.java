@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.common.idgenerator;
+package com.seoultech.synergybe.domain.common.generator;
 
 import org.springframework.stereotype.Component;
 
@@ -53,9 +53,9 @@ public class IdGeneratorSnowFlake implements IdGenerator {
         this.customEpoch = DEFAULT_CUSTOM_EPOCH;
     }
 
-    public String generateId(IdPrefix idPrefix) {
+    public Long generateId() {
         long id = nextId();
-        return String.valueOf(id);
+        return id;
     }
 
     public synchronized long nextId() {

@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.common.idgenerator;
+package com.seoultech.synergybe.domain.common.generator;
 
 import org.springframework.stereotype.Component;
 
