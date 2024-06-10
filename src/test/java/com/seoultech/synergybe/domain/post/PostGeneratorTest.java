@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.post;
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.post.implement.PostManager;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
@@ -26,6 +27,9 @@ public class PostGeneratorTest {
     IdGenerator idGenerator;
 
     @Autowired
+    TokenGenerator tokenGenerator;
+
+    @Autowired
     PostManager postManager;
 
     @Autowired
@@ -34,8 +38,11 @@ public class PostGeneratorTest {
 
     @Test
     void generatePost() {
+        Long userId = idGenerator.generateId();
+        String userToken = tokenGenerator.generateToken(IdPrefix.USER);
+
         User user = User.builder()
-                .id("user-id")
+                .id(userId)
                 .password("3e4r5t6y6y7u")
                 .passwordEncoder(passwordEncoder)
                 .email("email@email.com")
@@ -49,10 +56,13 @@ public class PostGeneratorTest {
         List<Post> postList = new ArrayList<>();
 
 
-        for (int i = 0; i < 10000; i++) {
-            String postId = idGenerator.generateId(IdPrefix.POST);
+        for (int i = 0; i < 10; i++) {
+            Long postId = idGenerator.generateId();
+            String postToken = tokenGenerator.generateToken(IdPrefix.POST);
+
             Post post = Post.builder()
                     .id(postId)
+                    .postToken(postToken)
                     .user(user)
                     .title("title")
                     .content("content")
