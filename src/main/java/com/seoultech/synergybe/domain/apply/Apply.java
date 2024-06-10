@@ -22,7 +22,9 @@ import static com.seoultech.synergybe.domain.common.constants.DeletedStatus.IS_D
 public class Apply {
     @Id
     @Column(name = "apply_id")
-    private String id;
+    private Long id;
+
+    private String applyToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -40,8 +42,9 @@ public class Apply {
     private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @Builder
-    public Apply(String id, User user, Project project) {
+    public Apply(Long id, String applyToken, User user, Project project) {
         this.id = id;
+        this.applyToken = applyToken;
         this.user = user;
         this.project = project;
         this.status = ApplyStatus.NEW;
