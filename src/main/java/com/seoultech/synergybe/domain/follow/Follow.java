@@ -14,7 +14,10 @@ import lombok.*;
 public class Follow extends BaseTime {
     @Id
     @Column(name = "follow_id")
-    private String id;
+    private Long id;
+
+    @Column(name = "follow_token")
+    private String followToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id")
@@ -29,7 +32,7 @@ public class Follow extends BaseTime {
     private FollowStatus status;
 
     @Builder
-    public Follow(String id, User follower, User following) {
+    public Follow(Long id, User follower, User following) {
         this.id = id;
         this.follower = follower;
         this.following = following;
