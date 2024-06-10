@@ -24,6 +24,7 @@ public class Apply {
     @Column(name = "apply_id")
     private Long id;
 
+    @Column(name = "apply_token")
     private String applyToken;
 
     @ManyToOne(fetch = FetchType.LAZY)

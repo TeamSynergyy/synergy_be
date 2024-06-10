@@ -14,6 +14,7 @@ public class ChatRoom {
     @Column(name = "chat_room_id")
     private Long id;
 
+    @Column(name = "chat_room_token")
     private String chatRoomToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
