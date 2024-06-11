@@ -22,7 +22,7 @@ public class UserDetailsImpl implements UserDetails {
         return user.getEmail().getEmail();
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return user.getId();
     }
 

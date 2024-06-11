@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TicketRepository extends JpaRepository<Ticket, String> {
+public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query(value = "SELECT * FROM ticket WHERE project_id = :projectId", nativeQuery = true)
     List<Ticket> findAllByProjectId(@Param("projectId") String projectId);
 

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PostLikeRepository extends JpaRepository<PostLike, String> {
+public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     @Query(value = "SELECT * FROM post_like WHERE user_id = :userId and post_id = :postId for update", nativeQuery = true)
     Optional<PostLike> findByUserIdAndPostId(@Param("userId") String userId, @Param("postId") String postId);
 

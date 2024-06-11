@@ -12,7 +12,7 @@ import java.util.Optional;
 public class UserRefreshTokenReader {
     private final UserRefreshTokenRepository userRefreshTokenRepository;
 
-    public Optional<UserRefreshToken> readByUserId(String userId) {
+    public Optional<UserRefreshToken> readByUserId(Long userId) {
         return userRefreshTokenRepository.findByUserId(userId);
     }
 

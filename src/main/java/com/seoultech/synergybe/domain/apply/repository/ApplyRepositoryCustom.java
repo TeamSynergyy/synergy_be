@@ -10,5 +10,5 @@ public interface ApplyRepositoryCustom {
 
     List<Apply> findAllProcessByUserId(String userId);
 
-    List<String> findUserIdsByProjectId(String projectId);
+    List<Long> findUserIdsByProjectId(String projectId);
 }

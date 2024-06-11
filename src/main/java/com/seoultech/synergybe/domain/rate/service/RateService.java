@@ -36,7 +36,7 @@ public class RateService {
 
     public GetRateResponse createRate(CreateRateRequest request, User giveUser) {
         Project project = projectService.findProjectById(request.projectId());
-        User receiveUser = userService.getUser(request.receiveUserId());
+        User receiveUser = userService.getUserByToken(request.receiveUserId());
         Long rateId = idGenerator.generateId();
         String rateToken = tokenGenerator.generateToken(IdPrefix.RATE);
 

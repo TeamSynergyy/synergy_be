@@ -20,7 +20,7 @@ public final class ApplyMapperEntityToDto {
     ) {
         List<GetApplyResponse> getApplyResponses = applyList.stream()
                 .map(result -> new GetApplyResponse(
-                        result.getId(),
+                        result.getApplyToken(),
                         result.getStatus()))
                 .toList();
         PageInfo pageInfo = PageInfo.of(applyList.size());

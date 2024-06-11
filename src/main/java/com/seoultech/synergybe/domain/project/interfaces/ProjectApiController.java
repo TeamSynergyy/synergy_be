@@ -75,7 +75,7 @@ public class ProjectApiController {
     @Operation(summary = "내가 좋아요한 프로젝트", description = "좋아요한 프로젝트가 반환됩니다")
     @GetMapping(value = "/me/likes")
     public ResponseEntity<ListResponse<GetProjectResponse>> getLikedProjects(@LoginUser String userId) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(projectService.getLikedProjectList(user));
     }
@@ -89,7 +89,7 @@ public class ProjectApiController {
     @Operation(summary = "추천 프로젝트", description = "나의 활동을 바탕으로 프로젝트가 추천됩니다")
     @GetMapping(value = "/recommend")
     public ResponseEntity<ListResponse<GetProjectResponse>> getRecommendProjects(@RequestParam(value = "end", required = false, defaultValue = "0") Long end, @LoginUser String userId) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(projectService.getRecommendListByUser(user, end));
     }

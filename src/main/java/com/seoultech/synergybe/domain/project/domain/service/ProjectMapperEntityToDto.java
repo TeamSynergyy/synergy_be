@@ -16,16 +16,16 @@ public class ProjectMapperEntityToDto {
         List<GetProjectResponse> getProjectResponses = projectList.stream()
                 .map(
                         result -> new GetProjectResponse(
-                                result.getId(),
+                                result.getProjectToken(),
                                 result.getName().getName(),
                                 result.getContent().getContent(),
                                 result.getField().name(),
                                 result.getStatus().getName(),
                                 result.getPeriod().getStartAt(),
                                 result.getPeriod().getEndAt(),
-                                result.getLeaderId().getLeaderId(),
+                                String.valueOf(result.getLeaderId().getLeaderId()),
                                 result.getLocation().getLocation(),
-                                result.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getId()).collect(Collectors.toList())
+                                result.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserToken()).collect(Collectors.toList())
                         )
                 )
                 .toList();

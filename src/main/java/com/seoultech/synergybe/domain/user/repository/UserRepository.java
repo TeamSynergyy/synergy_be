@@ -17,11 +17,14 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 
     @Query(value = "SELECT * FROM user WHERE user_id IN :userIds", nativeQuery = true)
-    List<User> findAllByUserId(@Param("userIds") List<String> userIds);
+    List<User> findAllByUserId(@Param("userIds") List<Long> userIds);
 
     Page<User> findAll(Specification<User> spec, Pageable pageable);
 
     boolean existsByEmail(UserEmail email);
 
     Optional<User> findByUserToken(String userToken);
+
+    @Query(value = "SELECT * FROM user WHERE user_id IN :userToken", nativeQuery = true)
+    List<User> findAllByUserToken(@Param("userToken") List<String> userToken);
 }

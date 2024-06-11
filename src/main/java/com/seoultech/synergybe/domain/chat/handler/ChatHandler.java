@@ -71,7 +71,7 @@ public class ChatHandler extends TextWebSocketHandler {
         log.info("session {}", chatMessageRequest.toString());
 
         // 유저 검증
-        User user = userService.getUser(chatMessageRequest.userId());
+        User user = userService.getUserByToken(chatMessageRequest.userId());
         if (user == null) {
             throw new WebSocketBadRequestException(ErrorCode.BAD_REQUEST, "유효하지 않은 유저의 메세지 요청입니다.");
         }

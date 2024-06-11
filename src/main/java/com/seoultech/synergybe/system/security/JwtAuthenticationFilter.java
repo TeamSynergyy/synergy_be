@@ -105,7 +105,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType("application/json");
     }
 
-    private UserRefreshToken getOrGenerate(String userId) {
+    private UserRefreshToken getOrGenerate(Long userId) {
         Optional<UserRefreshToken> userRefreshToken = userRefreshTokenReader.readByUserId(userId);
 
         if (userRefreshToken.isPresent()) {

@@ -4,7 +4,7 @@ import com.seoultech.synergybe.domain.user.User;
 
 public record CreateUserResponse (String userId) {
     public static CreateUserResponse from(User user) {
-        return new CreateUserResponse(user.getId());
+        return new CreateUserResponse(user.getUserToken());
     }
 
 }

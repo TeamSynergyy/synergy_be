@@ -25,7 +25,7 @@ public class ProjectLikeController {
     @Operation(summary = "좋아요 신청, 취소", description = "좋아요를 신청 및 취소하며 좋아요 타입에 따라 좋아요 상태가 변화하므로 PUT 메서드 하나로 관리됩니다.")
     @PutMapping(value = "/{projectToken}/like")
     public ResponseEntity<ProjectLikeResponse> updateProjectLike(@PathVariable("projectToken") String projectToken, @RequestBody ProjectLikeType type, @LoginUser String userId) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(projectLikeService.updateProjectLike(user, projectToken, type));
     }

@@ -15,7 +15,7 @@ public record GetProjectResponse(
         String status,
         LocalDateTime startAt,
         LocalDateTime endAt,
-        String leaderId,
+        String leaderToken,
 
         Point location,
         List<String> teamUserIds

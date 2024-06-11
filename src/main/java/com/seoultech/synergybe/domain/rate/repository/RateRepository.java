@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface RateRepository extends JpaRepository<Rate, String> {
+public interface RateRepository extends JpaRepository<Rate, Long> {
 
     @Query(value = "SELECT * FROM rate WHERE project_id = :projectId AND receive_user_id = :receiverUserId", nativeQuery = true)
     List<Rate> findAllByProjectIdAndReceiverId(@Param("projectId") String projectId, @Param("receiverUserId") String receiveUserId);

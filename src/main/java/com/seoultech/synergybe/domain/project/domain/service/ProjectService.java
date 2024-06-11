@@ -51,7 +51,7 @@ public class ProjectService {
 
     @Transactional
     public GetProjectResponse createProject(String userId, CreateProjectRequest request) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
         Long projectId = idGenerator.generateId();
         String projectToken = tokenGenerator.generateToken(IdPrefix.POST);
         Point point = new Point(request.longitude(), request.latitude());
@@ -127,7 +127,7 @@ public class ProjectService {
                 .location(project.getLocation().getLocation())
                 .startAt(project.getPeriod().getStartAt())
                 .endAt(project.getPeriod().getEndAt())
-                .leaderId(String.valueOf(project.getLeaderId().getLeaderId()))
+                .leaderToken(String.valueOf(project.getLeaderId().getLeaderId()))
                 .status(project.getStatus().getName())
                 .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserToken()).collect(Collectors.toList()))
                 .build();
@@ -189,7 +189,7 @@ public class ProjectService {
         List<String> userIds = projectUserService.getProjectUserIds(projectId);
         List<User> userList = new ArrayList<>();
         for (String userId : userIds) {
-            userList.add(userService.getUser(userId));
+            userList.add(userService.getUserByToken(userId));
         }
 
         return userList;

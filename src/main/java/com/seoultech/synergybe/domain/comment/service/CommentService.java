@@ -34,7 +34,7 @@ public class CommentService {
 
     public GetCommentResponse createComment(String userId, CreateCommentRequest request) {
         Post post = postReader.read(request.postId());
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
         Long commentId = idGenerator.generateId();
         String commentToken = tokenGenerator.generateToken(IdPrefix.COMMENT);
 

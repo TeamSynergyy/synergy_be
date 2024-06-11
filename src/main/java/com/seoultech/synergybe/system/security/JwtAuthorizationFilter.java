@@ -92,7 +92,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             log.info("refreshToken: " + refreshToken);
 
             UserRefreshToken userRefreshTokenEntity = userRefreshTokenReader.readByRefreshToken(refreshToken);
-            String userId = userRefreshTokenEntity.getUserId();
+            Long userId = userRefreshTokenEntity.getUserId();
             String email = userDetailsService.getUserEmail(userId);
             log.info("check after readrefreshToken");
 
@@ -186,7 +186,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // 여기서 userId get 가능
         UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(account);
-        String userId = userDetails.getUserId();
+        Long userId = userDetails.getUserId();
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

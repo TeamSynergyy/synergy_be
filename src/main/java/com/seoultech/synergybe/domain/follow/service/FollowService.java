@@ -68,12 +68,12 @@ public class FollowService {
 
         if (followOptional.isPresent()) {
             followOptional.get().updateStatus(status);
-            User following = userService.getUser(followingId);
+            User following = userService.getUserByToken(followingId);
 //            notificationService.send(following, NotificationType.FOLLOW, "팔로우 신청이 완료되었습니다.", Long.valueOf(followingId));
 
             return followOptional.get();
         } else {
-            User following = userService.getUser(followingId);
+            User following = userService.getUserByToken(followingId);
             Long followId = idGenerator.generateId();
             String followToken = tokenGenerator.generateToken(IdPrefix.FOLLOW);
             Follow follow = Follow.builder()

@@ -38,7 +38,7 @@ public class ApplyService {
     @Transactional
     public GetApplyResponse createApply(String userToken, String projectToken) {
         Project project = projectService.findProjectById(projectToken);
-        User user = userService.getUser(userToken);
+        User user = userService.getUserByToken(userToken);
         Long applyId = idGenerator.generateId();
         String applyToken = tokenGenerator.generateToken(IdPrefix.APPLY);
 
@@ -63,7 +63,7 @@ public class ApplyService {
     public void deleteApply(String userId, String applyId) {
         // todo
         // 사용자 권한 검증
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
         Apply apply = getApply(applyId);
         validateApplyUser(user, apply);
         applyRepository.delete(apply);
@@ -84,7 +84,7 @@ public class ApplyService {
 
         log.info("applyId : " + apply.getId());
         apply.changeStatusToAccept();
-        User user = userService.getUser(applyUserId);
+        User user = userService.getUserByToken(applyUserId);
 
 
         // projectUser 추가
@@ -125,14 +125,14 @@ public class ApplyService {
     }
 
     public GetListApplyResponse getMyApplyList(String userId) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
         List<Apply> applies = applyRepository.findAllProcessByUserId(user.getUserToken());
 
         return ApplyMapperEntityToDto.applyListToResponse(applies);
     }
 
     public GetListApplyUserResponse getApplyUserList(String projectId) {
-        List<String> userIds = applyRepository.findUserIdsByProjectId(projectId);
+        List<Long> userIds = applyRepository.findUserIdsByProjectId(projectId);
 
         // user_id 는 PK가 아닌 UNIQUE KEY 이므로 findAllById() 사용 못함
         List<User> users = userService.getUsers(userIds);

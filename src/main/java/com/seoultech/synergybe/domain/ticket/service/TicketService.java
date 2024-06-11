@@ -61,7 +61,8 @@ public class TicketService {
 
         if (!request.assignedUserIds().isEmpty()) {
             // assignedUser 추가
-            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
+            List<Long> assignedUserIds = userService.getUserIds(request.assignedUserIds());
+            List<User> assignedUsers = userService.getUsers(assignedUserIds);
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }
@@ -116,7 +117,8 @@ public class TicketService {
             // 기존 assignedUser을 삭제 후 추가해야함
             ticket.deleteAssignedUsers();
             ticketUserService.deleteAssignedUser(ticket);
-            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
+            List<Long> assignedUserIds = userService.getUserIds(request.assignedUserIds());
+            List<User> assignedUsers = userService.getUsers(assignedUserIds);
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }
@@ -243,7 +245,8 @@ public class TicketService {
             ticket.deleteAssignedUsers();
             ticketUserService.deleteAssignedUser(ticket);
 
-            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
+            List<Long> assignedUserIds = userService.getUserIds(request.assignedUserIds());
+            List<User> assignedUsers = userService.getUsers(assignedUserIds);
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }

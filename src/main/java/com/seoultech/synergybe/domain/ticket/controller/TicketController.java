@@ -27,7 +27,7 @@ public class TicketController {
     @Operation(summary = "작업 생성", description = "작업을 생성하며, 할당된 유저(여러명)들을 포함합니다.")
     @PostMapping
     public ResponseEntity<GetTicketResponse> createTicket(@RequestBody CreateTicketRequest request, @LoginUser String userId) {
-        User allocatedUser = userService.getUser(userId);
+        User allocatedUser = userService.getUserByToken(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.createTicket(request, allocatedUser));
     }
@@ -43,7 +43,7 @@ public class TicketController {
     @PutMapping(value = "/{ticketToken}")
     public ResponseEntity<GetTicketResponse> updateTicket(@PathVariable("ticketToken") String ticketToken, @LoginUser String userId,
                                                           @RequestBody CreateTicketRequest request) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
         ticketService.updateTicket(request, user, ticketToken);
 
         return ResponseEntity.noContent().build();
@@ -53,7 +53,7 @@ public class TicketController {
     @PutMapping(value = "/change/{ticketToken}")
     public ResponseEntity<ListResponse<GetTicketResponse>> changeTicket(@PathVariable("ticketToken") String ticketToken, @LoginUser String userId,
                                                                 @RequestBody CreateTicketRequest request) {
-        User allocatedUser = userService.getUser(userId);
+        User allocatedUser = userService.getUserByToken(userId);
 
         return ResponseEntity.ok().body(ticketService.changeTickets(request, allocatedUser, ticketToken));
     }
@@ -61,7 +61,7 @@ public class TicketController {
     @Operation(summary = "작업 삭제", description = "작업을 삭제합니다.")
     @DeleteMapping(value = "/{ticketToken}")
     public ResponseEntity<Void> deleteTicket(@PathVariable("ticketToken") String ticketToken, @LoginUser String userId) {
-        User allocatedUser = userService.getUser(userId);
+        User allocatedUser = userService.getUserByToken(userId);
         ticketService.deleteTicket(ticketToken, allocatedUser);
 
         return ResponseEntity.noContent().build();

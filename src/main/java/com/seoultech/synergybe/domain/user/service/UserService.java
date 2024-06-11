@@ -113,7 +113,7 @@ public class UserService {
                 .build();
     }
 
-    public List<User> getUsers(List<String> userIds) {
+    public List<User> getUsers(List<Long> userIds) {
         return userRepository.findAllByUserId(userIds);
     }
 
@@ -169,7 +169,7 @@ public class UserService {
 
             log.info("Response from FastAPI: {}", response);
 
-            List<String> userIds = this.extractIds(response);
+            List<Long> userIds = this.extractIds(response);
 
             // 빈 배열일 경우 빈 배열 리턴
             if (userIds.isEmpty()) {
@@ -182,7 +182,7 @@ public class UserService {
             int startIdx = end.intValue();
             int endIdx = Math.min(startIdx + 10, userIds.size());
 
-            List<String> result = userIds.subList(startIdx, endIdx);
+            List<Long> result = userIds.subList(startIdx, endIdx);
 
             List<User> users = userRepository.findAllByUserId(result);
 
@@ -196,7 +196,7 @@ public class UserService {
         }
     }
 
-    private List<String> extractIds(String response) {
+    private List<Long> extractIds(String response) {
         try {
             // 받은 JSON 응답을 자바 리스트로 파싱
             ObjectMapper objectMapper = new ObjectMapper();
@@ -239,10 +239,17 @@ public class UserService {
 
         User user = getUserById(userId);
         String email = user.getEmail().getEmail();
-        String accessToken = jwtUtil.createToken(user.getUserToken(), email);
+        String accessToken = jwtUtil.createToken(user.getId(), email);
         log.info("refreshToken save success");
         cookieUtil.addRefreshTokenCookie(response, getRefreshToken, accessToken);
         log.info("add refreshToken cookie");
+    }
+
+    public List<Long> getUserIds(List<String> userToken) {
+        List<User> users = userRepository.findAllByUserToken(userToken);
+
+        List<Long> userIds = users.stream().map(user -> user.getId()).toList();
+        return userIds;
     }
 }
 
