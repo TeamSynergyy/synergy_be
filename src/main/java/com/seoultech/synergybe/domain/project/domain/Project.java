@@ -1,10 +1,10 @@
-package com.seoultech.synergybe.domain.project;
+package com.seoultech.synergybe.domain.project.domain;
 
 import com.seoultech.synergybe.domain.apply.Apply;
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.notice.Notice;
-import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
-import com.seoultech.synergybe.domain.project.vo.*;
+import com.seoultech.synergybe.domain.project.domain.vo.*;
+import com.seoultech.synergybe.domain.project.interfaces.dto.request.UpdateProjectRequest;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.schedule.Schedule;
@@ -87,7 +87,7 @@ public class Project extends BaseTime {
 
     @Builder
     public Project(Long id, String projectToken, String name, String content, ProjectField field, Point location, LocalDateTime startAt,
-                   LocalDateTime endAt, String leaderId) {
+                   LocalDateTime endAt, Long leaderId) {
         this.id = id;
         this.projectToken = projectToken;
         this.name = new ProjectName(name);
@@ -104,7 +104,7 @@ public class Project extends BaseTime {
         return this;
     }
 
-    public void updateProjectLeaderId(String leaderId) {
+    public void updateProjectLeaderId(Long leaderId) {
         this.leaderId = new ProjectLeaderId(leaderId);
     }
 

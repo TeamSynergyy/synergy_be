@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.ticket;
 
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
-import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.ticket.dto.request.CreateTicketRequest;
 import com.seoultech.synergybe.domain.ticket.vo.TicketContent;
 import com.seoultech.synergybe.domain.ticket.vo.TicketName;

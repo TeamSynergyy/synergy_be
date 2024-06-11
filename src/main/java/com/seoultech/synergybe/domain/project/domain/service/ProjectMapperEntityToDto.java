@@ -1,9 +1,9 @@
-package com.seoultech.synergybe.domain.project.service;
+package com.seoultech.synergybe.domain.project.domain.service;
 
 import com.seoultech.synergybe.domain.common.PageInfo;
-import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.dto.response.GetListProjectResponse;
-import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
+import com.seoultech.synergybe.domain.project.domain.Project;
+import com.seoultech.synergybe.domain.project.interfaces.dto.response.GetListProjectResponse;
+import com.seoultech.synergybe.domain.project.interfaces.dto.response.GetProjectResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

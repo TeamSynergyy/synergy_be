@@ -1,7 +1,5 @@
-package com.seoultech.synergybe.domain.project.dto.response;
+package com.seoultech.synergybe.domain.project.interfaces.dto.response;
 
-import com.seoultech.synergybe.domain.project.ProjectField;
-import com.seoultech.synergybe.domain.project.ProjectStatus;
 import lombok.Builder;
 import org.springframework.data.geo.Point;
 
@@ -10,7 +8,7 @@ import java.util.List;
 
 @Builder
 public record GetProjectResponse(
-        String projectId,
+        String projectToken,
         String name,
         String content,
         String field,

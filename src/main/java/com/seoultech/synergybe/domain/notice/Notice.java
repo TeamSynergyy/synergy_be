@@ -4,7 +4,7 @@ package com.seoultech.synergybe.domain.notice;
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
 import com.seoultech.synergybe.domain.notice.vo.NoticeContent;
 import com.seoultech.synergybe.domain.notice.vo.NoticeTitle;
-import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;

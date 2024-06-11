@@ -1,7 +1,7 @@
 package com.seoultech.synergybe.domain.apply;
 
 import com.seoultech.synergybe.domain.common.entity.IsDeleted;
-import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

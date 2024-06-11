@@ -1,12 +1,13 @@
-package com.seoultech.synergybe.domain.project.controller;
+package com.seoultech.synergybe.domain.project.interfaces;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
-import com.seoultech.synergybe.domain.project.Project;
-import com.seoultech.synergybe.domain.project.dto.request.CreateProjectRequest;
-import com.seoultech.synergybe.domain.project.dto.request.UpdateProjectRequest;
-import com.seoultech.synergybe.domain.project.dto.response.GetListProjectResponse;
-import com.seoultech.synergybe.domain.project.dto.response.GetProjectResponse;
-import com.seoultech.synergybe.domain.project.service.ProjectService;
+import com.seoultech.synergybe.domain.project.domain.Project;
+import com.seoultech.synergybe.domain.project.domain.ProjectCommand;
+import com.seoultech.synergybe.domain.project.domain.service.ProjectService;
+import com.seoultech.synergybe.domain.project.interfaces.dto.request.CreateProjectRequest;
+import com.seoultech.synergybe.domain.project.interfaces.dto.request.UpdateProjectRequest;
+import com.seoultech.synergybe.domain.project.interfaces.dto.response.GetListProjectResponse;
+import com.seoultech.synergybe.domain.project.interfaces.dto.response.GetProjectResponse;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
@@ -25,16 +26,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/v1/projects")
 @RequiredArgsConstructor
 @Tag(name = "프로젝트 api")
-public class ProjectController {
+public class ProjectApiController {
     private final ProjectService projectService;
-
     private final UserService userService;
 
     @Operation(summary = "프로젝트 생성", description = "프로젝트가 생성됩니다.")
     @PostMapping
-    public ResponseEntity<GetProjectResponse> createProject(@Valid @RequestBody CreateProjectRequest request, @LoginUser String userId) {
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(userId, request));
+    public ResponseEntity<GetProjectResponse> createProject(@Valid @RequestBody CreateProjectRequest request, @LoginUser String userToken) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(userToken, request));
     }
 
     @Operation(summary = "프로젝트 수정", description = "요청된 정보에 따라 프로젝트가 수정됩니다.")

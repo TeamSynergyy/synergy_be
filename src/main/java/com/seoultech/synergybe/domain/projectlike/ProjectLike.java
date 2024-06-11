@@ -2,7 +2,7 @@ package com.seoultech.synergybe.domain.projectlike;
 
 
 import com.seoultech.synergybe.domain.common.constants.LikeStatus;
-import com.seoultech.synergybe.domain.project.Project;
+import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.common.BaseTime;
 import lombok.AccessLevel;
