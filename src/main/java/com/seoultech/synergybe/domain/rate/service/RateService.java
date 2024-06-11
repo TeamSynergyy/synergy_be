@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.rate.service;
 
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.project.exception.ProjectLeaderBadRequestException;
@@ -30,14 +31,17 @@ public class RateService {
     private final ProjectService projectService;
     private final UserService userService;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
 
     public GetRateResponse createRate(CreateRateRequest request, User giveUser) {
         Project project = projectService.findProjectById(request.projectId());
         User receiveUser = userService.getUser(request.receiveUserId());
-        String rateId = idGenerator.generateId(IdPrefix.RATE);
+        Long rateId = idGenerator.generateId();
+        String rateToken = tokenGenerator.generateToken(IdPrefix.RATE);
+
         Rate rate = Rate.builder()
-                .id(rateId).project(project).giveUser(giveUser).receiveUser(receiveUser).content(request.content()).score(request.score())
+                .id(rateId).project(project).rateToken(rateToken).giveUser(giveUser).receiveUser(receiveUser).content(request.content()).score(request.score())
                 .build();
         rateRepository.save(rate);
 
@@ -71,7 +75,7 @@ public class RateService {
     }
 
     private UserRateResponse CalculateUserRate(String projectId, User user) {
-        List<Rate> rates = rateRepository.findAllByProjectIdAndReceiverId(projectId, user.getId());
+        List<Rate> rates = rateRepository.findAllByProjectIdAndReceiverId(projectId, user.getUserToken());
         int total = 0;
 
         for (Rate rate : rates) {

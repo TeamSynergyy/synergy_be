@@ -27,9 +27,9 @@ public class CommentController {
 
     @Operation(summary = "Comment 생성", description = "게시글에 댓글이 생성되며, 사용자와 시간이 포함됩니다.")
     @PostMapping
-    public ResponseEntity<GetCommentResponse> createComment(@Valid @RequestBody CreateCommentRequest request, @LoginUser String userId) {
+    public ResponseEntity<GetCommentResponse> createComment(@Valid @RequestBody CreateCommentRequest request, @LoginUser String userToken) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(userId, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(userToken, request));
     }
 
     @Operation(summary = "Comment 수정", description = "댓글이 요청에 대해 수정됩니다.")

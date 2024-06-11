@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String>, UserRepositoryCustom {
+public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 
     @Query(value = "SELECT * FROM user WHERE user_id IN :userIds", nativeQuery = true)
     List<User> findAllByUserId(@Param("userIds") List<String> userIds);
@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, String>, UserReposit
     Page<User> findAll(Specification<User> spec, Pageable pageable);
 
     boolean existsByEmail(UserEmail email);
+
+    Optional<User> findByUserToken(String userToken);
 }

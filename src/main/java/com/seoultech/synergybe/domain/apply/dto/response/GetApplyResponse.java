@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record GetApplyResponse(
-        String applyId,
+        String applyToken,
         String status
 ) {
     @QueryProjection

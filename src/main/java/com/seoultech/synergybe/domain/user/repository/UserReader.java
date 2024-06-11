@@ -12,7 +12,7 @@ public class UserReader {
     private final UserRepository userRepository;
 
     public User read(String userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByUserToken(userId)
                 .orElseThrow(() -> new UserNotFoundException("존재하지 않은 유저입니다."));
     }
 }

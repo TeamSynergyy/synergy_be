@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.follow.service;
 
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.follow.Follow;
 import com.seoultech.synergybe.domain.follow.FollowStatus;
@@ -27,6 +28,7 @@ public class FollowService {
     private final UserService userService;
     private final NotificationService notificationService;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
     public List<String> findFollowingIdsByUserId(String userId) {
         return followRepository.findFollowingIdsByFollowerId(userId);
@@ -35,12 +37,12 @@ public class FollowService {
     /**
      *
      * @param user 신청한 유저
-     * @param followingId 신청 받은 유저
+     * @param followingToken 신청 받은 유저
      * @param type
      * @return
      */
     @Transactional
-    public GetFollowResponse updateFollow(User user, String followingId, CreateFollowRequest type) {
+    public GetFollowResponse updateFollow(User user, String followingToken, CreateFollowRequest type) {
         FollowStatus status;
         if (type.followType().equals("follow")) {
             status = FollowStatus.FOLLOW;
@@ -49,7 +51,7 @@ public class FollowService {
         }
 
         try {
-            Follow updatedFollow = update(user, followingId, status);
+            Follow updatedFollow = update(user, followingToken, status);
             GetFollowResponse getFollowResponse = GetFollowResponse.builder().build();
 
             return getFollowResponse;
@@ -62,7 +64,7 @@ public class FollowService {
     }
 
     public synchronized Follow update(User user, String followingId, FollowStatus status) {
-        Optional<Follow> followOptional = followRepository.findByFollowerIdAndFollowingId(user.getId(), followingId);
+        Optional<Follow> followOptional = followRepository.findByFollowerIdAndFollowingId(user.getUserToken(), followingId);
 
         if (followOptional.isPresent()) {
             followOptional.get().updateStatus(status);
@@ -72,9 +74,11 @@ public class FollowService {
             return followOptional.get();
         } else {
             User following = userService.getUser(followingId);
-            String followId = idGenerator.generateId(IdPrefix.FOLLOW);
+            Long followId = idGenerator.generateId();
+            String followToken = tokenGenerator.generateToken(IdPrefix.FOLLOW);
             Follow follow = Follow.builder()
                     .id(followId)
+                    .followToken(followToken)
                     .follower(user)
                     .following(following)
                     .build();

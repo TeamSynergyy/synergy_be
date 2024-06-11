@@ -2,8 +2,9 @@ package com.seoultech.synergybe.domain.projectuser.service;
 
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.project.domain.Project;
-import com.seoultech.synergybe.domain.project.infrastructure.repository.ProjectRepository;
+import com.seoultech.synergybe.domain.project.infrastructure.ProjectRepository;
 import com.seoultech.synergybe.domain.projectuser.ProjectUser;
 import com.seoultech.synergybe.domain.projectuser.exception.ProjectUserNotFoundException;
 import com.seoultech.synergybe.domain.projectuser.repository.ProjectUserRepository;
@@ -22,18 +23,24 @@ public class ProjectUserService {
 
     private final ProjectUserRepository projectUserRepository;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
     private final ProjectRepository projectRepository;
 
     public void createProjectUser(Project project, User user) {
-        Optional<ProjectUser> projectUserOptional = projectUserRepository.findByProjectIdAndUserId(project.getId(), user.getId());
+        Optional<ProjectUser> projectUserOptional = projectUserRepository.findByProjectIdAndUserId(project.getProjectToken(), user.getUserToken());
 
         if (projectUserOptional.isPresent()) {
             // 이미 생성됨
         } else {
-            String projectUserId = idGenerator.generateId(IdPrefix.PROJECT_USER);
+            Long projectUserId = idGenerator.generateId();
+            String projectUserToken = tokenGenerator.generateToken(IdPrefix.PROJECT_USER);
             ProjectUser projectUser = ProjectUser.builder()
-                    .id(projectUserId).project(project).user(user)
+                    .id(projectUserId)
+                    .projectUserToken(projectUserToken)
+                    .project(project)
+                    .user(user)
                     .build();
+
             project.getProjectUsers().add(projectUser);
             projectUserRepository.save(projectUser);
         }
@@ -44,7 +51,7 @@ public class ProjectUserService {
     }
 
     public void deleteProjectUser(Project project, User user) {
-        Optional<ProjectUser> projectUserOptional = projectUserRepository.findByProjectIdAndUserId(project.getId(), user.getId());
+        Optional<ProjectUser> projectUserOptional = projectUserRepository.findByProjectIdAndUserId(project.getProjectToken(), user.getUserToken());
 
         if (projectUserOptional.isPresent()) {
             projectUserRepository.delete(projectUserOptional.get());

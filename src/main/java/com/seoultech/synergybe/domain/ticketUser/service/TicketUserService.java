@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.ticketUser.service;
 
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.ticketUser.TicketUser;
 import com.seoultech.synergybe.domain.ticketUser.repository.TicketUserRepository;
@@ -17,17 +18,21 @@ import java.util.Optional;
 public class TicketUserService {
     private final TicketUserRepository ticketUserRepository;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
     public void createTicketUser(Ticket ticket, User user) {
-        Optional<TicketUser> ticketUserOptional = ticketUserRepository.findByTicketIdAndUserId(ticket.getId(), user.getId());
+        Optional<TicketUser> ticketUserOptional = ticketUserRepository.findByTicketIdAndUserId(ticket.getTicketToken(), user.getUserToken());
 
         if (ticketUserOptional.isPresent()) {
             // 이미 생성됨
         } else {
-            String ticketUserId = idGenerator.generateId(IdPrefix.TICKET_USER);
+            Long ticketUserId = idGenerator.generateId();
+            String ticketUserToken = tokenGenerator.generateToken(IdPrefix.TICKET_USER);
+
             TicketUser ticketUser = TicketUser.builder()
-                    .id(ticketUserId).ticket(ticket).user(user)
+                    .id(ticketUserId).ticketUserToken(ticketUserToken).ticket(ticket).user(user)
                     .build();
+
             ticket.getTicketUsers().add(ticketUser);
             ticketUserRepository.save(ticketUser);
         }

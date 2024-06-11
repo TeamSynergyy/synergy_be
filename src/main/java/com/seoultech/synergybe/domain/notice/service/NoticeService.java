@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.notice.service;
 
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.notice.Notice;
 import com.seoultech.synergybe.domain.notice.dto.request.CreateNoticeRequest;
@@ -28,18 +29,24 @@ public class NoticeService {
     private final ProjectService projectService;
     private final NotificationService notificationService;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
 
     public GetNoticeResponse createNotice(CreateNoticeRequest request) {
         Project project = projectService.findProjectById(request.projectId());
-        String noticeId = idGenerator.generateId(IdPrefix.NOTICE);
+        Long noticeId = idGenerator.generateId();
+        String noticeToken = tokenGenerator.generateToken(IdPrefix.NOTICE);
         Notice notice = Notice.builder()
-                .id(noticeId).content(request.content()).project(project)
+                .id(noticeId)
+                .noticeToken(noticeToken)
+                .content(request.content())
+                .project(project)
                 .build();
+
         Notice savedNotice = this.noticeRepository.save(notice);
         List<User> projectUsers = project.getProjectUsers().stream().map(projectUser -> projectUser.getUser()).collect(Collectors.toList());
         for (User user : projectUsers) {
-            notificationService.send(user, NotificationType.PROJECT_NOTICE, "공지사항이 생성되었습니다.", project.getId());
+            notificationService.send(user, NotificationType.PROJECT_NOTICE, "공지사항이 생성되었습니다.", project.getProjectToken());
         }
         GetNoticeResponse getNoticeResponse = GetNoticeResponse.builder().build();
 

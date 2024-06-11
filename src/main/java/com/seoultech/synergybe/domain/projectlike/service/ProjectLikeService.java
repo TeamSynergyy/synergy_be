@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.projectlike.service;
 import com.seoultech.synergybe.domain.common.constants.LikeStatus;
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.project.infrastructure.ProjectRepository;
 import com.seoultech.synergybe.domain.projectlike.ProjectLike;
@@ -24,10 +25,11 @@ public class ProjectLikeService {
     private final ProjectLikeRepository projectLikeRepository;
     private final ProjectRepository projectRepository;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
 
     @Transactional
-    public ProjectLikeResponse updateProjectLike(User user, String projectId, ProjectLikeType type) {
+    public ProjectLikeResponse updateProjectLike(User user, String projectToken, ProjectLikeType type) {
         LikeStatus status;
         if (type.getLikeType().equals("like")) {
             status = LikeStatus.LIKE;
@@ -35,7 +37,7 @@ public class ProjectLikeService {
             status = LikeStatus.UN_LIKE;
         }
         try {
-            ProjectLike updatedProjectLike = this.update(user, projectId, status);
+            ProjectLike updatedProjectLike = this.update(user, projectToken, status);
 
 //            return ProjectLikeResponse.from(updatedProjectLike);
             return ProjectLikeResponse.builder().build();
@@ -45,19 +47,21 @@ public class ProjectLikeService {
     }
 
     public synchronized ProjectLike update(User user, String projectId, LikeStatus status) {
-        Optional<ProjectLike> projectLikeOptional = projectLikeRepository.findByUserUserIdAndProjectId(user.getId(), projectId);
+        Optional<ProjectLike> projectLikeOptional = projectLikeRepository.findByUserUserIdAndProjectId(user.getUserToken(), projectId);
 
         if (projectLikeOptional.isPresent()) {
             projectLikeOptional.get().updateStatus(status);
 
             return projectLikeOptional.get();
         } else {
-            String projectLikeId = idGenerator.generateId(IdPrefix.PROJECT_LIKE);
+            Long projectLikeId = idGenerator.generateId();
+            String projectLikeToken = tokenGenerator.generateToken(IdPrefix.PROJECT_LIKE);
 //            Project project = projectService.findProjectById(projectId);
             Project project = projectRepository.findById(projectId)
                     .orElseThrow();
             ProjectLike projectLike = ProjectLike.builder()
                     .id(projectLikeId)
+                    .projectLikeToken(projectLikeToken)
                     .user(user)
                     .project(project)
                     .build();
@@ -67,6 +71,6 @@ public class ProjectLikeService {
     }
 
     public List<String> findLikedProjectIds(User user) {
-        return projectLikeRepository.findProjectIdsByUserId(user.getId());
+        return projectLikeRepository.findProjectIdsByUserId(user.getUserToken());
     }
 }

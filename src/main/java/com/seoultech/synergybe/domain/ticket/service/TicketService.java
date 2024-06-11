@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.ticket.service;
 
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.project.domain.service.ProjectService;
@@ -34,6 +35,7 @@ public class TicketService {
     private final ProjectService projectService;
     private final UserService userService;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
     /**
      * todo
@@ -49,9 +51,11 @@ public class TicketService {
 
         Project project = projectService.findProjectById(request.projectId());
         Integer lastOrderNum = ticketRepository.findLastOrderNumber(request.status(), request.projectId());
-        String ticketId = idGenerator.generateId(IdPrefix.TICKET);
+        Long ticketId = idGenerator.generateId();
+        String ticketToken = tokenGenerator.generateToken(IdPrefix.RATE);
+
         Ticket ticket = Ticket.builder()
-                .id(ticketId).project(project)
+                .id(ticketId).ticketToken(ticketToken).project(project)
                 .build();
         ticketRepository.save(ticket);
 
@@ -217,7 +221,7 @@ public class TicketService {
                 .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
 
         // check User
-        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getId());
+        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getProjectToken());
         checkUser(authUsers, user);
 
         ticketRepository.delete(ticket);
@@ -230,7 +234,7 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
         // check User
-        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getId());
+        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getProjectToken());
         checkUser(authUsers, user);
 
         // assignedUser 수정

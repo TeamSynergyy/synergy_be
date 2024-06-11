@@ -55,9 +55,10 @@ public class Comment extends BaseTime {
     private IsDeleted isDeleted = new IsDeleted(IS_DELETED_DEFAULT);
 
     @Builder
-    public Comment(String id, String comment, User user, Post post, Comment parentComment, int depth, int orderNumber,
+    public Comment(Long id, String commentToken, String comment, User user, Post post, Comment parentComment, int depth, int orderNumber,
                    boolean isChildComment) {
         this.id = id;
+        this.commentToken = commentToken;
         this.comment = new CommentContent(comment);
         this.user = user;
         this.post = post;
