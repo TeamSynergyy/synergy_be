@@ -87,7 +87,7 @@ public class Project extends BaseTime {
 
     @Builder
     public Project(Long id, String projectToken, String name, String content, ProjectField field, Point location, LocalDateTime startAt,
-                   LocalDateTime endAt, String leaderId) {
+                   LocalDateTime endAt, Long leaderId) {
         this.id = id;
         this.projectToken = projectToken;
         this.name = new ProjectName(name);
@@ -104,7 +104,7 @@ public class Project extends BaseTime {
         return this;
     }
 
-    public void updateProjectLeaderId(String leaderId) {
+    public void updateProjectLeaderId(Long leaderId) {
         this.leaderId = new ProjectLeaderId(leaderId);
     }
 

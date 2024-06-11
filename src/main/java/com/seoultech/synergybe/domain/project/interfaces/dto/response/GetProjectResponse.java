@@ -8,7 +8,7 @@ import java.util.List;
 
 @Builder
 public record GetProjectResponse(
-        String projectId,
+        String projectToken,
         String name,
         String content,
         String field,

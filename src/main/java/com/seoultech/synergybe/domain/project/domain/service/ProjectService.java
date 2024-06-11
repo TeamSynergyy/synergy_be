@@ -1,10 +1,11 @@
-package com.seoultech.synergybe.domain.project.service;
+package com.seoultech.synergybe.domain.project.domain.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.project.interfaces.dto.request.CreateProjectRequest;
@@ -42,20 +43,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
-
     private final ProjectUserService projectUserService;
-
     private final ProjectLikeService projectLikeService;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
     private final UserService userService;
 
     @Transactional
     public GetProjectResponse createProject(String userId, CreateProjectRequest request) {
         User user = userService.getUser(userId);
-        String projectId = idGenerator.generateId(IdPrefix.PROJECT);
+        Long projectId = idGenerator.generateId();
+        String projectToken = tokenGenerator.generateToken(IdPrefix.POST);
         Point point = new Point(request.longitude(), request.latitude());
         Project project = Project.builder()
                 .id(projectId)
+                .projectToken(projectToken)
                 .name(request.name())
                 .content(request.content())
                 .field(request.field())
@@ -67,15 +69,15 @@ public class ProjectService {
         Project savedProject = projectRepository.save(project);
         projectUserService.createProjectUser(savedProject, user);
         return GetProjectResponse.builder()
-                .projectId(savedProject.getId())
+                .projectToken(savedProject.getProjectToken())
                 .build();
     }
 
-    private void validateProjectUser(String userId, String projectId) {
+    private void validateProjectUser(String userToken, String projectId) {
         Project project = findProjectById(projectId);
-        List<String> userListIds = project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getId()).toList();
+        List<String> userListTokens = project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserToken()).toList();
 
-        if (!userListIds.contains(userId)) {
+        if (!userListTokens.contains(userToken)) {
             throw new ProjectBadRequestException("프로젝트 변경 권한이 없습니다.");
         }
     }
@@ -89,10 +91,10 @@ public class ProjectService {
     }
 
     @Transactional
-    public void updateProject(String userId, UpdateProjectRequest request) {
+    public void updateProject(String userToken, UpdateProjectRequest request) {
         // todo
         // 프로젝트 멤버 검증
-        validateProjectUser(userId, request.projectId());
+        validateProjectUser(userToken, request.projectId());
 
         Project project = this.findProjectById(request.projectId());
         Project updatedProject = project.updateProject(request);
@@ -114,20 +116,20 @@ public class ProjectService {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("존재하지 않는 프로젝트입니다."));
     }
-    public GetProjectResponse getProject(String projectId) {
-        Project project = this.findProjectById(projectId);
+    public GetProjectResponse getProject(String projectToken) {
+        Project project = this.findProjectById(projectToken);
 
         return GetProjectResponse.builder()
-                .projectId(projectId)
+                .projectToken(projectToken)
                 .name(project.getName().getName())
                 .content(project.getContent().getContent())
                 .field(project.getField().name())
                 .location(project.getLocation().getLocation())
                 .startAt(project.getPeriod().getStartAt())
                 .endAt(project.getPeriod().getEndAt())
-                .leaderId(project.getLeaderId().getLeaderId())
+                .leaderId(String.valueOf(project.getLeaderId().getLeaderId()))
                 .status(project.getStatus().getName())
-                .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getId()).collect(Collectors.toList()))
+                .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserToken()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -207,13 +209,13 @@ public class ProjectService {
 
         try {
             log.info("get recommend project list start");
-            String userId = user.getId();
-            log.info("user Id {}", userId);
+            String userToken = user.getUserToken();
+            log.info("user Id {}", userToken);
 
             RestTemplate restTemplate = new RestTemplate();
             log.info("rest template new");
             String fastApiUrl = "http://fastapi:8000"; // 컨테이너 이름과 포트
-            String response = restTemplate.getForObject(fastApiUrl + "/recommend/projects/" + userId, String.class);
+            String response = restTemplate.getForObject(fastApiUrl + "/recommend/projects/" + userToken, String.class);
 
             log.info("Response from FastAPI: {}", response);
 

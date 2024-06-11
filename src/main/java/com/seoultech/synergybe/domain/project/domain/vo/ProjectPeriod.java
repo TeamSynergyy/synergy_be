@@ -21,13 +21,13 @@ public class ProjectPeriod {
     @Column(name = "end_at")
     private LocalDateTime endAt;
 
-    public ProjectPeriod(LocalDateTime startAt, LocalDateTime endAt, String leaderId) {
+    public ProjectPeriod(LocalDateTime startAt, LocalDateTime endAt, Long leaderId) {
         validateNotNull(startAt, endAt, leaderId);
         this.startAt = startAt;
         this.endAt = endAt;
     }
 
-    private void validateNotNull(LocalDateTime startAt, LocalDateTime endAt, String leaderId) {
+    private void validateNotNull(LocalDateTime startAt, LocalDateTime endAt, Long leaderId) {
         if (startAt == null || endAt == null || leaderId == null) {
             throw new ProjectBadRequestException("시작일자 종료일자 리더는 필수 항목 입니다.");
         }
