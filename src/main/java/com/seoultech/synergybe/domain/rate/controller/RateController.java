@@ -28,7 +28,7 @@ public class RateController {
     @Operation(summary = "평가 생성", description = "프로젝트 팀원에 대해 평가를 생성합니다.")
     @PostMapping
     public ResponseEntity<GetRateResponse> createRate(@RequestBody CreateRateRequest request, @LoginUser String userId) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(rateService.createRate(request, user));
     }
@@ -36,7 +36,7 @@ public class RateController {
     @Operation(summary = "평가 반영", description = "팀장만이 수행 가능하며, 평가가 진행된 내용에 대해 팀원 및 팀장에게 적용됩니다.")
     @PutMapping("/{projectId}/evaluations")
     public ResponseEntity<List<UserRateResponse>> updateUserRate(@PathVariable("projectId") String projectId, @LoginUser String userId) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(rateService.updateTemperature(projectId, user));
     }

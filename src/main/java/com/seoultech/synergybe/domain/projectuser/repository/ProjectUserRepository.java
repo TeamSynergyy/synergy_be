@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProjectUserRepository extends JpaRepository<ProjectUser, String> {
-    Optional<ProjectUser> findByProjectIdAndUserId(String projectId, String userId);
+public interface ProjectUserRepository extends JpaRepository<ProjectUser, Long> {
+    Optional<ProjectUser> findByProjectUserTokenAndProjectUserToken(String projectId, String userId);
 
     @Query(value = "SELECT user_id FROM project_user WHERE project_id = :projectId", nativeQuery = true)
     List<String> findProjectUserIdsByProjectId(@Param("projectId") String projectId);

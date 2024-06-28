@@ -36,14 +36,17 @@ public class ApplyService {
     private final TokenGenerator tokenGenerator;
 
     @Transactional
-    public GetApplyResponse createApply(String userId, String projectId) {
-        Project project = projectService.findProjectById(projectId);
-        User user = userService.getUser(userId);
+    public GetApplyResponse createApply(String userToken, String projectToken) {
+        Project project = projectService.findProjectById(projectToken);
+        User user = userService.getUserByToken(userToken);
         Long applyId = idGenerator.generateId();
         String applyToken = tokenGenerator.generateToken(IdPrefix.APPLY);
 
         Apply apply = Apply.builder()
-                .id(applyId).user(user).project(project)
+                .id(applyId)
+                .applyToken(applyToken)
+                .user(user)
+                .project(project)
                 .build();
         Apply savedApply = applyRepository.save(apply);
 
@@ -52,15 +55,16 @@ public class ApplyService {
 //        notificationService.send(leader, NotificationType.PROJECT_APPLY, "프로젝트 신청이 완료되었습니다.", projectId);
 
         return GetApplyResponse.builder()
-                .applyId(savedApply.getId())
+                .applyToken(savedApply.getApplyToken())
                 .build();
     }
 
     @Transactional
-    public void deleteApply(String userId, String applyId) {
+    public void deleteApply(String userId, String applyToken) {
         // todo
         // 사용자 권한 검증
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
+        Long applyId = getApplyId(applyToken);
         Apply apply = getApply(applyId);
         validateApplyUser(user, apply);
         applyRepository.delete(apply);
@@ -72,6 +76,10 @@ public class ApplyService {
         }
     }
 
+    public Long getApplyId(String applyToken) {
+        return applyRepository.findByApplyToken(applyToken).getId();
+    }
+
     @Transactional
     public void updateApplyStatusToAccept(String leaderId, String applyUserId, String projectId) {
         Apply apply = applyRepository.findApplyByUserIdAndProjectId(applyUserId, projectId);
@@ -81,12 +89,13 @@ public class ApplyService {
 
         log.info("applyId : " + apply.getId());
         apply.changeStatusToAccept();
-        User user = userService.getUser(applyUserId);
+        User user = userService.getUserByToken(applyUserId);
 
 
         // projectUser 추가
-        String projectUserId = idGenerator.generateId(IdPrefix.PROJECT_USER);
-        ProjectUser projectUser = new ProjectUser(projectUserId, project, user);
+        Long projectUserId = idGenerator.generateId();
+        String projectUserToken = tokenGenerator.generateToken(IdPrefix.PROJECT_USER);
+        ProjectUser projectUser = new ProjectUser(projectUserId, projectUserToken, project, user);
         project.getProjectUsers().add(projectUser);
         projectUserRepository.save(projectUser);
 //        User applyUser = userService.getUser(userId);
@@ -121,14 +130,14 @@ public class ApplyService {
     }
 
     public GetListApplyResponse getMyApplyList(String userId) {
-        User user = userService.getUser(userId);
-        List<Apply> applies = applyRepository.findAllProcessByUserId(user.getId());
+        User user = userService.getUserByToken(userId);
+        List<Apply> applies = applyRepository.findAllProcessByUserId(user.getUserToken());
 
         return ApplyMapperEntityToDto.applyListToResponse(applies);
     }
 
     public GetListApplyUserResponse getApplyUserList(String projectId) {
-        List<String> userIds = applyRepository.findUserIdsByProjectId(projectId);
+        List<Long> userIds = applyRepository.findUserIdsByProjectId(projectId);
 
         // user_id 는 PK가 아닌 UNIQUE KEY 이므로 findAllById() 사용 못함
         List<User> users = userService.getUsers(userIds);
@@ -136,7 +145,7 @@ public class ApplyService {
         return ApplyMapperEntityToDto.userListToResponse(users);
     }
 
-    public Apply getApply(String applyId) {
+    public Apply getApply(Long applyId) {
         return applyRepository.findById(applyId).orElseThrow(() -> new ApplyNotFoundException("신청내역이 존재하지 않습니다."));
     }
 }

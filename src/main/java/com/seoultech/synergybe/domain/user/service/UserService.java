@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.email.MailService;
 import com.seoultech.synergybe.domain.user.UserRefreshToken;
@@ -50,6 +51,7 @@ public class UserService {
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final CustomPasswordEncoder passwordEncoder;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
     private final MailService mailService;
     private final CookieUtil cookieUtil;
     private final JwtUtil jwtUtil;
@@ -63,9 +65,12 @@ public class UserService {
     ) {
         checkEmailDuplicate(email);
 
-        String userId = idGenerator.generateId(IdPrefix.USER);
+        Long userId = idGenerator.generateId();
+        String userToken = tokenGenerator.generateToken(IdPrefix.USER);
+
         User user = User.builder()
                 .id(userId)
+                .userToken(userToken)
                 .email(email)
                 .password(password)
                 .name(name)
@@ -76,7 +81,7 @@ public class UserService {
 
         mailService.validateEmail(email);
 
-        return user.getId();
+        return user.getUserToken();
     }
 
     private void checkEmailDuplicate(String email) {
@@ -87,15 +92,20 @@ public class UserService {
         }
     }
 
-    public User getUser(String userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
+    public User getUserByToken(String userToken) {
+        return userRepository.findByUserToken(userToken).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
+    }
+
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
     }
 
     public GetUserAccountResponse getUserInfo(String userId) {
-        User user = getUser(userId);
+        User user = getUserByToken(userId);
 
         return GetUserAccountResponse.builder()
-                .userId(user.getId())
+                .userToken(user.getUserToken())
                 .email(user.getEmail().getEmail())
                 .major(user.getMajor().getMajor())
                 .name(user.getName().getName())
@@ -103,7 +113,7 @@ public class UserService {
                 .build();
     }
 
-    public List<User> getUsers(List<String> userIds) {
+    public List<User> getUsers(List<Long> userIds) {
         return userRepository.findAllByUserId(userIds);
     }
 
@@ -143,7 +153,7 @@ public class UserService {
             String name,
             String major
     ) {
-        User user = getUser(userId);
+        User user = getUserByToken(userId);
         user.updateUserInfo(email, name, major);
     }
 
@@ -159,7 +169,7 @@ public class UserService {
 
             log.info("Response from FastAPI: {}", response);
 
-            List<String> userIds = this.extractIds(response);
+            List<Long> userIds = this.extractIds(response);
 
             // 빈 배열일 경우 빈 배열 리턴
             if (userIds.isEmpty()) {
@@ -172,7 +182,7 @@ public class UserService {
             int startIdx = end.intValue();
             int endIdx = Math.min(startIdx + 10, userIds.size());
 
-            List<String> result = userIds.subList(startIdx, endIdx);
+            List<Long> result = userIds.subList(startIdx, endIdx);
 
             List<User> users = userRepository.findAllByUserId(result);
 
@@ -186,7 +196,7 @@ public class UserService {
         }
     }
 
-    private List<String> extractIds(String response) {
+    private List<Long> extractIds(String response) {
         try {
             // 받은 JSON 응답을 자바 리스트로 파싱
             ObjectMapper objectMapper = new ObjectMapper();
@@ -225,14 +235,21 @@ public class UserService {
         getRefreshToken.updateRefreshToken();
         log.info("new refreshToken value: " + getRefreshToken.getRefreshToken().getRefreshToken());
 
-        String userId = getRefreshToken.getUserId();
+        Long userId = getRefreshToken.getUserId();
 
-        User user = getUser(userId);
+        User user = getUserById(userId);
         String email = user.getEmail().getEmail();
-        String accessToken = jwtUtil.createToken(userId, email);
+        String accessToken = jwtUtil.createToken(user.getId(), email);
         log.info("refreshToken save success");
         cookieUtil.addRefreshTokenCookie(response, getRefreshToken, accessToken);
         log.info("add refreshToken cookie");
+    }
+
+    public List<Long> getUserIds(List<String> userToken) {
+        List<User> users = userRepository.findAllByUserToken(userToken);
+
+        List<Long> userIds = users.stream().map(user -> user.getId()).toList();
+        return userIds;
     }
 }
 

@@ -7,9 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, String> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query(value = "SELECT comment_id FROM comment WHERE post_id = :postId", nativeQuery = true)
     List<String> findCommentIdsByPostId(@Param("postId") String postId);
+
+    Comment findByCommentToken(String commentToken);
 }

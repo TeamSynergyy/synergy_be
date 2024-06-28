@@ -30,16 +30,16 @@ public class NoticeController {
     }
 
     @Operation(summary = "공지 조회", description = "프로젝트 공지를 단건 조회합니다.")
-    @GetMapping(value = "/{projectId}")
-    public ResponseEntity<ListResponse<GetNoticeResponse>> getNotice(@PathVariable("projectId") String projectId) {
+    @GetMapping(value = "/{projectToken}")
+    public ResponseEntity<ListResponse<GetNoticeResponse>> getNotice(@PathVariable("projectToken") String projectToken) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(noticeService.getNoticeList(projectId));
+        return ResponseEntity.status(HttpStatus.OK).body(noticeService.getNoticeList(projectToken));
     }
 
     @Operation(summary = "공지 삭제", description = "프로젝트 공지를 삭제합니다.")
-    @DeleteMapping("/{noticeId}")
-    public ResponseEntity<GetNoticeResponse> deleteNotice(@PathVariable("noticeId") String noticeId, @LoginUser String userId) {
-        noticeService.deleteNotice(noticeId);
+    @DeleteMapping("/{noticeToken}")
+    public ResponseEntity<GetNoticeResponse> deleteNotice(@PathVariable("noticeToken") String noticeToken, @LoginUser String userId) {
+        noticeService.deleteNotice(noticeToken);
         return ResponseEntity.noContent().build();
     }
 

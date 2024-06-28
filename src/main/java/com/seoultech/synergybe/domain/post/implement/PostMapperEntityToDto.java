@@ -16,16 +16,16 @@ public class PostMapperEntityToDto {
         List<GetPostResponse> getPostResponses = postList.stream()
                 .map(
                         result -> new GetPostResponse(
-                            result.getId(),
+                            result.getPostToken(),
                             result.getTitle().getTitle(),
                             result.getContent().getContent(),
-                            result.getUser().getId(),
+                            result.getUser().getUserToken(),
                             result.getAuthorName().getAuthorName(),
                             result.getComments().stream().map(
                                     comment -> new GetCommentResponse(
-                                            comment.getId(),
-                                            comment.getUser().getId(),
-                                            comment.getPost().getId(),
+                                            comment.getCommentToken(),
+                                            comment.getUser().getUserToken(),
+                                            comment.getPost().getPostToken(),
                                             comment.getComment().getContent(),
                                             comment.getUpdateAt()
                                     )
@@ -45,16 +45,16 @@ public class PostMapperEntityToDto {
 
     public static GetPostResponse postToResponse(Post post) {
         GetPostResponse getPostResponse = new GetPostResponse(
-                post.getId(),
+                post.getPostToken(),
                 post.getTitle().getTitle(),
                 post.getContent().getContent(),
-                post.getUser().getId(),
+                post.getUser().getUserToken(),
                 post.getAuthorName().getAuthorName(),
                 post.getComments().stream().map(
                         comment -> new GetCommentResponse(
-                                comment.getId(),
-                                comment.getUser().getId(),
-                                comment.getPost().getId(),
+                                comment.getCommentToken(),
+                                comment.getUser().getUserToken(),
+                                comment.getPost().getPostToken(),
                                 comment.getComment().getContent(),
                                 comment.getUpdateAt()
                         )

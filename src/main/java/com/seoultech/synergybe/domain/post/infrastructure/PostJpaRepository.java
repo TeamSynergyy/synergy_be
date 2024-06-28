@@ -24,6 +24,10 @@ public class PostJpaRepository {
         postRepository.delete(post);
     }
 
+    public Post findByToken(String token) {
+        return postRepository.findByPostToken(token);
+    }
+
     public Post findById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시글입니다."));

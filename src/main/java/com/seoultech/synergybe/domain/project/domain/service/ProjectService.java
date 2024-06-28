@@ -51,7 +51,7 @@ public class ProjectService {
 
     @Transactional
     public GetProjectResponse createProject(String userId, CreateProjectRequest request) {
-        User user = userService.getUser(userId);
+        User user = userService.getUserByToken(userId);
         Long projectId = idGenerator.generateId();
         String projectToken = tokenGenerator.generateToken(IdPrefix.POST);
         Point point = new Point(request.longitude(), request.latitude());
@@ -112,7 +112,12 @@ public class ProjectService {
         return GetProjectResponse.builder().build();
     }
 
-    public Project findProjectById(String projectId) {
+    public Long getProjectId(String projectToken) {
+        return projectRepository.findByProjectToken(projectToken).getId();
+    }
+
+    public Project findProjectById(String projectToken) {
+        Long projectId = getProjectId(projectToken);
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("존재하지 않는 프로젝트입니다."));
     }
@@ -127,7 +132,7 @@ public class ProjectService {
                 .location(project.getLocation().getLocation())
                 .startAt(project.getPeriod().getStartAt())
                 .endAt(project.getPeriod().getEndAt())
-                .leaderId(String.valueOf(project.getLeaderId().getLeaderId()))
+                .leaderToken(String.valueOf(project.getLeaderId().getLeaderId()))
                 .status(project.getStatus().getName())
                 .teamUserIds(project.getProjectUsers().stream().map(projectUser -> projectUser.getUser().getUserToken()).collect(Collectors.toList()))
                 .build();
@@ -179,7 +184,12 @@ public class ProjectService {
     }
 
     public ListResponse<GetProjectResponse> getLikedProjectList(User user) {
-        List<String> projectIds = projectLikeService.findLikedProjectIds(user);
+        List<String> projectTokens = projectLikeService.findLikedProjectIds(user);
+        List<Long> projectIds = new ArrayList<>();
+        for (String projectToken : projectTokens) {
+            projectIds.add(getProjectId(projectToken));
+        }
+
         List<Project> projects = projectRepository.findAllById(projectIds);
 
         return new ListResponse(projects);
@@ -189,7 +199,7 @@ public class ProjectService {
         List<String> userIds = projectUserService.getProjectUserIds(projectId);
         List<User> userList = new ArrayList<>();
         for (String userId : userIds) {
-            userList.add(userService.getUser(userId));
+            userList.add(userService.getUserByToken(userId));
         }
 
         return userList;
@@ -232,8 +242,12 @@ public class ProjectService {
             int endIdx = Math.min(startIdx + 10, projectIds.size());
 
             List<String> result = projectIds.subList(startIdx, endIdx);
+            List<Long> resultProjectIds = new ArrayList<>();
+            for (String projectToken : result) {
+                resultProjectIds.add(getProjectId(projectToken));
+            }
 
-            List<Project> projects = projectRepository.findAllById(result);
+            List<Project> projects = projectRepository.findAllById(resultProjectIds);
 
 
             log.info("Response from FastAPI: {}", response);

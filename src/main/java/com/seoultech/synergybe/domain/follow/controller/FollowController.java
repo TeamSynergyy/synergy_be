@@ -24,11 +24,11 @@ public class FollowController {
     private final UserService userService;
 
     @Operation(summary = "follow 신청, 취소", description = "팔로우를 신청 및 취소하며 팔로우 타입에 따라 팔로우 상태가 변화하므로 PUT 메서드 하나로 관리됩니다.")
-    @PutMapping(value = "/{followingId}")
-    public ResponseEntity<GetFollowResponse> updateFollow(@PathVariable("followingId") String followingId, @RequestBody CreateFollowRequest type, @LoginUser String userId) {
-        User user = userService.getUser(userId);
+    @PutMapping(value = "/{followingToken}")
+    public ResponseEntity<GetFollowResponse> updateFollow(@PathVariable("followingToken") String followingToken, @RequestBody CreateFollowRequest type, @LoginUser String userId) {
+        User user = userService.getUserByToken(userId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(followService.updateFollow(user, followingId, type));
+        return ResponseEntity.status(HttpStatus.OK).body(followService.updateFollow(user, followingToken, type));
 
     }
 

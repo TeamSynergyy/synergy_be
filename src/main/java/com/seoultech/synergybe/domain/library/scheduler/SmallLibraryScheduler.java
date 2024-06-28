@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.library.scheduler;
 
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.library.domain.RawSmallLibrary;
 import com.seoultech.synergybe.domain.library.domain.SmallLibrary;
 import com.seoultech.synergybe.domain.library.repository.RawSmallLibraryRepository;
@@ -21,6 +22,7 @@ public class SmallLibraryScheduler {
     private final SmallLibraryRepository smallLibraryRepository;
     private final RawSmallLibraryRepository rawSmallLibraryRepository;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
     @Scheduled(cron = "0 0 4 * * 6", zone = "Asia/Seoul")
     public void updateSmallLibrary() {
@@ -30,7 +32,8 @@ public class SmallLibraryScheduler {
 
         List<SmallLibrary> smallLibraries = rawSmallLibraryList.stream().map(
                 rawSmallLibrary -> SmallLibrary.builder()
-                        .id(idGenerator.generateId(IdPrefix.SMALL_LIBRARY))
+                        .id(idGenerator.generateId())
+                        .smallLibraryToken(tokenGenerator.generateToken(IdPrefix.SMALL_LIBRARY))
                         .name(rawSmallLibrary.getName())
                         .address(rawSmallLibrary.getAddress())
                         .telNumber(rawSmallLibrary.getTelNumber())

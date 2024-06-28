@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface NoticeRepository extends JpaRepository<Notice, String> {
+public interface NoticeRepository extends JpaRepository<Notice, Long> {
     @Query(value = "SELECT notice_id FROM notice WHERE project_id = :projectId", nativeQuery = true)
     List<String> findNoticeIdsByProjectId(@Param("projectId") String projectId);
+
+    Notice findByNoticeToken(String noticeToken);
 }

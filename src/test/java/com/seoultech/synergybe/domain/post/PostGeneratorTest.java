@@ -43,6 +43,7 @@ public class PostGeneratorTest {
 
         User user = User.builder()
                 .id(userId)
+                .userToken(userToken)
                 .password("3e4r5t6y6y7u")
                 .passwordEncoder(passwordEncoder)
                 .email("email@email.com")

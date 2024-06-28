@@ -41,7 +41,7 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createToken(String userId, String email) {
+    public String createToken(Long userId, String email) {
         Date date = new Date();
 
         return BEARER_PREFIX +

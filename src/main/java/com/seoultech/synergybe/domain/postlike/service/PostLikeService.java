@@ -3,6 +3,7 @@ package com.seoultech.synergybe.domain.postlike.service;
 import com.seoultech.synergybe.domain.common.constants.LikeStatus;
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.infrastructure.PostJpaRepository;
 import com.seoultech.synergybe.domain.postlike.PostLike;
@@ -25,13 +26,14 @@ import java.util.Optional;
 public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
     private final PostJpaRepository postJpaRepository;
 
     @Transactional
-    public GetPostLikeResponse updatePostLike(User user, String postId, PostLikeType type) {
+    public GetPostLikeResponse updatePostLike(User user, String postToken, PostLikeType type) {
         LikeStatus status;
         log.info("before find");
-        Post post = postJpaRepository.findById(postId);
+        Post post = postJpaRepository.findByToken(postToken);
         log.info("after find");
 
         if (type.getLikeType().equals("like")) {
@@ -41,7 +43,7 @@ public class PostLikeService {
         }
         try {
             log.info("updatePostLike update before");
-            PostLike updatedPostLike = this.update(user, postId, status);
+            PostLike updatedPostLike = this.update(user, postToken, status);
             log.info("updatePostLike update after");
             return GetPostLikeResponse.builder().build();
         } catch (Exception e) {
@@ -62,11 +64,11 @@ public class PostLikeService {
      * 3 - status가 like이면 like 로 변경
      * post에서 해당 postlike 추가
      */
-    public synchronized PostLike update(User user, String postId, LikeStatus likeStatus) {
-        Optional<PostLike> postLikeOptional = postLikeRepository.findByUserIdAndPostId(user.getId(), postId);
+    public synchronized PostLike update(User user, String postToken, LikeStatus likeStatus) {
+        Optional<PostLike> postLikeOptional = postLikeRepository.findByUserIdAndPostId(user.getUserToken(), postToken);
         log.info("option");
 
-        Post post = postJpaRepository.findById(postId);
+        Post post = postJpaRepository.findByToken(postToken);
         log.info("post");
 
         if (postLikeOptional.isPresent()) {
@@ -85,11 +87,13 @@ public class PostLikeService {
         } else {
             // 없을 경우 생성
 
-            String postLikeId = idGenerator.generateId(IdPrefix.POST_LIKE);
+            Long postLikeId = idGenerator.generateId();
+            String postLikeToken = tokenGenerator.generateToken(IdPrefix.POST_LIKE);
 
             log.info("updatePostLike builder before");
             PostLike postLike = PostLike.builder()
                     .id(postLikeId)
+                    .postLikeToken(postLikeToken)
                     .user(user)
                     .post(post)
                     .build();
@@ -100,6 +104,6 @@ public class PostLikeService {
 
 
     public List<String> findLikedPostIds(User user) {
-        return postLikeRepository.findPostIdsByUserId(user.getId());
+        return postLikeRepository.findPostIdsByUserId(user.getUserToken());
     }
 }

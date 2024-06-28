@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.ticket.service;
 
 import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
+import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.domain.Project;
 import com.seoultech.synergybe.domain.project.domain.service.ProjectService;
@@ -34,6 +35,7 @@ public class TicketService {
     private final ProjectService projectService;
     private final UserService userService;
     private final IdGenerator idGenerator;
+    private final TokenGenerator tokenGenerator;
 
     /**
      * todo
@@ -49,15 +51,18 @@ public class TicketService {
 
         Project project = projectService.findProjectById(request.projectId());
         Integer lastOrderNum = ticketRepository.findLastOrderNumber(request.status(), request.projectId());
-        String ticketId = idGenerator.generateId(IdPrefix.TICKET);
+        Long ticketId = idGenerator.generateId();
+        String ticketToken = tokenGenerator.generateToken(IdPrefix.RATE);
+
         Ticket ticket = Ticket.builder()
-                .id(ticketId).project(project)
+                .id(ticketId).ticketToken(ticketToken).project(project)
                 .build();
         ticketRepository.save(ticket);
 
         if (!request.assignedUserIds().isEmpty()) {
             // assignedUser 추가
-            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
+            List<Long> assignedUserIds = userService.getUserIds(request.assignedUserIds());
+            List<User> assignedUsers = userService.getUsers(assignedUserIds);
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }
@@ -86,13 +91,12 @@ public class TicketService {
      * 이전 status의 ticket들의 orderNum이 큰 ticket에 대해 -1
      * 수정 할 status의 ticket들 중 orderNum이 큰 ticket들에 대해 +1
      */
-    public ListResponse<GetTicketResponse> changeTickets(CreateTicketRequest request, User user, String ticketId) {
+    public ListResponse<GetTicketResponse> changeTickets(CreateTicketRequest request, User user, String ticketToken) {
         // check User
         List<User> authUsers = projectService.getUserListByProject(request.projectId());
         checkUser(authUsers, user);
 
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
+        Ticket ticket = ticketRepository.findByTicketToken(ticketToken);
 
         boolean isEqualStatus = false;
 
@@ -112,7 +116,8 @@ public class TicketService {
             // 기존 assignedUser을 삭제 후 추가해야함
             ticket.deleteAssignedUsers();
             ticketUserService.deleteAssignedUser(ticket);
-            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
+            List<Long> assignedUserIds = userService.getUserIds(request.assignedUserIds());
+            List<User> assignedUsers = userService.getUsers(assignedUserIds);
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }
@@ -213,11 +218,10 @@ public class TicketService {
     }
 
     public GetTicketResponse deleteTicket(String ticketId, User user) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
+        Ticket ticket = ticketRepository.findByTicketToken(ticketId);
 
         // check User
-        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getId());
+        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getProjectToken());
         checkUser(authUsers, user);
 
         ticketRepository.delete(ticket);
@@ -227,10 +231,10 @@ public class TicketService {
     }
 
     public void updateTicket(CreateTicketRequest request, User user, String ticketId) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
+        Ticket ticket = ticketRepository.findByTicketToken(ticketId);
+
         // check User
-        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getId());
+        List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getProjectToken());
         checkUser(authUsers, user);
 
         // assignedUser 수정
@@ -239,7 +243,8 @@ public class TicketService {
             ticket.deleteAssignedUsers();
             ticketUserService.deleteAssignedUser(ticket);
 
-            List<User> assignedUsers = userService.getUsers(request.assignedUserIds());
+            List<Long> assignedUserIds = userService.getUserIds(request.assignedUserIds());
+            List<User> assignedUsers = userService.getUsers(assignedUserIds);
             for (User assignedUser : assignedUsers) {
                 ticketUserService.createTicketUser(ticket, assignedUser);
             }

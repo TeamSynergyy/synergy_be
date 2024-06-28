@@ -32,8 +32,9 @@ public class Follow extends BaseTime {
     private FollowStatus status;
 
     @Builder
-    public Follow(Long id, User follower, User following) {
+    public Follow(Long id, String followToken, User follower, User following) {
         this.id = id;
+        this.followToken = followToken;
         this.follower = follower;
         this.following = following;
         this.status = FollowStatus.FOLLOW;

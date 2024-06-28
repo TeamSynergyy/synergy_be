@@ -21,10 +21,10 @@ public class ApplyController {
     private final ApplyService applyService;
 
     @Operation(summary = "프로젝트 지원 생성", description = "프로젝트와 user가 매핑되어 지원됩니다.")
-    @PostMapping(value = "/{projectId}")
-    public ResponseEntity<GetApplyResponse> createApply(@PathVariable("projectId") String projectId, @LoginUser String userId) {
+    @PostMapping(value = "/{projectToken}")
+    public ResponseEntity<GetApplyResponse> createApply(@PathVariable("projectToken") String projectToken, @LoginUser String userToken) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(applyService.createApply(userId, projectId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(applyService.createApply(userToken, projectToken));
     }
 
     @Operation(summary = "프로젝트 지원 삭제", description = "지원이 삭제됩니다.")

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Builder
 public record GetPostResponse(
-        String postId,
+        String postToken,
         String title,
         String content,
         String userId,

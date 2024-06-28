@@ -15,7 +15,7 @@ public class PostReader {
     private final PostJpaRepository postJpaRepository;
 
     public Post read(String postId) {
-        return postJpaRepository.findById(postId);
+        return postJpaRepository.findByToken(postId);
     }
 
     public ListResponse<GetPostResponse> readRecentList(Long offset) {

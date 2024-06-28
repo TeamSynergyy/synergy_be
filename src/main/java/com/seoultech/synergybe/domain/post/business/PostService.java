@@ -30,7 +30,7 @@ public class PostService {
         postManager.save(post);
 
         return GetPostResponse.builder()
-                .postId(post.getId())
+                .postToken(post.getPostToken())
                 .build();
     }
 
@@ -42,7 +42,7 @@ public class PostService {
         postManager.update(post, updatePostDto);
 
         return GetPostResponse.builder()
-                .postId(post.getId())
+                .postToken(post.getPostToken())
                 .build();
     }
 

@@ -21,7 +21,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return queryFactory
                 .select(post.count())
                 .from(post)
-                .where(post.user.id.eq(userId))
+                .where(post.user.userToken.eq(userId))
                 .fetchOne();
     }
 
@@ -38,7 +38,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public List<Post> findAllByUserId(String userId) {
         return queryFactory
                 .selectFrom(post)
-                .where(post.user.id.eq(userId))
+                .where(post.user.userToken.eq(userId))
                 .fetch();
     }
 
@@ -81,7 +81,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
         return queryFactory
                 .selectFrom(post)
-                .where(post.user.id.in(userIds)
+                .where(post.user.userToken.in(userIds)
                         .and(post.createAt.goe(oneWeekAgo)))
                 .orderBy(post.createAt.desc())
                 .limit(10)

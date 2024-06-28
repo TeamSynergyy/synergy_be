@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.seoultech.synergybe.domain.project.QProject.project;
+import static com.seoultech.synergybe.domain.project.domain.QProject.project;
+
 
 @Repository
 @RequiredArgsConstructor
