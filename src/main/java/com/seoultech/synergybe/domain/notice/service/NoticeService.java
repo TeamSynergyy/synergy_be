@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,12 +65,19 @@ public class NoticeService {
     }
 
     public Notice findNoticeById(String noticeId) {
-        return this.noticeRepository.findById(noticeId)
-                .orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 공지입니다."));
+        return this.noticeRepository.findByNoticeToken(noticeId);
+    }
+
+    public Long getNoticeId(String noticeToken) {
+        return noticeRepository.findByNoticeToken(noticeToken).getId();
     }
 
     public ListResponse<GetNoticeResponse> getNoticeList(String projectId) {
-        List<String> noticeIds = noticeRepository.findNoticeIdsByProjectId(projectId);
+        List<String> noticeTokens = noticeRepository.findNoticeIdsByProjectId(projectId);
+        List<Long> noticeIds = new ArrayList<>();
+        for (String noticeToken : noticeTokens) {
+            noticeIds.add(getNoticeId(noticeToken));
+        }
 
         List<Notice> notices = noticeRepository.findAllById(noticeIds);
 

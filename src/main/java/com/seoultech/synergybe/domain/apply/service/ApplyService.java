@@ -60,10 +60,11 @@ public class ApplyService {
     }
 
     @Transactional
-    public void deleteApply(String userId, String applyId) {
+    public void deleteApply(String userId, String applyToken) {
         // todo
         // 사용자 권한 검증
         User user = userService.getUserByToken(userId);
+        Long applyId = getApplyId(applyToken);
         Apply apply = getApply(applyId);
         validateApplyUser(user, apply);
         applyRepository.delete(apply);
@@ -73,6 +74,10 @@ public class ApplyService {
         if (!apply.getUser().equals(user)) {
             throw new ApplyBadRequestException("지원내역에 대한 권한이 없습니다.");
         }
+    }
+
+    public Long getApplyId(String applyToken) {
+        return applyRepository.findByApplyToken(applyToken).getId();
     }
 
     @Transactional
@@ -140,7 +145,7 @@ public class ApplyService {
         return ApplyMapperEntityToDto.userListToResponse(users);
     }
 
-    public Apply getApply(String applyId) {
+    public Apply getApply(Long applyId) {
         return applyRepository.findById(applyId).orElseThrow(() -> new ApplyNotFoundException("신청내역이 존재하지 않습니다."));
     }
 }

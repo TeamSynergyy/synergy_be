@@ -37,4 +37,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             + "FROM ticket " +
             "WHERE status = UPPER(:status) AND project_id = :projectId", nativeQuery = true)
     Integer findLastOrderNumber(@Param("status") String status, @Param("projectId") String projectId);
+
+    Ticket findByTicketToken(String ticketToken);
 }

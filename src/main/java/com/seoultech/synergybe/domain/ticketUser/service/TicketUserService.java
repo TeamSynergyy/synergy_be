@@ -21,7 +21,7 @@ public class TicketUserService {
     private final TokenGenerator tokenGenerator;
 
     public void createTicketUser(Ticket ticket, User user) {
-        Optional<TicketUser> ticketUserOptional = ticketUserRepository.findByTicketIdAndUserId(ticket.getTicketToken(), user.getUserToken());
+        Optional<TicketUser> ticketUserOptional = ticketUserRepository.findByTicketTicketTokenAndTicketUserToken(ticket.getTicketToken(), user.getUserToken());
 
         if (ticketUserOptional.isPresent()) {
             // 이미 생성됨

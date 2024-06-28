@@ -112,7 +112,12 @@ public class ProjectService {
         return GetProjectResponse.builder().build();
     }
 
-    public Project findProjectById(String projectId) {
+    public Long getProjectId(String projectToken) {
+        return projectRepository.findByProjectToken(projectToken).getId();
+    }
+
+    public Project findProjectById(String projectToken) {
+        Long projectId = getProjectId(projectToken);
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("존재하지 않는 프로젝트입니다."));
     }
@@ -179,7 +184,12 @@ public class ProjectService {
     }
 
     public ListResponse<GetProjectResponse> getLikedProjectList(User user) {
-        List<String> projectIds = projectLikeService.findLikedProjectIds(user);
+        List<String> projectTokens = projectLikeService.findLikedProjectIds(user);
+        List<Long> projectIds = new ArrayList<>();
+        for (String projectToken : projectTokens) {
+            projectIds.add(getProjectId(projectToken));
+        }
+
         List<Project> projects = projectRepository.findAllById(projectIds);
 
         return new ListResponse(projects);
@@ -232,8 +242,12 @@ public class ProjectService {
             int endIdx = Math.min(startIdx + 10, projectIds.size());
 
             List<String> result = projectIds.subList(startIdx, endIdx);
+            List<Long> resultProjectIds = new ArrayList<>();
+            for (String projectToken : result) {
+                resultProjectIds.add(getProjectId(projectToken));
+            }
 
-            List<Project> projects = projectRepository.findAllById(result);
+            List<Project> projects = projectRepository.findAllById(resultProjectIds);
 
 
             log.info("Response from FastAPI: {}", response);

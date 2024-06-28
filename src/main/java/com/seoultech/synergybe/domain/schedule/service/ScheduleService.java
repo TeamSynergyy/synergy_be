@@ -43,9 +43,8 @@ public class ScheduleService {
         scheduleRepository.save(schedule);
     }
 
-    private Schedule findScheduleById(String scheduleId) {
-        return scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleNotFoundException("존재하지 않는 일정입니다."));
+    private Schedule findScheduleById(String scheduleToken) {
+        return scheduleRepository.findByScheduleToken(scheduleToken);
     }
 
     public void deleteSchedule(String scheduleId) {

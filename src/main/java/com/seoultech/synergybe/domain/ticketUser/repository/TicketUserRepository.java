@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface TicketUserRepository extends JpaRepository<TicketUser, Long> {
-    Optional<TicketUser> findByTicketIdAndUserId(String id, String userId);
+    Optional<TicketUser> findByTicketTicketTokenAndTicketUserToken(String id, String userId);
 
     @Query(value = "SELECT user_id FROM ticket_user WHERE ticket_id = :ticketId", nativeQuery = true)
     List<String> findTicketUserIdsByTicketId(@Param("ticketId") String ticketId);

@@ -91,13 +91,12 @@ public class TicketService {
      * 이전 status의 ticket들의 orderNum이 큰 ticket에 대해 -1
      * 수정 할 status의 ticket들 중 orderNum이 큰 ticket들에 대해 +1
      */
-    public ListResponse<GetTicketResponse> changeTickets(CreateTicketRequest request, User user, String ticketId) {
+    public ListResponse<GetTicketResponse> changeTickets(CreateTicketRequest request, User user, String ticketToken) {
         // check User
         List<User> authUsers = projectService.getUserListByProject(request.projectId());
         checkUser(authUsers, user);
 
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
+        Ticket ticket = ticketRepository.findByTicketToken(ticketToken);
 
         boolean isEqualStatus = false;
 
@@ -219,8 +218,7 @@ public class TicketService {
     }
 
     public GetTicketResponse deleteTicket(String ticketId, User user) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
+        Ticket ticket = ticketRepository.findByTicketToken(ticketId);
 
         // check User
         List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getProjectToken());
@@ -233,8 +231,8 @@ public class TicketService {
     }
 
     public void updateTicket(CreateTicketRequest request, User user, String ticketId) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketNotFoundException("존재하지 않는 티켓입니다."));
+        Ticket ticket = ticketRepository.findByTicketToken(ticketId);
+
         // check User
         List<User> authUsers = projectService.getUserListByProject(ticket.getProject().getProjectToken());
         checkUser(authUsers, user);

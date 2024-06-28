@@ -20,4 +20,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, Project
 
     @Query(value = "SELECT * FROM project WHERE leader_id = :userId", nativeQuery = true)
     List<Project> findAllByLeaderId(@Param("userId") String userId);
+
+    Project findByProjectToken(String projectToken);
 }

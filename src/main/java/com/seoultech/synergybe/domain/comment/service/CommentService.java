@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -63,8 +64,7 @@ public class CommentService {
     }
 
     public Comment findCommentById(String commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("존재하지 않는 댓글입니다."));
+        return commentRepository.findByCommentToken(commentId);
     }
 
     public void deleteComment(String commentId) {
@@ -72,8 +72,16 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
+    public Long getCommentId(String commentToken) {
+        return commentRepository.findByCommentToken(commentToken).getId();
+    }
+
     public ListResponse<GetCommentResponse> getCommentList(String postId) {
-        List<String> commentIds = commentRepository.findCommentIdsByPostId(postId);
+        List<String> commentTokens = commentRepository.findCommentIdsByPostId(postId);
+        List<Long> commentIds = new ArrayList<>();
+        for (String commentToken : commentTokens) {
+            commentIds.add(getCommentId(commentToken));
+        }
 
         List<Comment> comments = commentRepository.findAllById(commentIds);
 

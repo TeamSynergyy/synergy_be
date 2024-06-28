@@ -57,8 +57,7 @@ public class ProjectLikeService {
             Long projectLikeId = idGenerator.generateId();
             String projectLikeToken = tokenGenerator.generateToken(IdPrefix.PROJECT_LIKE);
 //            Project project = projectService.findProjectById(projectId);
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow();
+            Project project = projectRepository.findByProjectToken(projectId);
             ProjectLike projectLike = ProjectLike.builder()
                     .id(projectLikeId)
                     .projectLikeToken(projectLikeToken)

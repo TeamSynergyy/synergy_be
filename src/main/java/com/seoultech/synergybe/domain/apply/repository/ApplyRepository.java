@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface ApplyRepository extends JpaRepository<Apply, Long>, ApplyRepositoryCustom {
+    Apply findByApplyToken(String applyToken);
 
 //    @Query(value = "SELECT * FROM apply WHERE user_id = :userId AND project_id = :projectId", nativeQuery = true)
 //    Optional<Apply> findByUserIdAndProjectId(@Param("userId") String userId, @Param("projectId") Long projectId);
