@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -25,7 +26,8 @@ public class MailService {
         return Integer.parseInt(generatedNumber);
     }
 
-    public void validateEmail(String email) {
+    @Async
+    public void sendValidateEmail(String email) {
         Integer authNumber = generateRandomNumber();
         String from = "jonghuncu@gmail.com";
         String to = email;
@@ -60,19 +62,13 @@ public class MailService {
             // 이러한 경우 MessagingException이 발생
             e.printStackTrace();//e.printStackTrace()는 예외를 기본 오류 스트림에 출력하는 메서드
         }
-        log.info("before setDataExpire");
         redisUtil.setDataExpire(String.valueOf(authNumber), to, 60*5L);
-        log.info("after setDataExpire");
     }
 
     public boolean checkAuthNumber(String email, String authNumber) {
-        if(redisUtil.getData(authNumber)==null){
-            return false;
-        }
-        else if(redisUtil.getData(authNumber).equals(email)){
+        if(redisUtil.getData(authNumber).equals(email)){
             return true;
-        }
-        else{
+        } else{
             return false;
         }
     }
