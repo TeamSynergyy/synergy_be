@@ -10,17 +10,18 @@ import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.email.MailService;
 import com.seoultech.synergybe.domain.user.UserRefreshToken;
+import com.seoultech.synergybe.domain.user.dto.request.CreateUserRequest;
+import com.seoultech.synergybe.domain.user.dto.request.ValidateNumberRequest;
 import com.seoultech.synergybe.domain.user.dto.response.*;
 import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
 import com.seoultech.synergybe.domain.user.exception.UserNotFoundException;
-import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenRepository;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.vo.UserEmail;
 import com.seoultech.synergybe.system.exception.ErrorCode;
 import com.seoultech.synergybe.system.security.JwtUtil;
 import com.seoultech.synergybe.system.utils.CookieUtil;
-import com.seoultech.synergybe.system.utils.EmailRequest;
+import com.seoultech.synergybe.system.utils.RedisUtil;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -48,48 +49,56 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final UserRefreshTokenReader userRefreshTokenReader;
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final CustomPasswordEncoder passwordEncoder;
     private final IdGenerator idGenerator;
     private final TokenGenerator tokenGenerator;
     private final MailService mailService;
     private final CookieUtil cookieUtil;
     private final JwtUtil jwtUtil;
+    private final RedisUtil redisUtil;
 
     @Transactional
-    public String createUser(
-            String email,
-            String password,
-            String name,
-            String major
-    ) {
-        checkEmailDuplicate(email);
-
+    public String createUser(CreateUserRequest request) {
         Long userId = idGenerator.generateId();
         String userToken = tokenGenerator.generateToken(IdPrefix.USER);
+        String isValidateEmail = redisUtil.getData(request.email()+request.validationNumber());
+        if (isValidateEmail.equals("false")) {
+            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "인증되지 않은 사용자입니다.");
+        }
 
         User user = User.builder()
                 .id(userId)
                 .userToken(userToken)
-                .email(email)
-                .password(password)
-                .name(name)
+                .email(request.email())
+                .password(request.password())
+                .name(request.name())
                 .passwordEncoder(passwordEncoder)
-                .major(major)
+                .major(request.major())
                 .build();
         userRepository.save(user);
-
-        mailService.validateEmail(email);
 
         return user.getUserToken();
     }
 
-    private void checkEmailDuplicate(String email) {
+    @Transactional
+    public void checkEmailDuplicate(String email) {
         UserEmail userEmail = new UserEmail(email);
         boolean isEmailDuplicated = userRepository.existsByEmail(userEmail);
         if (isEmailDuplicated) {
             throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "이미 존재하는 이메일입니다.");
         }
+    }
+
+    public void validateNumber(ValidateNumberRequest request) {
+        boolean isAuthorize = mailService.checkAuthNumber(request.email(), request.validationNumber());
+
+        if (!isAuthorize) {
+            // 인증 완료 실패 data set
+            redisUtil.setDataExpire(request.email()+request.validationNumber(), "false", 60*5L);
+            throw new UserBadRequestException(ErrorCode.BAD_REQUEST, "인증번호가 일치하지 않습니다.");
+        }
+        // 인증 완료 data set
+        redisUtil.setDataExpire(request.email()+request.validationNumber(), "true", 60*5L);
     }
 
     public User getUserByToken(String userToken) {
@@ -206,15 +215,6 @@ public class UserService {
             });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public void validateEmail(EmailRequest request) {
-        boolean isAuthorize = mailService.checkAuthNumber(request.email(), request.authNumber());
-
-        if (!isAuthorize) {
-            // todo
-            // 인증번호가 다르다면 회원가입 진행하지 않음
         }
     }
 

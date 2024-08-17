@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.seoultech.synergybe.domain.user.dto.request.CreateUserRequest;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.service.UserService;
 
@@ -28,9 +29,11 @@ public class UserServiceTest {
         String password = "password";
         String name = "name";
         String major = "major";
+        String validationNumber = "123456";
+        CreateUserRequest request = new CreateUserRequest(email, password, name, major, validationNumber);
 
         // when
-        String userToken = userService.createUser(email, password, name, major);
+        String userToken = userService.createUser(request);
         User user = userRepository.findByUserToken(userToken).orElseThrow();
 
         // then

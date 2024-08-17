@@ -1,13 +1,14 @@
 package com.seoultech.synergybe.domain.user.controller;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
+import com.seoultech.synergybe.domain.user.application.UserFacade;
 import com.seoultech.synergybe.domain.user.dto.request.CreateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
+import com.seoultech.synergybe.domain.user.dto.request.ValidateNumberRequest;
 import com.seoultech.synergybe.domain.user.dto.response.GetUserAccountResponse;
 import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.system.config.login.LoginUser;
-import com.seoultech.synergybe.system.utils.EmailRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,29 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserFacade userFacade;
+
+    @PostMapping
+    public ResponseEntity<String> createUser(@Valid @RequestBody CreateUserRequest request) {
+        String userToken = userFacade.createUser(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userToken);
+    }
+
+    @PostMapping("/sending-number")
+    public ResponseEntity<Void> sendValidationNumber(@Valid @RequestBody ValidateNumberRequest request) {
+        userFacade.sendValidationNumber(request.email());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/validation-email")
+    public ResponseEntity<Void> validateEmail(@Valid @RequestBody ValidateNumberRequest request) {
+        userFacade.validateNumber(request);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary = "나의 정보", description = "내 프로필 정보가 반환됩니다.")
     @GetMapping(value = "/me/info")
     public ResponseEntity<GetUserAccountResponse> getMyInfo(@LoginUser String userId) {
@@ -37,24 +61,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo(userId));
     }
 
-    @PostMapping("/email-auth")
-    public ResponseEntity<Void> validateEmail(@Valid @RequestBody EmailRequest request) {
-        userService.validateEmail(request);
-
-        return ResponseEntity.noContent().build();
-    }
-
     @Operation(summary = "유저 조회", description = "유저Id 기준으로 해당 유저를 반환합니다.")
     @GetMapping(value = "/{userId}")
     public ResponseEntity<GetUserAccountResponse> getUser(@PathVariable("userId") String userId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo(userId));
-    }
-
-    @PostMapping
-    public ResponseEntity<String> createUser(@Valid @RequestBody CreateUserRequest request) {
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request.email(), request.password(), request.name(), request.major()));
     }
 
     @Operation(summary = "검색어를 포함하는 유자", description = "검색어를 포함하는 유저가 반환됩니다.")
