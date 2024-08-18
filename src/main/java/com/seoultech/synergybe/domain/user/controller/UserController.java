@@ -92,7 +92,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/refresh-token")
-    public ResponseEntity<Void> generateAccessToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> generateAccessTokenByRefreshToken(HttpServletRequest request, HttpServletResponse response) {
         userService.generateAccessTokenByRefreshToken(request, response);
         return ResponseEntity.noContent().build();
     }

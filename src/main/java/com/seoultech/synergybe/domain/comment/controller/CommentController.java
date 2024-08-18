@@ -5,8 +5,6 @@ import com.seoultech.synergybe.domain.comment.dto.request.UpdateCommentRequest;
 import com.seoultech.synergybe.domain.comment.dto.response.GetCommentResponse;
 import com.seoultech.synergybe.domain.comment.service.CommentService;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
-import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.domain.user.service.UserService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/comments")

@@ -10,7 +10,6 @@ import com.seoultech.synergybe.domain.ticket.Ticket;
 import com.seoultech.synergybe.domain.ticket.TicketStatus;
 import com.seoultech.synergybe.domain.ticket.dto.request.CreateTicketRequest;
 import com.seoultech.synergybe.domain.ticket.dto.response.GetTicketResponse;
-import com.seoultech.synergybe.domain.ticket.exception.TicketNotFoundException;
 import com.seoultech.synergybe.domain.ticket.repository.TicketRepository;
 import com.seoultech.synergybe.domain.ticketUser.service.TicketUserService;
 import com.seoultech.synergybe.domain.user.User;

@@ -2,7 +2,6 @@ package com.seoultech.synergybe.domain.project.interfaces;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.project.domain.Project;
-import com.seoultech.synergybe.domain.project.domain.ProjectCommand;
 import com.seoultech.synergybe.domain.project.domain.service.ProjectService;
 import com.seoultech.synergybe.domain.project.interfaces.dto.request.CreateProjectRequest;
 import com.seoultech.synergybe.domain.project.interfaces.dto.request.UpdateProjectRequest;
