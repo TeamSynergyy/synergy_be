@@ -11,7 +11,6 @@ public record CreateUserRequest (
         String name,
         @NotBlank(message = "전공은 필수 항목입니다.")
         String major,
-
         @NotBlank(message = "인증번호는 필수 항목입니다.")
         String validationNumber
 ) {
