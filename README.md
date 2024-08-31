@@ -30,7 +30,7 @@
 
 ## Infra Architecture
 
-<img src="./public/infra_architecture.png" alt="logo" width="80%" />
+<img src="./public/infra_architecture_2.png" alt="logo" width="80%" />
 
 
 <br/>
@@ -406,6 +406,10 @@ src
 
 https://github.com/TeamSynergyy/synergy_be/assets/109144975/dfcc215b-6b67-4628-99d4-973980cf1e89
 
+
+### 채팅
+
+https://github.com/user-attachments/assets/5f62c3bc-6cdb-457b-adfe-9e4433956bae
 
 ### 컨텐츠 추천
 
