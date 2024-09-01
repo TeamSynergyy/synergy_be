@@ -15,6 +15,9 @@ public class RedisUtil {
     private final StringRedisTemplate redisTemplate;
 
     public String getData(String key){//지정된 키(key)에 해당하는 데이터를 Redis에서 가져오는 메서드
+        if (key == null) {
+            throw new IllegalArgumentException("RedisUtil getData: " + key + "is null");
+        }
         ValueOperations<String,String> valueOperations=redisTemplate.opsForValue();
         return valueOperations.get(key);
     }
@@ -28,9 +31,6 @@ public class RedisUtil {
         ValueOperations<String,String> valueOperations=redisTemplate.opsForValue();
         Duration expireDuration=Duration.ofSeconds(duration);
         valueOperations.set(key,value,expireDuration);
-        log.info("key : " + key);
-        log.info("value : " + value);
-        log.info("duration : " + duration);
     }
 
     public void deleteData(String key){//지정된 키(key)에 해당하는 데이터를 Redis에서 삭제하는 메서드

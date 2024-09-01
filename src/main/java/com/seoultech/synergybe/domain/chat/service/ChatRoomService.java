@@ -8,7 +8,7 @@ import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.domain.user.service.UserService;
+import com.seoultech.synergybe.domain.user.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final ChatRoomRepository chatRoomRepository;
     private final IdGenerator idGenerator;
     private final TokenGenerator tokenGenerator;

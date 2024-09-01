@@ -1,6 +1,6 @@
 package com.seoultech.synergybe.domain.chat.interceptor;
 
-import com.seoultech.synergybe.domain.user.service.UserService;
+import com.seoultech.synergybe.domain.user.service.UserServiceImpl;
 import com.seoultech.synergybe.system.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
@@ -15,7 +15,7 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class JwtChannelInterceptor implements ChannelInterceptor {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final JwtUtil jwtUtil;
 
     @Override

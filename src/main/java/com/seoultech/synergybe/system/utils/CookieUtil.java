@@ -81,7 +81,7 @@ public class CookieUtil {
         response.addCookie(cookie);
     }
 
-    public void addRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken, String accessToken) {
+    public void addAccessTokenRefreshTokenCookie(HttpServletResponse response, UserRefreshToken userRefreshToken, String accessToken) {
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
 
         String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();

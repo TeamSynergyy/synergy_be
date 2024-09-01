@@ -9,6 +9,7 @@ import com.seoultech.synergybe.system.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -82,7 +83,7 @@ public class SecurityConfig {
                     .headers(AbstractHttpConfigurer::disable)
                     .cors(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(authorize -> authorize
-                            .requestMatchers("/api/v1/users/refresh-token", "/api/v1/users").permitAll() // 특정 경로 허용
+                            .requestMatchers("/api/v1/users/refresh-token", "/api/v1/users/**", "/api/v1/users/login").permitAll() // 특정 경로 허용
                             .anyRequest().authenticated() // 나머지 요청은 인증 필요
                     );
 

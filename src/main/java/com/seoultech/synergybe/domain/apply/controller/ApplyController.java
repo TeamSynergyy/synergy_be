@@ -1,12 +1,10 @@
 package com.seoultech.synergybe.domain.apply.controller;
 
-import com.seoultech.synergybe.domain.apply.dto.request.CreateApplyRequest;
 import com.seoultech.synergybe.domain.apply.dto.response.*;
 import com.seoultech.synergybe.domain.apply.service.ApplyService;
 import com.seoultech.synergybe.system.config.login.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

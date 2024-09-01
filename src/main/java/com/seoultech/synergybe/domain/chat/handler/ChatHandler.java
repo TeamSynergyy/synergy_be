@@ -8,7 +8,7 @@ import com.seoultech.synergybe.domain.chat.dto.response.ChatMessageResponse;
 import com.seoultech.synergybe.domain.chat.exception.WebSocketBadRequestException;
 import com.seoultech.synergybe.domain.chat.service.ChatMessageService;
 import com.seoultech.synergybe.domain.user.User;
-import com.seoultech.synergybe.domain.user.service.UserService;
+import com.seoultech.synergybe.domain.user.service.UserServiceImpl;
 import com.seoultech.synergybe.system.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,12 +28,12 @@ public class ChatHandler extends TextWebSocketHandler {
     private WebSocketSessionMap webSocketSessionMap; // 채팅방별 세션리스트 모음
     private ObjectMapper objectMapper;
     private ChatMessageService chatMessageService;
-    private UserService userService;
+    private UserServiceImpl userService;
 
 
 
     // 채팅 핸들러 생성
-    public ChatHandler(ObjectMapper objectMapper, ChatMessageService chatMessageService, UserService userService) {
+    public ChatHandler(ObjectMapper objectMapper, ChatMessageService chatMessageService, UserServiceImpl userService) {
         this.webSocketSessionMap = new WebSocketSessionMap();
         this.objectMapper = objectMapper;
         this.chatMessageService = chatMessageService;
