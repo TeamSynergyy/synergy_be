@@ -11,7 +11,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class TokenGeneratorUUIDTest {
+class TokenGeneratorUUIDTest {
     @Autowired
     IdGenerator idGenerator;
 

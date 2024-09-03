@@ -195,7 +195,7 @@ class UserServiceTest {
 
     @DisplayName("RefreshToken이 유효한 경우 AccessToken을 재발급한다")
     @Test
-    void generateAccessTokenByRefreshToken_V1() {
+    void generateAccessTokenByRefreshToken() {
         // given
         String email = "jonghuncu@gmail.com";
         String password = "password";
