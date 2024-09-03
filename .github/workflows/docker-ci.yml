@@ -37,6 +37,10 @@ jobs:
     - name: Build With Gradle
       run: ./gradlew build
 
+    # build test
+    - name: Run Tests with Gradle
+      run: ./gradlew --info test
+
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: ${{ always() }}
