@@ -11,13 +11,14 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class TokenGeneratorUUIDTest {
+class TokenGeneratorUUIDTest {
     @Autowired
     IdGenerator idGenerator;
 
     @Autowired
     TokenGenerator tokenGenerator;
 
+    @DisplayName("객체 ID 1만개 생성시 1초 이내로 실행된다.")
     @Test
     void generateLongId() {
         List<Long> longList = new ArrayList<>();
@@ -27,18 +28,18 @@ public class TokenGeneratorUUIDTest {
 
         for (int i = 0; i < 10000; i++) {
             Long longId = idGenerator.generateId();
-            System.out.println("longId : " + i + " 번째 : "+ longId);
             longList.add(longId);
-
         }
 
-        // test end
         long endTime = System.currentTimeMillis();
-        System.out.println("longId Total execution time: " + (endTime - startTime) + " milliseconds");
+        long elapsedTime = endTime - startTime;
 
-        assertThat(longList.size()).isEqualTo(10000);
+        // test end
+        assertThat(longList).hasSize(10000);
+        assertThat(elapsedTime).isLessThanOrEqualTo(1000);
     }
 
+    @DisplayName("대체키 ID 1만개 생성시 3초 이내로 실행된다.")
     @Test
     void generateStringId() {
         List<String> stringList = new ArrayList<>();
@@ -48,16 +49,14 @@ public class TokenGeneratorUUIDTest {
 
         for (int i = 0; i < 10000; i++) {
             String stringId = tokenGenerator.generateToken(IdPrefix.POST);
-            System.out.println("stringId : " + i + " 번째 : "+ stringId);
             stringList.add(stringId);
         }
 
         // test end
         long endTime = System.currentTimeMillis();
-        System.out.println("stringId Total execution time: " + (endTime - startTime) + " milliseconds");
+        long elapsedTime = endTime - startTime;
 
-        assertThat(stringList.size()).isEqualTo(10000);
+        assertThat(stringList).hasSize(10000);
+        assertThat(elapsedTime).isLessThanOrEqualTo(3000);
     }
-
-
 }

@@ -8,24 +8,24 @@ import com.seoultech.synergybe.domain.email.MailService;
 import com.seoultech.synergybe.domain.user.dto.request.CreateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.request.ValidateNumberRequest;
 import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
+import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenFactory;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
 import com.seoultech.synergybe.domain.user.service.UserService;
 
-import com.seoultech.synergybe.system.utils.CookieUtil;
 import com.seoultech.synergybe.system.utils.RedisUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.*;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -51,6 +51,11 @@ class UserServiceTest {
     private final String TRUE = "true";
     private final String FALSE = "false";
 
+    private MockHttpServletRequest request;
+    private MockHttpServletResponse response;
+
+    @Autowired
+    private UserRefreshTokenFactory userRefreshTokenFactory;
 
     @PostConstruct
     public void setAuthNumber() {
@@ -174,17 +179,86 @@ class UserServiceTest {
                 .isInstanceOf(UserBadRequestException.class)
                 .hasMessage("checkEmailDuplicate >> 유저 email: " + email + "은 이미 존재합니다.");
     }
+    @DisplayName("RefreshToken이 없는 경우 예외를 발생시킨다")
+    @Test
+    void EmptyRefreshTokengenerateAccessTokenByRefreshToken() {
+        // given
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        Cookie mockCookie = new Cookie("refreshToken", null);
+        request.setCookies(mockCookie);
 
-    @DisplayName("RefreshToken 으로 AccessToken 재발급한다")
+        // when & then
+        assertThrows(UserBadRequestException.class,
+                () -> userService.generateAccessTokenByRefreshToken(request, response));
+    }
+
+    @DisplayName("RefreshToken이 유효한 경우 AccessToken을 재발급한다")
     @Test
     void generateAccessTokenByRefreshToken() {
-        HttpServletRequest request = new MockHttpServletRequest();
+        // given
+        String email = "jonghuncu@gmail.com";
+        String password = "password";
+        String name = "name";
+        String major = "major";
+        CreateUserRequest createUserRequest = new CreateUserRequest(email, password, name, major, authNumber);
+        redisUtil.setDataExpire(email+authNumber, TRUE, 60*5L);
 
-        String mockRefreshTokenValue = "mockRefreshToken";
-        String mockAccessTokenValue = "mockAccessToken";
+        String userToken = userService.createUser(createUserRequest);
+        User user = userRepository.findByUserToken(userToken).orElseThrow();
+        Long userId = user.getId();
 
-        Cookie mockCookie = new Cookie("refreshToken", mockRefreshTokenValue);
-        Mockito.when(CookieUtil.getCookie(request, "refreshToken")).thenReturn(Optional.of(mockCookie));
+        // refresh token
+        UserRefreshToken userRefreshToken = new UserRefreshToken(userId);
+        userRefreshTokenFactory.save(userRefreshToken);
 
+        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
+
+        // cookie 세팅
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        Cookie mockCookie = new Cookie("refreshToken", refreshToken);
+        request.setCookies(mockCookie);
+
+        // when
+        userService.generateAccessTokenByRefreshToken(request, response);
+
+        // then
+        String accessToken = response.getHeader("Authorization");  // Assuming the token is in the "Authorization" header
+        assertThat(accessToken).isNotNull();
+        assertThat(accessToken).startsWith("Bearer ");
+    }
+
+    @DisplayName("유효하지 않은 RefreshToken인 경우 예외를 발생시킨다")
+    @Test
+    void invalidRefreshTokengenerateAccessTokenByRefreshToken() {
+        // given
+        String email = "jonghuncu@gmail.com";
+        String password = "password";
+        String name = "name";
+        String major = "major";
+        CreateUserRequest createUserRequest = new CreateUserRequest(email, password, name, major, authNumber);
+        redisUtil.setDataExpire(email+authNumber, TRUE, 60*5L);
+
+        String userToken = userService.createUser(createUserRequest);
+        User user = userRepository.findByUserToken(userToken).orElseThrow();
+        Long userId = user.getId();
+
+        // refresh token
+        UserRefreshToken userRefreshToken = new UserRefreshToken(userId);
+        userRefreshTokenFactory.save(userRefreshToken);
+
+        String refreshToken = userRefreshToken.getRefreshToken().getRefreshToken();
+        String invalidRefreshToken = refreshToken + "invalid";
+
+        // cookie 세팅
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        Cookie mockCookie = new Cookie("refreshToken", invalidRefreshToken);
+        request.setCookies(mockCookie);
+
+        // when & then
+        assertThrows(UserBadRequestException.class,
+                () -> userService.generateAccessTokenByRefreshToken(request, response));
     }
 }
