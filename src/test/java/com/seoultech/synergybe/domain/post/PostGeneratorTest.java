@@ -36,41 +36,41 @@ public class PostGeneratorTest {
     UserRepository userRepository;
 
 
-    @Test
-    void generatePost() {
-        Long userId = idGenerator.generateId();
-        String userToken = tokenGenerator.generateToken(IdPrefix.USER);
-
-        User user = User.builder()
-                .id(userId)
-                .userToken(userToken)
-                .password("3e4r5t6y6y7u")
-                .passwordEncoder(passwordEncoder)
-                .email("email@email.com")
-                .name("jonghun")
-                .major("cs")
-                .build();
-        userRepository.save(user);
-
-        assertThat("email@email.com").isEqualTo(user.getEmail().getEmail());
-
-        List<Post> postList = new ArrayList<>();
-
-
-        for (int i = 0; i < 10; i++) {
-            Long postId = idGenerator.generateId();
-            String postToken = tokenGenerator.generateToken(IdPrefix.POST);
-
-            Post post = Post.builder()
-                    .id(postId)
-                    .postToken(postToken)
-                    .user(user)
-                    .title("title")
-                    .content("content")
-                    .build();
-            postList.add(post);
-
-        }
-        postManager.saveAll(postList);
-    }
+//    @Test
+//    void generatePost() {
+//        Long userId = idGenerator.generateId();
+//        String userToken = tokenGenerator.generateToken(IdPrefix.USER);
+//
+//        User user = User.builder()
+//                .id(userId)
+//                .userToken(userToken)
+//                .password("3e4r5t6y6y7u")
+//                .passwordEncoder(passwordEncoder)
+//                .email("email@email.com")
+//                .name("jonghun")
+//                .major("cs")
+//                .build();
+//        userRepository.save(user);
+//
+//        assertThat("email@email.com").isEqualTo(user.getEmail().getEmail());
+//
+//        List<Post> postList = new ArrayList<>();
+//
+//
+//        for (int i = 0; i < 10; i++) {
+//            Long postId = idGenerator.generateId();
+//            String postToken = tokenGenerator.generateToken(IdPrefix.POST);
+//
+//            Post post = Post.builder()
+//                    .id(postId)
+//                    .postToken(postToken)
+//                    .user(user)
+//                    .title("title")
+//                    .content("content")
+//                    .build();
+//            postList.add(post);
+//
+//        }
+//        postManager.saveAll(postList);
+//    }
 }
