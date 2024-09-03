@@ -18,7 +18,7 @@ permissions:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     services:
       redis:
@@ -26,7 +26,7 @@ jobs:
         ports:
           - 6379:6379
       mongodb:
-        image: mongodb:latest
+        image: mongo:4.4.6
         env:
           MONGO_INITDB_ROOT_USERNAME: rivkode
           MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_DB_PASSWORD }}
