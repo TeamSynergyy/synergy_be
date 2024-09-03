@@ -21,6 +21,15 @@ jobs:
     runs-on: ubuntu-22.04
 
     services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: synergy_db
+          MYSQL_USER: rivkode
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
+        ports:
+          - 3306:3306
       redis:
         image: redis:latest
         ports:
@@ -63,13 +72,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: MySQL 설치
-        uses: mirromutth/mysql-action@v1
-        with:
-          mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
-          mysql database: synergy_db # Optional, default value is "test". The specified database which will be create
-          mysql user: rivkode # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Of course you can use secrets, too
-          mysql password: ${{ secrets.MYSQL_DB_PASSWORD }}
+#      - name: MySQL 설치
+#        uses: mirromutth/mysql-action@v1
+#        with:
+#          mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
+#          mysql database: synergy_db # Optional, default value is "test". The specified database which will be create
+#          mysql user: rivkode # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Of course you can use secrets, too
+#          mysql password: ${{ secrets.MYSQL_DB_PASSWORD }}
 
       - name: Wait for MySQL
         run: |
