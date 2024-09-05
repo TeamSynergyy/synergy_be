@@ -60,6 +60,7 @@ public class User extends BaseTime {
             String name,
             String major
     ) {
+        if (userToken == null || email == null || name == null || major == null) throw new NullPointerException();
         this.email = this.email.updateEmail(email);
         this.name = this.name.updateName(name);
         this.major = this.major.updateMajor(major);

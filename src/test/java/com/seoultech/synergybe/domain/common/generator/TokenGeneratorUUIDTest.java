@@ -23,7 +23,6 @@ class TokenGeneratorUUIDTest {
     void generateLongId() {
         List<Long> longList = new ArrayList<>();
 
-        // test start
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < 10000; i++) {
@@ -44,7 +43,6 @@ class TokenGeneratorUUIDTest {
     void generateStringId() {
         List<String> stringList = new ArrayList<>();
 
-        // test start
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < 10000; i++) {
@@ -52,7 +50,6 @@ class TokenGeneratorUUIDTest {
             stringList.add(stringId);
         }
 
-        // test end
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
 

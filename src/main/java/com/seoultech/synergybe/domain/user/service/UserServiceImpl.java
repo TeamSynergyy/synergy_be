@@ -157,12 +157,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void updateMyInfo(
-            String userId,
+            String userToken,
             String email,
             String name,
             String major
     ) {
-        User user = getUserByToken(userId);
+        User user = getUserByToken(userToken);
         user.updateUserInfo(email, name, major);
     }
 
@@ -251,7 +251,7 @@ public class UserServiceImpl implements UserService {
     public List<Long> getUserIds(List<String> userToken) {
         List<User> users = userRepository.findAllByUserToken(userToken);
 
-        List<Long> userIds = users.stream().map(user -> user.getId()).toList();
+        List<Long> userIds = users.stream().map(User::getId).toList();
         return userIds;
     }
 }
