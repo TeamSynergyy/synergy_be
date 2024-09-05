@@ -71,7 +71,6 @@ public class UserController {
     @Operation(summary = "검색어를 포함하는 유자", description = "검색어를 포함하는 유저가 반환됩니다.")
     @GetMapping
     public ResponseEntity<Page<User>> searchAllPosts(@RequestParam("search") String search, @PageableDefault(size = 15) Pageable pageable) {
-        log.info(">> keyword : {}", search);
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.searchAllUsers(search, pageable));
     }

@@ -1,6 +1,5 @@
 package com.seoultech.synergybe.domain.email;
 
-import com.seoultech.synergybe.domain.common.RandomNumber;
 import com.seoultech.synergybe.system.utils.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
