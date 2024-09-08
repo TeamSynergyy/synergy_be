@@ -7,6 +7,7 @@ import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 import com.seoultech.synergybe.domain.common.RandomNumber;
 import com.seoultech.synergybe.domain.email.MailService;
 import com.seoultech.synergybe.domain.user.dto.request.CreateUserRequest;
+import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.request.ValidateNumberRequest;
 import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
 import com.seoultech.synergybe.domain.user.repository.UserRefreshTokenFactory;
@@ -286,42 +287,15 @@ class UserServiceTest {
         userService.validateNumber(validateRequest);
         String userToken = userService.createUser(request);
 
+        UpdateUserRequest updateRequest = new UpdateUserRequest(newEmail, newName, newMajor);
+
         // when
-        userService.updateMyInfo(userToken, newEmail, newName, newMajor);
+        userService.updateMyInfo(userToken, updateRequest);
         // Then: 사용자 정보가 제대로 업데이트 되었는지 확인
         User updatedUser = userRepository.findByUserToken(userToken).orElseThrow();
         assertThat(updatedUser.getEmail().getEmail()).isEqualTo(newEmail);
         assertThat(updatedUser.getName().getName()).isEqualTo(newName);
         assertThat(updatedUser.getMajor().getMajor()).isEqualTo(newMajor);
-    }
-
-    @DisplayName("유저 정보를 업데이트시 null 입력시 예외가 발생한다.")
-    @Test
-    void nullExceptionUpdateMyInfo() {
-        String initialEmail = "old@example.com";
-        String initialName = "Old Name";
-        String newName = "New Name";
-        String initialMajor = "Old Major";
-        String newMajor = "New Major";
-        String password = "password";
-
-        CreateUserRequest request = new CreateUserRequest(initialEmail, password, initialName, initialMajor, authNumber);
-        redisUtil.setDataExpire(authNumber, initialEmail, 60*5L);
-
-        ValidateNumberRequest validateRequest = new ValidateNumberRequest(initialEmail, authNumber);
-        userService.validateNumber(validateRequest);
-        String userToken = userService.createUser(request);
-
-        // When
-        assertThrows(NullPointerException.class, () -> {
-            userService.updateMyInfo(userToken, null, newName, newMajor);
-        });
-
-        // Then
-        User updatedUser = userRepository.findByUserToken(userToken).orElseThrow();
-        assertThat(updatedUser.getEmail().getEmail()).isEqualTo(initialEmail);
-        assertThat(updatedUser.getName().getName()).isEqualTo(initialName);
-        assertThat(updatedUser.getMajor().getMajor()).isEqualTo(initialMajor);
     }
 
     @DisplayName("유저를 keyword로 검색한다.")
