@@ -2,9 +2,10 @@ package com.seoultech.synergybe.domain.user.service;
 
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.user.User;
+import com.seoultech.synergybe.domain.user.controller.GetUserResponse;
 import com.seoultech.synergybe.domain.user.dto.request.CreateUserRequest;
+import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.request.ValidateNumberRequest;
-import com.seoultech.synergybe.domain.user.dto.response.GetUserAccountResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public interface UserService {
 
     User getUserById(Long userId);
 
-    GetUserAccountResponse getUserInfo(String userId);
+    GetUserResponse getUserInfo(String userId);
 
     List<User> getUsers(List<Long> userIds);
 
@@ -32,9 +33,9 @@ public interface UserService {
 
     Specification<User> search(String keyword);
 
-    void updateMyInfo(String userId, String email, String name, String major);
+    void updateMyInfo(String userToken, UpdateUserRequest request);
 
-    ListResponse<GetUserAccountResponse> getSimilarUserListByUser(String userId, Long end);
+    ListResponse<GetUserResponse> getSimilarUserListByUser(String userId, Long end);
 
     void generateAccessTokenByRefreshToken(HttpServletRequest request, HttpServletResponse response);
 
