@@ -107,6 +107,9 @@ jobs:
       - name: properties 파일 생성
         run: |
           cd ./src/main
+          if [ ! -d "resources" ]; then
+            mkdir resources
+          fi
           mkdir resources
           cd ./resources
           touch ./application.properties
