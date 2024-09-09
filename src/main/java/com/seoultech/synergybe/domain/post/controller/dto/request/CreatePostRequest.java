@@ -1,15 +1,8 @@
-package com.seoultech.synergybe.domain.post.presentation.dto.request;
+package com.seoultech.synergybe.domain.post.controller.dto.request;
 
-import com.seoultech.synergybe.domain.image.Image;
-import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.postlike.PostLike;
-import com.seoultech.synergybe.domain.user.User;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public record CreatePostRequest(

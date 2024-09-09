@@ -30,10 +30,6 @@ public class FollowService {
     private final IdGenerator idGenerator;
     private final TokenGenerator tokenGenerator;
 
-    public List<String> findFollowingIdsByUserId(String userId) {
-        return followRepository.findFollowingIdsByFollowerId(userId);
-    }
-
     /**
      *
      * @param user 신청한 유저
@@ -64,14 +60,14 @@ public class FollowService {
     }
 
     public synchronized Follow update(User user, String followingId, FollowStatus status) {
-        Optional<Follow> followOptional = followRepository.findByFollowerIdAndFollowingId(user.getUserToken(), followingId);
+        Follow followOptional = followRepository.findByFollowerTokenAndFollowingToken(user.getUserToken(), followingId);
 
-        if (followOptional.isPresent()) {
-            followOptional.get().updateStatus(status);
+        if (followOptional != null) {
+            followOptional.updateStatus(status);
             User following = userService.getUserByToken(followingId);
 //            notificationService.send(following, NotificationType.FOLLOW, "팔로우 신청이 완료되었습니다.", Long.valueOf(followingId));
 
-            return followOptional.get();
+            return followOptional;
         } else {
             User following = userService.getUserByToken(followingId);
             Long followId = idGenerator.generateId();
@@ -88,27 +84,23 @@ public class FollowService {
         }
     }
 
-    public List<String> getFollowerIdList(String userId) {
-        return followRepository.findFollowerIdsByFollowingId(userId);
+    public List<Long> getFollowerIdList(String userToken) {
+        return followRepository.findFollowerIdsByFollowingToken(userToken);
     }
 
-    public List<String> getFollowingIdList(String userId) {
-        return followRepository.findFollowingIdsByFollowerId(userId);
+    public List<Long> getFollowingIdList(String userToken) {
+        return followRepository.findFollowingIdsByFollowerToken(userToken);
     }
 
-    public ListResponse<String> getFollowerIds(String userId) {
-        List<String> getFollowerIdList = getFollowerIdList(userId);
+    public ListResponse<String> getFollowerIds(String userToken) {
+        List<Long> getFollowerIdList = getFollowerIdList(userToken);
 
-        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowerIdList);
-
-        return getUserIdListResponses;
+        return new ListResponse(getFollowerIdList);
     }
 
-    public ListResponse<String> getFollowingIds(String userId) {
-        List<String> getFollowingIdList = getFollowingIdList(userId);
+    public ListResponse<String> getFollowingIds(String userToken) {
+        List<Long> getFollowingIdList = getFollowingIdList(userToken);
 
-        ListResponse<String> getUserIdListResponses = new ListResponse(getFollowingIdList);
-
-        return getUserIdListResponses;
+        return new ListResponse(getFollowingIdList);
     }
 }

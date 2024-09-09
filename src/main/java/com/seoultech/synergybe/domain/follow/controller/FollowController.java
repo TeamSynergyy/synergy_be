@@ -45,6 +45,4 @@ public class FollowController {
 
         return ResponseEntity.status(HttpStatus.OK).body(followService.getFollowingIds(userId));
     }
-
-
 }

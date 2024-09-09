@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.implement;
+package com.seoultech.synergybe.domain.post.service;
 
 import com.seoultech.synergybe.domain.post.Post;
 import com.seoultech.synergybe.domain.post.exception.PostBadRequestException;
