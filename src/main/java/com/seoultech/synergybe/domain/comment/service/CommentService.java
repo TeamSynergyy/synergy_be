@@ -11,7 +11,7 @@ import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.notification.service.NotificationService;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.implement.PostReader;
+import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.user.User;
 import com.seoultech.synergybe.domain.user.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +25,15 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class CommentService {
+    private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final PostReader postReader;
     private final UserServiceImpl userService;
     private final NotificationService notificationService;
     private final IdGenerator idGenerator;
     private final TokenGenerator tokenGenerator;
 
     public GetCommentResponse createComment(String userId, CreateCommentRequest request) {
-        Post post = postReader.read(request.postId());
+        Post post = postRepository.findByPostToken(request.postId());
         User user = userService.getUserByToken(userId);
         Long commentId = idGenerator.generateId();
         String commentToken = tokenGenerator.generateToken(IdPrefix.COMMENT);
@@ -47,10 +47,9 @@ public class CommentService {
 
         Comment savedComment = commentRepository.save(comment);
         savedComment.addPost(post);
-//        User postUser = post.getUser();
 //        notificationService.send(postUser, NotificationType.COMMENT, "댓글이 생성되었습니다", post.getId());
         return GetCommentResponse.builder()
-                .commentId(savedComment.getCommentToken())
+                .commentToken(savedComment.getCommentToken())
                 .build();
     }
 

@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.presentation.dto.response;
+package com.seoultech.synergybe.domain.post.controller.dto.response;
 
 import com.seoultech.synergybe.domain.common.PageInfo;
 

@@ -1,4 +1,4 @@
-package com.seoultech.synergybe.domain.post.presentation.dto.response;
+package com.seoultech.synergybe.domain.post.controller.dto.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,7 +15,7 @@ public record GetPostResponse(
         String postToken,
         String title,
         String content,
-        String userId,
+        String userToken,
         String authorName,
 
         List<GetCommentResponse> commentList,

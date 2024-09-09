@@ -10,14 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FollowRepository extends JpaRepository<Follow, Long> {
+public interface FollowRepository extends JpaRepository<Follow, Long>, FollowRepositoryCustom {
 
-    @Query(value = "SELECT following_id FROM follow WHERE follower_id = :userId AND status = 'FOLLOW'", nativeQuery = true)
-    List<String> findFollowingIdsByFollowerId(@Param("userId") String userId);
-
-    @Query(value = "SELECT follower_id FROM follow WHERE following_id = :userId AND status = 'FOLLOW'", nativeQuery = true)
-    List<String> findFollowerIdsByFollowingId(@Param("userId") String userId);
-
-    @Query(value = "SELECT * FROM follow WHERE follower_id = :userId AND following_id = :followingId FOR UPDATE", nativeQuery = true)
-    Optional<Follow> findByFollowerIdAndFollowingId(@Param("userId") String userId, @Param("followingId") String followingId);
 }

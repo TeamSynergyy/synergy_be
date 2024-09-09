@@ -11,7 +11,7 @@ import java.util.List;
 public class FollowReader {
     private final FollowRepository followRepository;
 
-    public List<String> readFollowingIds(String userId) {
-        return followRepository.findFollowingIdsByFollowerId(userId);
+    public List<Long> readFollowingIds(String userToken) {
+        return followRepository.findFollowingIdsByFollowerToken(userToken);
     }
 }

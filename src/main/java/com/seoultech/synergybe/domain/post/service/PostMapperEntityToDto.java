@@ -1,8 +1,9 @@
-package com.seoultech.synergybe.domain.post.implement;
+package com.seoultech.synergybe.domain.post.service;
 
 import com.seoultech.synergybe.domain.comment.dto.response.GetCommentResponse;
+import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.presentation.dto.response.GetPostResponse;
+import com.seoultech.synergybe.domain.post.controller.dto.response.GetPostResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostMapperEntityToDto {
 
-    public static List<GetPostResponse> postListToResponse(List<Post> postList) {
+    public static ListResponse<GetPostResponse> postListToResponse(List<Post> postList, boolean hasNext) {
         List<GetPostResponse> getPostResponses = postList.stream()
                 .map(
                         result -> new GetPostResponse(
@@ -38,9 +39,40 @@ public class PostMapperEntityToDto {
                     )
                 )
                 .toList();
-//        PageInfo pageInfo = PageInfo.of(getPostResponses.size(), hasNext);
+        ListResponse<GetPostResponse> response = new ListResponse<>(getPostResponses, hasNext);
 
-        return getPostResponses;
+        return response;
+    }
+
+    public static ListResponse<GetPostResponse> postListToResponse(List<Post> postList) {
+        List<GetPostResponse> getPostResponses = postList.stream()
+                .map(
+                        result -> new GetPostResponse(
+                                result.getPostToken(),
+                                result.getTitle().getTitle(),
+                                result.getContent().getContent(),
+                                result.getUser().getUserToken(),
+                                result.getAuthorName().getAuthorName(),
+                                result.getComments().stream().map(
+                                        comment -> new GetCommentResponse(
+                                                comment.getCommentToken(),
+                                                comment.getUser().getUserToken(),
+                                                comment.getPost().getPostToken(),
+                                                comment.getComment().getContent(),
+                                                comment.getUpdateAt()
+                                        )
+                                ).collect(Collectors.toList()), // 댓글 목록을 포함
+                                result.getCreateAt(),
+                                result.getUpdateAt(),
+                                "",
+                                List.of(""),
+                                result.getLikes().size() // 좋아요 수
+                        )
+                )
+                .toList();
+        ListResponse<GetPostResponse> response = new ListResponse<>(getPostResponses);
+
+        return response;
     }
 
     public static GetPostResponse postToResponse(Post post) {

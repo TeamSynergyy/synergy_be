@@ -5,7 +5,7 @@ import com.seoultech.synergybe.domain.common.generator.IdGenerator;
 import com.seoultech.synergybe.domain.common.generator.IdPrefix;
 import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.post.Post;
-import com.seoultech.synergybe.domain.post.infrastructure.PostJpaRepository;
+import com.seoultech.synergybe.domain.post.repository.PostRepository;
 import com.seoultech.synergybe.domain.postlike.PostLike;
 import com.seoultech.synergybe.domain.postlike.PostLikeType;
 import com.seoultech.synergybe.domain.postlike.dto.response.GetPostLikeResponse;
@@ -27,14 +27,11 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final IdGenerator idGenerator;
     private final TokenGenerator tokenGenerator;
-    private final PostJpaRepository postJpaRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public GetPostLikeResponse updatePostLike(User user, String postToken, PostLikeType type) {
         LikeStatus status;
-        log.info("before find");
-        Post post = postJpaRepository.findByToken(postToken);
-        log.info("after find");
 
         if (type.getLikeType().equals("like")) {
             status = LikeStatus.LIKE;
@@ -42,9 +39,7 @@ public class PostLikeService {
             status = LikeStatus.UN_LIKE;
         }
         try {
-            log.info("updatePostLike update before");
-            PostLike updatedPostLike = this.update(user, postToken, status);
-            log.info("updatePostLike update after");
+            update(user, postToken, status);
             return GetPostLikeResponse.builder().build();
         } catch (Exception e) {
             throw new PostLikeNotFoundException("존재하지 않는 좋아요입니다.");
@@ -68,7 +63,7 @@ public class PostLikeService {
         Optional<PostLike> postLikeOptional = postLikeRepository.findByUserIdAndPostId(user.getUserToken(), postToken);
         log.info("option");
 
-        Post post = postJpaRepository.findByToken(postToken);
+        Post post = postRepository.findByPostToken(postToken);
         log.info("post");
 
         if (postLikeOptional.isPresent()) {
