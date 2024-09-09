@@ -16,7 +16,7 @@ permissions:
 
 # Job 실행
 jobs:
-  build:
+  ci-test:
 
     runs-on: ubuntu-22.04
 
