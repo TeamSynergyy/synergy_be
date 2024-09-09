@@ -2,6 +2,7 @@ package com.seoultech.synergybe.domain.user;
 
 import com.seoultech.synergybe.domain.common.CustomPasswordEncoder;
 
+import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.vo.*;
 import com.seoultech.synergybe.domain.common.BaseTime;
 import jakarta.persistence.*;
@@ -56,14 +57,12 @@ public class User extends BaseTime {
     }
 
     public void updateUserInfo(
-            String email,
-            String name,
-            String major
+            UpdateUserRequest request
     ) {
-        if (userToken == null || email == null || name == null || major == null) throw new NullPointerException();
-        this.email = this.email.updateEmail(email);
-        this.name = this.name.updateName(name);
-        this.major = this.major.updateMajor(major);
+        if (userToken == null || request == null) throw new NullPointerException();
+        this.email = this.email.updateEmail(request.email());
+        this.name = this.name.updateName(request.name());
+        this.major = this.major.updateMajor(request.major());
     }
 }
 

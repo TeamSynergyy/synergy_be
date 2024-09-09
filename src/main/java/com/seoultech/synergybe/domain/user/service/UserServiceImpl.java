@@ -10,9 +10,10 @@ import com.seoultech.synergybe.domain.common.generator.TokenGenerator;
 import com.seoultech.synergybe.domain.common.paging.ListResponse;
 import com.seoultech.synergybe.domain.email.MailService;
 import com.seoultech.synergybe.domain.user.UserRefreshToken;
+import com.seoultech.synergybe.domain.user.controller.GetUserResponse;
 import com.seoultech.synergybe.domain.user.dto.request.CreateUserRequest;
+import com.seoultech.synergybe.domain.user.dto.request.UpdateUserRequest;
 import com.seoultech.synergybe.domain.user.dto.request.ValidateNumberRequest;
-import com.seoultech.synergybe.domain.user.dto.response.*;
 import com.seoultech.synergybe.domain.user.exception.UserBadRequestException;
 import com.seoultech.synergybe.domain.user.exception.UserNotFoundException;
 import com.seoultech.synergybe.domain.user.repository.UserRepository;
@@ -110,16 +111,11 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
     }
 
-    public GetUserAccountResponse getUserInfo(String userId) {
-        User user = getUserByToken(userId);
+    public GetUserResponse getUserInfo(String userToken) {
+        User user = getUserByToken(userToken);
+        UserInfo userInfo = new UserInfo(user);
 
-        return GetUserAccountResponse.builder()
-                .userToken(user.getUserToken())
-                .email(user.getEmail().getEmail())
-                .major(user.getMajor().getMajor())
-                .name(user.getName().getName())
-                .temperature(user.getTemperature().getTemperature())
-                .build();
+        return new GetUserResponse(userInfo);
     }
 
     public List<User> getUsers(List<Long> userIds) {
@@ -157,16 +153,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void updateMyInfo(
-            String userToken,
-            String email,
-            String name,
-            String major
+            String userToken, UpdateUserRequest request
     ) {
         User user = getUserByToken(userToken);
-        user.updateUserInfo(email, name, major);
+        user.updateUserInfo(request);
     }
 
-    public ListResponse<GetUserAccountResponse> getSimilarUserListByUser(String userId, Long end) {
+    public ListResponse<GetUserResponse> getSimilarUserListByUser(String userId, Long end) {
 
         try {
             log.info("user Id {}", userId);
